@@ -1,4 +1,4 @@
-const CACHE_NAME = 'epic2003-shell-v4';
+const CACHE_NAME = 'epic2003-shell-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,7 +6,6 @@ const APP_SHELL = [
   './script.js',
   './manifest.webmanifest',
   './assets/favicon.svg',
-  './assets/venue-map.svg',
   './assets/aisha-roy.webp',
   './assets/metal-shadows.webp',
   './assets/dj-blaze.webp',
