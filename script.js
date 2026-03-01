@@ -1,12 +1,20 @@
 ﻿/* ===================================================
-   EPIC-2003 - Rock Night 2026
+   PHOENIX LIVE '26 - Rock Night 2026
    Vanilla JS interactions
    =================================================== */
 
 (function () {
     'use strict';
 
-    /* ---- Preloader ---- */
+    /* ---- Email Automation (EmailJS) ---- */
+    // Instructions: Go to https://www.emailjs.com/, create a free account, 
+    // and replace placeholders with your Service, Template, and Public IDs.
+    if (typeof emailjs !== 'undefined' && !window.location.href.includes("YOUR_PUBLIC_KEY")) {
+        // Only init if user replaced the placeholder
+        const pk = "YOUR_PUBLIC_KEY";
+        if (pk && pk !== "YOUR_PUBLIC_KEY") emailjs.init(pk);
+    }
+
     const preloader = document.getElementById('preloader');
     const preloaderBar = document.getElementById('preloader-bar');
     if (preloader) {
@@ -504,16 +512,21 @@
     };
 
     const validateControl = (control) => {
-        const value = String(control.value || '').trim();
-        if (control.value !== value && control.type !== 'password') {
-            control.value = value;
-        }
+        // Only validate visible, enabled fields that can have values
+        if (control.disabled || control.type === 'hidden' || control.type === 'submit') return true;
 
+        const value = String(control.value || '').trim();
+
+        // Clear previous custom errors first
+        control.setCustomValidity('');
+
+        // 1. Required Check
         if (control.required && value.length === 0) {
             setInvalidState(control, 'Please fill out this field.');
             return false;
         }
 
+        // 2. Email Pattern
         if (control.type === 'email' && value.length > 0) {
             const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(value)) {
@@ -522,8 +535,8 @@
             }
         }
 
+        // 3. Phone Pattern
         if (control.name === 'phone' && value.length > 0) {
-            // More lenient phone: allows +, numbers, spaces, dots, dashes
             const phoneRegex = /^[0-9+.\-\s()]{7,25}$/;
             if (!phoneRegex.test(value)) {
                 setInvalidState(control, 'Enter a valid phone number.');
@@ -531,25 +544,28 @@
             }
         }
 
+        // 4. Native Browser Validation (minlength, pattern, etc.)
         if (!control.checkValidity()) {
             setInvalidState(control, control.validationMessage || 'Invalid input.');
             return false;
         }
 
+        // Success - clear styling
         clearInvalidState(control);
         return true;
     };
 
     if (registerForm && registerStatus) {
+        // Collect all relevant form controls
         const controls = Array.from(registerForm.elements).filter((el) => {
-            return el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement;
+            return (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement);
         });
 
         const savedDraft = readFormDraft();
         if (savedDraft) {
             controls.forEach((control) => {
                 const nextValue = savedDraft[control.name];
-                if (typeof nextValue === 'string') {
+                if (typeof nextValue === 'string' && nextValue) {
                     control.value = nextValue;
                 }
             });
@@ -577,23 +593,40 @@
 
             let firstInvalid = null;
 
+            // Clear previous error message
+            registerStatus.textContent = "";
+            registerStatus.className = 'register-status';
+
             controls.forEach((el) => {
                 const valid = validateControl(el);
-                if (!valid && !firstInvalid) firstInvalid = el;
+                if (!valid && !firstInvalid) {
+                    firstInvalid = el;
+                }
             });
 
             if (firstInvalid) {
-                registerStatus.textContent = firstInvalid.validationMessage || 'Please fill in all fields correctly.';
+                // Determine the correct error message
+                const errorMsg = firstInvalid.validationMessage || 'Please fill out this field.';
+                registerStatus.textContent = errorMsg;
                 registerStatus.className = 'register-status error';
-                firstInvalid.focus();
+
+                // Focus and ensure field is visible
+                firstInvalid.focus({ preventScroll: false });
+                setTimeout(() => {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                }, 10);
+
+                console.warn("Validation failed on field:", firstInvalid.name, firstInvalid.validationMessage);
                 registerForm.setAttribute('aria-busy', 'false');
                 return;
             }
 
             const formData = new FormData(registerForm);
             const name = String(formData.get('fullName') || 'Guest').trim();
+            const emailValue = String(formData.get('email') || '').trim();
             const pass = String(formData.get('passType') || 'Standard').replace('-', ' ').toUpperCase();
             const tickets = String(formData.get('tickets') || '1');
+
 
             // Success Transition
             registerStatus.textContent = "Processing secure registration...";
@@ -632,9 +665,29 @@
                     // Simulate Automation Logs
                     const logEmail = document.getElementById('log-email');
                     const logSms = document.getElementById('log-sms');
+                    const logLiveMail = document.getElementById('log-live-mail');
 
                     setTimeout(() => logEmail?.classList.add('active'), 800);
                     setTimeout(() => logSms?.classList.add('active'), 1800);
+                    setTimeout(() => logLiveMail?.classList.add('active'), 2800);
+
+                    // ---- Real Email Dispatch (EmailJS) ----
+                    // This creates the live email to the user's inbox
+                    if (typeof emailjs !== 'undefined') {
+                        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                            to_name: name,
+                            to_email: emailValue,
+                            pass_type: pass,
+                            ticket_qty: tickets,
+                            order_id: 'PX-' + Math.floor(Math.random() * 9000 + 1000)
+                        }).then(() => {
+                            console.log("SUCCESS: Real Email Sent!");
+                        }, (error) => {
+                            console.log("FAILED: Check Public Key at EmailJS.com", error);
+                        });
+                    }
+                } else {
+                    console.warn("Missing one or more modal elements. Check IDs: register-modal, modal-name, modal-pass, modal-tickets.");
                 }
 
                 registerForm.reset();
@@ -706,13 +759,20 @@
             validateControl(target);
         }, true);
 
+        registerForm.addEventListener('change', (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+            validateControl(target);
+            persistDraft();
+        });
+
         registerForm.addEventListener('input', (event) => {
             const target = event.target;
             if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
             validateControl(target);
             persistDraft();
 
-            if (registerStatus.textContent) {
+            if (registerStatus.textContent && !target.classList.contains('invalid')) {
                 registerStatus.textContent = '';
                 registerStatus.className = 'register-status';
             }
@@ -789,9 +849,9 @@
                 const icsContent = [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
-                    'PRODID:-//EPIC-2003//Rock Night 2026//EN',
+                    'PRODID:-//PHOENIX-LIVE-26//Rock Night 2026//EN',
                     'BEGIN:VEVENT',
-                    `UID:epic-2003-rock-night-${uidDate}@vishh70.github.io`,
+                    `UID:phoenix-live-26-rock-night-${uidDate}@vishh70.github.io`,
                     `DTSTAMP:${formatIcsDateUtc(new Date())}`,
                     `DTSTART:${formatIcsDateUtc(eventStart)}`,
                     `DTEND:${formatIcsDateUtc(eventEnd)}`,

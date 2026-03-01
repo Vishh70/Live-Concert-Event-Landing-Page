@@ -752,6 +752,13 @@
             </svg>
             <span>SMS confirmation outbound...</span>
           </div>
+          <div class="log-item" id="log-live-mail" style="color: #4ade80; opacity: 0;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <span>LIVE: Ticket dispatched to your inbox!</span>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -762,6 +769,8 @@
     </div>
   </div>
 
+  <!-- Email Automation SDK (EmailJS) -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script src="script.js" defer></script>
 </body>
 
