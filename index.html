@@ -636,12 +636,104 @@
     </div>
   </footer>
 
-  <button id="scroll-top" class="glass scroll-top" aria-label="Scroll back to top" hidden>
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"
-      stroke-linecap="round" stroke-linejoin="round">
-      <path d="M18 15l-6-6-6 6"></path>
-    </svg>
   </button>
+
+  <!-- Registration Success Modal -->
+  <div id="register-modal" class="modal-overlay" aria-hidden="true" hidden>
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2>Registration Confirmed!</h2>
+        <p>You're heading to PHOENIX LIVE '26</p>
+      </div>
+      <div class="modal-body">
+        <div class="digital-pass-wrap" id="digital-pass-preview" hidden>
+          <div class="digital-pass glass">
+            <div class="pass-header">
+              <span class="pass-label">PHOENIX LIVE '26</span>
+              <span class="pass-id">#PX-9921</span>
+            </div>
+            <div class="pass-main">
+              <div class="pass-row">
+                <div class="pass-col">
+                  <label>Attendee</label>
+                  <span id="pass-name">---</span>
+                </div>
+                <div class="pass-col">
+                  <label>Tier</label>
+                  <span id="pass-tier">---</span>
+                </div>
+              </div>
+              <div class="pass-row">
+                <div class="pass-col">
+                  <label>Quantity</label>
+                  <span id="pass-qty">---</span>
+                </div>
+                <div class="pass-col">
+                  <label>Gate</label>
+                  <span>Gate A</span>
+                </div>
+              </div>
+            </div>
+            <div class="pass-qr">
+              <svg viewBox="0 0 100 100" width="80" height="80">
+                <path d="M0 0h30v10h-20v20h-10zM70 0h30v30h-10v-20h-20zM0 70h10v20h20v10h-30zM70 100v-10h20v-20h10v30z"
+                  fill="currentColor" />
+                <rect x="25" y="25" width="10" height="10" fill="currentColor" />
+                <rect x="45" y="25" width="10" height="10" fill="currentColor" />
+                <rect x="65" y="25" width="10" height="10" fill="currentColor" />
+                <rect x="25" y="45" width="10" height="10" fill="currentColor" />
+                <rect x="45" y="45" width="10" height="10" fill="currentColor" />
+                <rect x="65" y="45" width="10" height="10" fill="currentColor" />
+                <rect x="25" y="65" width="10" height="10" fill="currentColor" />
+                <rect x="45" y="65" width="10" height="10" fill="currentColor" />
+                <rect x="65" y="65" width="10" height="10" fill="currentColor" />
+              </svg>
+              <small>Check-in at gate</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-preview" id="modal-summary-view">
+          <div class="ticket-field">
+            <span>Attendee</span>
+            <strong id="modal-name">---</strong>
+          </div>
+          <div class="ticket-field">
+            <span>Pass Type</span>
+            <strong id="modal-pass">---</strong>
+          </div>
+          <div class="ticket-field">
+            <span>Quantity</span>
+            <strong id="modal-tickets">---</strong>
+          </div>
+        </div>
+        <div class="automation-logs" id="modal-logs-view">
+          <div class="log-item" id="log-email">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <span>Sending e-ticket to inbox...</span>
+          </div>
+          <div class="log-item" id="log-sms">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l4-4H7l3-3H7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+            <span>SMS confirmation outbound...</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--ghost" id="view-email-btn">View My Ticket</button>
+        <button class="btn" id="modal-close-btn">Finish</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js" defer></script>
 </body>

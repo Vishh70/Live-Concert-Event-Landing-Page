@@ -514,18 +514,25 @@
             return false;
         }
 
-        if (control.type === 'email' && value.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            setInvalidState(control, 'Enter a valid email address.');
-            return false;
+        if (control.type === 'email' && value.length > 0) {
+            const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(value)) {
+                setInvalidState(control, 'Enter a valid email address.');
+                return false;
+            }
         }
 
-        if (control.name === 'phone' && value.length > 0 && !/^[0-9+\-() ]{8,20}$/.test(value)) {
-            setInvalidState(control, 'Enter a valid phone number.');
-            return false;
+        if (control.name === 'phone' && value.length > 0) {
+            // More lenient phone: allows +, numbers, spaces, dots, dashes
+            const phoneRegex = /^[0-9+.\-\s()]{7,25}$/;
+            if (!phoneRegex.test(value)) {
+                setInvalidState(control, 'Enter a valid phone number.');
+                return false;
+            }
         }
 
         if (!control.checkValidity()) {
-            setInvalidState(control, control.validationMessage || 'Please enter a valid value.');
+            setInvalidState(control, control.validationMessage || 'Invalid input.');
             return false;
         }
 
@@ -585,13 +592,100 @@
 
             const formData = new FormData(registerForm);
             const name = String(formData.get('fullName') || 'Guest').trim();
+            const pass = String(formData.get('passType') || 'Standard').replace('-', ' ').toUpperCase();
+            const tickets = String(formData.get('tickets') || '1');
 
-            registerStatus.textContent = `Registration submitted for ${name}. Please check your email for updates.`;
-            registerStatus.className = 'register-status success';
-            registerForm.reset();
-            writeFormDraft(null);
-            registerForm.setAttribute('aria-busy', 'false');
+            // Success Transition
+            registerStatus.textContent = "Processing secure registration...";
+            registerStatus.className = 'register-status';
+
+            setTimeout(() => {
+                // Populate Modal Views
+                const modal = document.getElementById('register-modal');
+                const modalName = document.getElementById('modal-name');
+                const modalPass = document.getElementById('modal-pass');
+                const modalTickets = document.getElementById('modal-tickets');
+
+                // Digital Pass Views
+                const passName = document.getElementById('pass-name');
+                const passTier = document.getElementById('pass-tier');
+                const passQty = document.getElementById('pass-qty');
+
+                if (modal && modalName && modalPass && modalTickets) {
+                    modalName.textContent = name;
+                    modalPass.textContent = pass;
+                    modalTickets.textContent = tickets;
+
+                    // Populate Pass Mockup
+                    if (passName) passName.textContent = name;
+                    if (passTier) passTier.textContent = pass;
+                    if (passQty) passQty.textContent = `${tickets} PASSES`;
+
+                    modal.hidden = false;
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+
+                    // Simulate Automation Logs
+                    const logEmail = document.getElementById('log-email');
+                    const logSms = document.getElementById('log-sms');
+
+                    setTimeout(() => logEmail?.classList.add('active'), 800);
+                    setTimeout(() => logSms?.classList.add('active'), 1800);
+                }
+
+                registerForm.reset();
+                writeFormDraft(null);
+                registerForm.setAttribute('aria-busy', 'false');
+                registerStatus.textContent = "";
+            }, 1200);
         });
+
+        // Modal View Toggle (View Ticket)
+        const viewEmailBtn = document.getElementById('view-email-btn');
+        const digitalPassPreview = document.getElementById('digital-pass-preview');
+        const modalSummaryView = document.getElementById('modal-summary-view');
+        const modalLogsView = document.getElementById('modal-logs-view');
+
+        if (viewEmailBtn && digitalPassPreview && modalSummaryView && modalLogsView) {
+            viewEmailBtn.addEventListener('click', () => {
+                const isViewingTicket = !digitalPassPreview.hidden;
+                if (!isViewingTicket) {
+                    digitalPassPreview.hidden = false;
+                    modalSummaryView.hidden = true;
+                    modalLogsView.hidden = true;
+                    viewEmailBtn.textContent = "Back to Summary";
+                } else {
+                    digitalPassPreview.hidden = true;
+                    modalSummaryView.hidden = false;
+                    modalLogsView.hidden = false;
+                    viewEmailBtn.textContent = "View My Ticket";
+                }
+            });
+        }
+
+        // Close Modal Logic
+        const modal = document.getElementById('register-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        if (modal && modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', () => {
+                modal.classList.add('fade-out');
+                setTimeout(() => {
+                    modal.hidden = true;
+                    modal.setAttribute('aria-hidden', 'true');
+                    modal.classList.remove('fade-out');
+                    document.body.style.overflow = '';
+
+                    // Reset views for next time
+                    if (digitalPassPreview) digitalPassPreview.hidden = true;
+                    if (modalSummaryView) modalSummaryView.hidden = false;
+                    if (modalLogsView) modalLogsView.hidden = false;
+                    if (viewEmailBtn) viewEmailBtn.textContent = "View My Ticket";
+
+                    document.getElementById('log-email')?.classList.remove('active');
+                    document.getElementById('log-sms')?.classList.remove('active');
+                }, 400);
+            });
+        }
 
         registerForm.addEventListener('blur', (event) => {
             const target = event.target;

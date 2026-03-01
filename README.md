@@ -72,9 +72,10 @@ A **world-class**, dark-themed concert landing page for **Rock Night 2026** at P
 ## 🚀 Key Features
 
 ### 🏠 Hero Section (`CIMS-14`)
-- 🐉 Cinematic dragon hero image with vignette overlay
-- 🎯 Bold gradient event title with floating animation
-- ⏱️ Live countdown timer with pulse glow on "Live Now" state
+- 🏁 **Cinematic Preloader**: Animated branding with progress bar.
+- 🎟️ **Automated Ticket Demo**: Simulated Email & SMS confirmation workflow.
+- 📧 **Premium Email Design**: Specialized [email-template.html](email-template.html) for post-purchase.
+- 📍 **Interactive Map**: One-click address copy and Google Maps integration.e
 - 🎫 CTA buttons: Register, Explore Artists, View Schedule, Add to Calendar
 - 🏷️ Staggered chip animations for event highlights
 - 📅 One-click `.ics` calendar file download

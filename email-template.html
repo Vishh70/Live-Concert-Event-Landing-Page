@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHOENIX LIVE '26 - Order Confirmation</title>
+    <style>
+        :root {
+            --bg: #050812;
+            --surface: #0b1428;
+            --accent: #22d3ee;
+            --plum: #9a6bff;
+            --text: #f7f6ff;
+            --muted: #a99fd0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #333;
+        }
+
+        .email-wrapper {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: var(--bg);
+            padding: 40px 20px;
+            text-align: center;
+            background: radial-gradient(circle at top right, #131f3a, #050812);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 6px 16px;
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0 0 10px;
+            color: #111;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .ticket-card {
+            background: #f8f9fc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .ticket-header {
+            background: linear-gradient(90deg, var(--accent), var(--plum));
+            padding: 15px 20px;
+            color: white;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ticket-body {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-group label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .info-group span {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .qr-section {
+            grid-column: span 2;
+            text-align: center;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            margin: 0 auto 10px;
+            padding: 10px;
+        }
+
+        .action-btn {
+            display: block;
+            background: var(--bg);
+            color: white;
+            text-align: center;
+            padding: 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+
+        .footer {
+            background: #f8f9fc;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-wrapper">
+        <div class="header">
+            <h1 class="logo">PHOENIX LIVE '26</h1>
+            <div class="status-badge">E-Ticket Confirmed</div>
+        </div>
+        <div class="content">
+            <h1>Hi [Attendee Name],</h1>
+            <p>Your registration for the biggest rock event of the year is successful! Below is your official e-ticket
+                and entry details. Please keep this email handy at the venue.</p>
+
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <span>OFFICIAL PASS</span>
+                    <span>#PX-2026-9921</span>
+                </div>
+                <div class="ticket-body">
+                    <div class="info-group">
+                        <label>Event</label>
+                        <span>Phoenix Live '26</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Venue</label>
+                        <span>Pune Arena, MH</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Pass Category</label>
+                        <span>[Pass Type]</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Quantity</label>
+                        <span>[Amount] Ticket(s)</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Gate Entry</label>
+                        <span>Gate A (Main)</span>
+                    </div>
+                    <div class="info-group">
+                        <label>Check-in Time</label>
+                        <span>5:30 PM Onwards</span>
+                    </div>
+                    <div class="qr-section">
+                        <div class="qr-placeholder">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=PX2026-CONFIRMED"
+                                alt="QR Code">
+                        </div>
+                        <span style="font-size: 10px; color: #94a3b8;">SCAN AT GATE FOR ENTRY</span>
+                    </div>
+                </div>
+            </div>
+
+            <p style="font-size: 14px; margin-top: 20px;"><strong>Need Help?</strong> Replied to this email or visit our
+                <a href="#">Support Center</a>.</p>
+
+            <a href="#" class="action-btn">Download PDF Ticket</a>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Phoenix Live Arena, Pune. All rights reserved.<br>
+                You are receiving this because you registered for Phoenix Live '26.</p>
+            <p><a href="#">Unsubscribe</a> | <a href="#">Privacy Policy</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
