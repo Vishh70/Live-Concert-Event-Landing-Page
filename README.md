@@ -2,10 +2,10 @@
   <img src="electric_dragon_concert_hero_1772381931809.png" alt="Rock Night 2026 Hero Banner" width="800" />
 </p>
 
-<h1 align="center">🎸 EPIC-2003 | Rock Night 2026 — Pune Arena</h1>
+<h1 align="center">🎸 PHOENIX LIVE '26 — Pune Arena</h1>
 
 <p align="center">
-  <strong>Premium, immersive, single-page concert landing experience</strong>
+  <strong>The Ultimate Rock Night Arena Experience</strong>
 </p>
 
 <p align="center">
