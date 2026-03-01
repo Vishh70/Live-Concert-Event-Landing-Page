@@ -1,5 +1,5 @@
 ﻿/* ===================================================
-   EPIC-2003 - Rock Night 2025
+   EPIC-2003 - Rock Night 2026
    Vanilla JS interactions
    =================================================== */
 
@@ -23,6 +23,17 @@
     const copyAddressBtn = document.getElementById('copy-address-btn');
     const copyAddressStatus = document.getElementById('copy-address-status');
     const venueAddress = document.getElementById('venue-address');
+    const addCalendarBtn = document.getElementById('add-calendar-btn');
+    const calendarStatus = document.getElementById('calendar-status');
+    const faqSearch = document.getElementById('faq-search');
+    const faqEmptyState = document.getElementById('faq-empty-state');
+    const faqDetails = Array.from(document.querySelectorAll('#rules-faq details'));
+    const plannerList = document.getElementById('planner-list');
+    const plannerItems = Array.from(document.querySelectorAll('#planner-list input[type="checkbox"][data-plan]'));
+    const plannerResetBtn = document.getElementById('planner-reset-btn');
+    const plannerStatus = document.getElementById('planner-status');
+    const plannerProgressText = document.getElementById('planner-progress-text');
+    const plannerProgressFill = document.getElementById('planner-progress-fill');
     const countdownEl = document.querySelector('.countdown');
     const countdownLabelEl = countdownEl ? countdownEl.querySelector('.countdown__label') : null;
     const countdownValueEls = {
@@ -32,9 +43,11 @@
         seconds: countdownEl ? countdownEl.querySelector('[data-unit="seconds"]') : null
     };
     const eventDateEl = document.querySelector('#hero time[datetime]');
+    const eventDayLabel = document.getElementById('event-day-label');
     const isMobileViewport = () => window.innerWidth <= MOBILE_BREAKPOINT;
     const prefersReducedMotion = () => REDUCED_MOTION_QUERY.matches;
     const FORM_DRAFT_KEY = 'epic2003.registerDraft.v1';
+    const PLANNER_KEY = 'epic2003.planner.v1';
     const getHashTarget = (hash) => {
         if (!hash || hash.length < 2 || hash.charAt(0) !== '#') return null;
         try {
@@ -66,6 +79,41 @@
             // Ignore storage errors (privacy mode, quota, etc.).
         }
     };
+
+    const readPlannerState = () => {
+        try {
+            const raw = window.localStorage.getItem(PLANNER_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch {
+            return null;
+        }
+    };
+
+    const writePlannerState = (state) => {
+        try {
+            if (!state || !Object.keys(state).length) {
+                window.localStorage.removeItem(PLANNER_KEY);
+                return;
+            }
+            window.localStorage.setItem(PLANNER_KEY, JSON.stringify(state));
+        } catch {
+            // Ignore storage errors.
+        }
+    };
+
+    const formatIcsDateUtc = (date) => {
+        const d = date instanceof Date ? date : new Date(date);
+        return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    };
+
+    if (eventDateEl && eventDayLabel) {
+        const parsed = new Date(eventDateEl.getAttribute('datetime') || '');
+        if (!Number.isNaN(parsed.getTime())) {
+            eventDayLabel.textContent = parsed.toLocaleDateString('en-IN', { weekday: 'long' });
+        }
+    }
 
     const setHeaderProgress = () => {
         const scrollTop = window.scrollY || window.pageYOffset;
@@ -548,6 +596,17 @@
     }
 
     if (copyAddressBtn && copyAddressStatus && venueAddress) {
+        let copyStatusTimer = 0;
+        const setCopyStatus = (message, type) => {
+            copyAddressStatus.textContent = message;
+            copyAddressStatus.className = `map-copy-status ${type}`;
+            window.clearTimeout(copyStatusTimer);
+            copyStatusTimer = window.setTimeout(() => {
+                copyAddressStatus.textContent = '';
+                copyAddressStatus.className = 'map-copy-status';
+            }, 2600);
+        };
+
         copyAddressBtn.addEventListener('click', async () => {
             const value = venueAddress.textContent ? venueAddress.textContent.trim() : '';
             if (!value) return;
@@ -566,43 +625,197 @@
                     document.execCommand('copy');
                     fallback.remove();
                 }
-                copyAddressStatus.textContent = 'Address copied to clipboard.';
+                setCopyStatus('Address copied to clipboard.', 'success');
             } catch {
-                copyAddressStatus.textContent = 'Unable to copy. Please copy the address manually.';
+                setCopyStatus('Unable to copy. Please copy the address manually.', 'error');
             }
         });
+    }
+
+    if (addCalendarBtn && calendarStatus) {
+        let calendarTimer = 0;
+        const setCalendarStatus = (message, type) => {
+            calendarStatus.textContent = message;
+            calendarStatus.className = `calendar-status ${type}`;
+            window.clearTimeout(calendarTimer);
+            calendarTimer = window.setTimeout(() => {
+                calendarStatus.textContent = '';
+                calendarStatus.className = 'calendar-status';
+            }, 2800);
+        };
+
+        addCalendarBtn.addEventListener('click', () => {
+            try {
+                const fallbackStart = new Date('2026-03-16T17:30:00+05:30');
+                const parsedStart = eventDateEl ? new Date(eventDateEl.getAttribute('datetime') || '') : fallbackStart;
+                const eventStart = Number.isNaN(parsedStart.getTime()) ? fallbackStart : parsedStart;
+                const eventEnd = new Date(eventStart.getTime() + (5.5 * 60 * 60 * 1000));
+                const uidDate = formatIcsDateUtc(eventStart).slice(0, 8);
+                const eventTitle = 'Rock Night 2026 - Pune Arena';
+
+                const icsContent = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//EPIC-2003//Rock Night 2026//EN',
+                    'BEGIN:VEVENT',
+                    `UID:epic-2003-rock-night-${uidDate}@vishh70.github.io`,
+                    `DTSTAMP:${formatIcsDateUtc(new Date())}`,
+                    `DTSTART:${formatIcsDateUtc(eventStart)}`,
+                    `DTEND:${formatIcsDateUtc(eventEnd)}`,
+                    `SUMMARY:${eventTitle}`,
+                    'LOCATION:Phoenix Concert Grounds\\, Pune',
+                    'DESCRIPTION:Live concert featuring DJ Blaze\\, The Metal Shadows\\, and Aisha Roy.',
+                    'END:VEVENT',
+                    'END:VCALENDAR'
+                ].join('\r\n');
+
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `rock-night-${eventStart.getFullYear()}.ics`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+
+                setCalendarStatus('Calendar file downloaded. Import it in Google/Outlook Calendar.', 'success');
+            } catch {
+                setCalendarStatus('Unable to generate calendar file right now.', 'error');
+            }
+        });
+    }
+
+    if (faqSearch && faqDetails.length) {
+        const runFaqFilter = () => {
+            const term = faqSearch.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            faqDetails.forEach((item) => {
+                const summary = item.querySelector('summary');
+                const answer = item.querySelector('p');
+                const haystack = `${summary ? summary.textContent : ''} ${answer ? answer.textContent : ''}`.toLowerCase();
+                const visible = term.length === 0 || haystack.includes(term);
+                item.hidden = !visible;
+                if (visible) visibleCount += 1;
+            });
+
+            if (faqEmptyState) {
+                faqEmptyState.hidden = visibleCount > 0;
+            }
+        };
+
+        faqSearch.addEventListener('input', runFaqFilter);
+    }
+
+    if (plannerList && plannerItems.length) {
+        let plannerTimer = 0;
+        const setPlannerStatus = (message, type) => {
+            if (!plannerStatus) return;
+            plannerStatus.textContent = message;
+            plannerStatus.className = `planner-status ${type}`;
+            window.clearTimeout(plannerTimer);
+            plannerTimer = window.setTimeout(() => {
+                plannerStatus.textContent = '';
+                plannerStatus.className = 'planner-status';
+            }, 2200);
+        };
+
+        const syncPlannerVisual = () => {
+            plannerItems.forEach((item) => {
+                const container = item.closest('li');
+                if (container) {
+                    container.classList.toggle('done', item.checked);
+                }
+            });
+        };
+
+        const updatePlannerProgress = () => {
+            const total = plannerItems.length;
+            const done = plannerItems.filter((item) => item.checked).length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+            if (plannerProgressText) {
+                plannerProgressText.textContent = `${done} / ${total} complete`;
+            }
+            if (plannerProgressFill) {
+                plannerProgressFill.style.width = `${pct}%`;
+            }
+        };
+
+        const savePlanner = () => {
+            const state = plannerItems.reduce((acc, item) => {
+                acc[item.dataset.plan] = item.checked;
+                return acc;
+            }, {});
+            writePlannerState(state);
+        };
+
+        const saved = readPlannerState();
+        if (saved) {
+            plannerItems.forEach((item) => {
+                const key = item.dataset.plan;
+                if (!key) return;
+                if (typeof saved[key] === 'boolean') {
+                    item.checked = saved[key];
+                }
+            });
+        }
+        syncPlannerVisual();
+        updatePlannerProgress();
+
+        plannerItems.forEach((item) => {
+            item.addEventListener('change', () => {
+                syncPlannerVisual();
+                updatePlannerProgress();
+                savePlanner();
+                setPlannerStatus('Checklist saved.', 'success');
+            });
+        });
+
+        if (plannerResetBtn) {
+            plannerResetBtn.addEventListener('click', () => {
+                plannerItems.forEach((item) => {
+                    item.checked = false;
+                });
+                syncPlannerVisual();
+                updatePlannerProgress();
+                writePlannerState(null);
+                setPlannerStatus('Checklist reset.', 'success');
+            });
+        }
     }
 
     const reducedMotionEnabled = prefersReducedMotion();
     const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 
     if (!reducedMotionEnabled && hasFinePointer) {
-        const cards = Array.from(document.querySelectorAll('.spotlight-section'));
+        const tiltElements = Array.from(document.querySelectorAll('.spotlight-section, .venue-big-display, .register-panel'));
 
-        cards.forEach((card) => {
+        tiltElements.forEach((el) => {
             let frame = 0;
             let latestX = 0;
             let latestY = 0;
 
             const renderTilt = () => {
                 frame = 0;
-                card.style.setProperty('--ry', `${latestX * 6}deg`);
-                card.style.setProperty('--rx', `${-latestY * 6}deg`);
+                // Limit tilt angle for larger elements
+                const maxTilt = el.classList.contains('spotlight-section') ? 6 : 3;
+                el.style.setProperty('transform', `perspective(1200px) rotateX(${-latestY * maxTilt}deg) rotateY(${latestX * maxTilt}deg)`);
             };
 
-            card.addEventListener('pointermove', (event) => {
-                const rect = card.getBoundingClientRect();
+            el.addEventListener('pointermove', (event) => {
+                const rect = el.getBoundingClientRect();
                 latestX = (event.clientX - rect.left) / rect.width - 0.5;
                 latestY = (event.clientY - rect.top) / rect.height - 0.5;
 
                 if (!frame) frame = window.requestAnimationFrame(renderTilt);
             });
 
-            card.addEventListener('pointerleave', () => {
+            el.addEventListener('pointerleave', () => {
                 if (frame) window.cancelAnimationFrame(frame);
                 frame = 0;
-                card.style.setProperty('--ry', '0deg');
-                card.style.setProperty('--rx', '0deg');
+                el.style.setProperty('transform', 'perspective(1200px) rotateX(0deg) rotateY(0deg)');
             });
         });
     }

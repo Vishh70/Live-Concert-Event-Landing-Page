@@ -19,8 +19,8 @@ If your site does not open:
 
 ## Event Snapshot
 
-- Event: `Rock Night 2025 - Pune Arena`
-- Date: `January 25, 2025`
+- Event: `Rock Night 2026 - Pune Arena`
+- Date: `March 16, 2026`
 - Venue: `Phoenix Concert Grounds, Pune`
 - Promoter: `XYZ Entertainment Group`
 - Featured Artists:
@@ -48,6 +48,7 @@ If your site does not open:
 
 ### CIMS-16: Event Details
 - Full schedule timeline
+- Schedule notes for stage flow and transitions
 - Venue layout image with descriptive `alt` text
 - Embedded Google Maps location
 - Promoter block
@@ -55,6 +56,7 @@ If your site does not open:
 - FAQ accordion using semantic `<details>/<summary>`
 - Added detailed logistics:
   - event essentials
+  - operations and safety flow
   - travel and parking guidance
   - support and gate flow notes
 
@@ -70,6 +72,7 @@ If your site does not open:
 - Client-side validation and inline status messaging
 - Draft persistence via `localStorage`
 - Live character counter for special requests
+- Registration trust indicators for response and support assurance
 
 ### UX + Front-End Enhancements
 - Sticky glassmorphic header with active-section highlighting
@@ -78,10 +81,24 @@ If your site does not open:
 - Scroll reveal sequencing and artist spotlight effects
 - Scroll-to-top button
 - Copy venue address to clipboard helper
+- One-click `Add To Calendar` export (`.ics`)
+- Calendar export auto-uses the live event datetime from page metadata
+- FAQ live search filter with empty-state feedback
+- Personal event planner checklist with local persistence
+- Planner completion progress tracking
 - SEO/event metadata using JSON-LD (`MusicEvent`)
 - PWA basics:
   - `manifest.webmanifest`
   - `sw.js` static shell caching
+
+### Design + Color System
+- Dark premium base with layered gradients for depth
+- Multi-accent palette:
+  - Electric Cyan for active/focus states
+  - Violet/Plum for primary branding
+  - Rose/Amber for highlights and energy accents
+- Improved contrast in headings, cards, forms, and map interactions
+- Consistent CTA hierarchy between solid and ghost buttons
 
 ## Tech Stack
 
@@ -174,4 +191,3 @@ Then visit:
 ## License
 
 Currently for internship/educational submission usage.
-
