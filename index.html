@@ -403,6 +403,28 @@
               <li>No spam messaging</li>
               <li>Support team response before event day</li>
             </ul>
+            <div class="trust-seals" aria-label="Security and Trust badges">
+              <div class="seal">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <span>SSL Secure Checkout</span>
+              </div>
+              <div class="seal">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span>Official Event Partner</span>
+              </div>
+              <div class="seal">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                  <polyline points="16 7 22 7 22 13" />
+                </svg>
+                <span>Instant E-ticket Delivery</span>
+              </div>
+            </div>
             <p id="register-status" class="register-status" aria-live="polite" role="status"></p>
           </div>
         </div>
@@ -704,6 +726,10 @@
             <strong id="modal-name">---</strong>
           </div>
           <div class="ticket-field">
+            <span>Email</span>
+            <strong id="modal-email">---</strong>
+          </div>
+          <div class="ticket-field">
             <span>Pass Type</span>
             <strong id="modal-pass">---</strong>
           </div>
@@ -729,7 +755,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn--ghost" id="view-email-btn">View My Ticket</button>
+        <button class="btn btn--ghost" id="view-pass-btn">Wallet Pass</button>
+        <button class="btn btn--ghost" id="view-email-btn">View E-ticket</button>
         <button class="btn" id="modal-close-btn">Finish</button>
       </div>
     </div>

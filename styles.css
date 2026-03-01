@@ -1154,8 +1154,38 @@ main {
   color: #4ade80;
 }
 
-.register-status.error {
-  color: #fb7185;
+.trust-seals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 32px 0 20px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.seal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.seal:hover {
+  background: rgba(34, 211, 238, 0.08);
+  border-color: rgba(34, 211, 238, 0.2);
+  color: var(--cyan);
+}
+
+.seal svg {
+  color: var(--cyan);
+  flex-shrink: 0;
 }
 
 .experience-stack {

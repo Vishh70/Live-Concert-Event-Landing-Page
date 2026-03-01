@@ -37,6 +37,26 @@
             padding: 40px 20px;
             text-align: center;
             background: radial-gradient(circle at top right, #131f3a, #050812);
+            position: relative;
+        }
+
+        .trust-stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(34, 211, 238, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transform: rotate(15deg);
+            opacity: 0.8;
         }
 
         .logo {
@@ -63,12 +83,28 @@
 
         .content {
             padding: 40px 30px;
+            position: relative;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 80px;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.03);
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 0;
         }
 
         h1 {
             font-size: 24px;
             margin: 0 0 10px;
             color: #111;
+            position: relative;
+            z-index: 1;
         }
 
         p {
@@ -76,15 +112,20 @@
             line-height: 1.6;
             color: #555;
             margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
         }
 
         .ticket-card {
             background: #f8f9fc;
-            border: 1px solid #e2e8f0;
+            border: 2px solid #e2e8f0;
             border-radius: 12px;
             padding: 0;
             margin-bottom: 30px;
             overflow: hidden;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .ticket-header {
@@ -145,6 +186,8 @@
             text-decoration: none;
             font-weight: 700;
             margin-top: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .footer {
@@ -166,18 +209,20 @@
 <body>
     <div class="email-wrapper">
         <div class="header">
+            <div class="trust-stamp">✓ Verified<br>Partner</div>
             <h1 class="logo">PHOENIX LIVE '26</h1>
             <div class="status-badge">E-Ticket Confirmed</div>
         </div>
         <div class="content">
-            <h1>Hi [Attendee Name],</h1>
+            <div class="watermark">OFFICIAL</div>
+            <h1 id="greet-name">Hi [Attendee Name],</h1>
             <p>Your registration for the biggest rock event of the year is successful! Below is your official e-ticket
                 and entry details. Please keep this email handy at the venue.</p>
 
             <div class="ticket-card">
                 <div class="ticket-header">
                     <span>OFFICIAL PASS</span>
-                    <span>#PX-2026-9921</span>
+                    <span id="pass-serial">#PX-2026-9921</span>
                 </div>
                 <div class="ticket-body">
                     <div class="info-group">
@@ -190,11 +235,11 @@
                     </div>
                     <div class="info-group">
                         <label>Pass Category</label>
-                        <span>[Pass Type]</span>
+                        <span id="view-pass">[Pass Type]</span>
                     </div>
                     <div class="info-group">
                         <label>Quantity</label>
-                        <span>[Amount] Ticket(s)</span>
+                        <span id="view-qty">[Amount] Ticket(s)</span>
                     </div>
                     <div class="info-group">
                         <label>Gate Entry</label>
@@ -206,7 +251,8 @@
                     </div>
                     <div class="qr-section">
                         <div class="qr-placeholder">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=PX2026-CONFIRMED"
+                            <img id="qr-img"
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=PX2026-CONFIRMED"
                                 alt="QR Code">
                         </div>
                         <span style="font-size: 10px; color: #94a3b8;">SCAN AT GATE FOR ENTRY</span>
@@ -215,9 +261,10 @@
             </div>
 
             <p style="font-size: 14px; margin-top: 20px;"><strong>Need Help?</strong> Replied to this email or visit our
-                <a href="#">Support Center</a>.</p>
+                <a href="#">Support Center</a>.
+            </p>
 
-            <a href="#" class="action-btn">Download PDF Ticket</a>
+            <a href="javascript:void(0)" onclick="window.print()" class="action-btn">Download PDF Ticket</a>
         </div>
         <div class="footer">
             <p>&copy; 2026 Phoenix Live Arena, Pune. All rights reserved.<br>
@@ -225,6 +272,28 @@
             <p><a href="#">Unsubscribe</a> | <a href="#">Privacy Policy</a></p>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get('name') || 'Attendee';
+            const pass = params.get('pass') || 'General Admission';
+            const qty = params.get('qty') || '1';
+            const email = params.get('email') || '';
+
+            document.getElementById('greet-name').textContent = `Hi ${name},`;
+            document.getElementById('view-pass').textContent = pass;
+            document.getElementById('view-qty').textContent = `${qty} Ticket(s)`;
+
+            // Random serial
+            const serial = 'PX-2026-' + Math.floor(Math.random() * 9000 + 1000);
+            document.getElementById('pass-serial').textContent = '#' + serial;
+
+            // Update QR code data
+            const qrData = `EVENT:PHOENIX-LIVE-26|SERIAL:${serial}|NAME:${name}|TICKETS:${qty}`;
+            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrData)}`;
+        })();
+    </script>
 </body>
 
 </html>

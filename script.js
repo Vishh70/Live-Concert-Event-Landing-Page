@@ -603,6 +603,7 @@
                 // Populate Modal Views
                 const modal = document.getElementById('register-modal');
                 const modalName = document.getElementById('modal-name');
+                const modalEmail = document.getElementById('modal-email');
                 const modalPass = document.getElementById('modal-pass');
                 const modalTickets = document.getElementById('modal-tickets');
 
@@ -611,8 +612,11 @@
                 const passTier = document.getElementById('pass-tier');
                 const passQty = document.getElementById('pass-qty');
 
+                const emailValue = String(formData.get('email') || '').trim();
+
                 if (modal && modalName && modalPass && modalTickets) {
                     modalName.textContent = name;
+                    if (modalEmail) modalEmail.textContent = emailValue;
                     modalPass.textContent = pass;
                     modalTickets.textContent = tickets;
 
@@ -637,28 +641,37 @@
                 writeFormDraft(null);
                 registerForm.setAttribute('aria-busy', 'false');
                 registerStatus.textContent = "";
+
+                // View E-ticket Logic
+                const viewEmailBtn = document.getElementById('view-email-btn');
+                if (viewEmailBtn) {
+                    viewEmailBtn.onclick = () => {
+                        const url = `email-template.html?name=${encodeURIComponent(name)}&pass=${encodeURIComponent(pass)}&qty=${encodeURIComponent(tickets)}&email=${encodeURIComponent(emailValue)}`;
+                        window.open(url, '_blank');
+                    };
+                }
             }, 1200);
         });
 
-        // Modal View Toggle (View Ticket)
-        const viewEmailBtn = document.getElementById('view-email-btn');
+        // Modal View Toggle (View Wallet Pass)
+        const viewPassBtn = document.getElementById('view-pass-btn');
         const digitalPassPreview = document.getElementById('digital-pass-preview');
         const modalSummaryView = document.getElementById('modal-summary-view');
         const modalLogsView = document.getElementById('modal-logs-view');
 
-        if (viewEmailBtn && digitalPassPreview && modalSummaryView && modalLogsView) {
-            viewEmailBtn.addEventListener('click', () => {
-                const isViewingTicket = !digitalPassPreview.hidden;
-                if (!isViewingTicket) {
+        if (viewPassBtn && digitalPassPreview && modalSummaryView && modalLogsView) {
+            viewPassBtn.addEventListener('click', () => {
+                const isViewingPass = !digitalPassPreview.hidden;
+                if (!isViewingPass) {
                     digitalPassPreview.hidden = false;
                     modalSummaryView.hidden = true;
                     modalLogsView.hidden = true;
-                    viewEmailBtn.textContent = "Back to Summary";
+                    viewPassBtn.textContent = "Back to Summary";
                 } else {
                     digitalPassPreview.hidden = true;
                     modalSummaryView.hidden = false;
                     modalLogsView.hidden = false;
-                    viewEmailBtn.textContent = "View My Ticket";
+                    viewPassBtn.textContent = "Wallet Pass";
                 }
             });
         }
