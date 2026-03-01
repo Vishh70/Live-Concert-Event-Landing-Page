@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EPIC-2003 | Rock Night 2025 - Pune Arena</title>
+  <meta name="description"
+    content="Official event landing page for Rock Night 2025 - Pune Arena featuring DJ Blaze, The Metal Shadows, and Aisha Roy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="ambient ambient--one" aria-hidden="true"></div>
+  <div class="ambient ambient--two" aria-hidden="true"></div>
+  <div class="noise-layer" aria-hidden="true"></div>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
+
+  <header class="site-header glass">
+    <a class="brand" href="#hero">EPIC-2003</a>
+    <nav aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="#lineup">Lineup</a></li>
+        <li><a href="#register">Register</a></li>
+        <li><a href="#details">Details</a></li>
+        <li><a href="#rules-faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn--small" href="#register">Register</a>
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main id="main-content">
+    <section id="hero" class="hero section">
+      <div class="hero__copy reveal">
+        <p class="eyebrow">Jan 25 | Phoenix Concert Grounds</p>
+        <h1>Rock Night 2025 - Pune Arena</h1>
+        <p class="hero__lineup">DJ Blaze | The Metal Shadows | Aisha Roy</p>
+        <div class="hero__chips" aria-label="Event highlights">
+          <span>Open-Air Arena</span>
+          <span>Immersive Light Show</span>
+          <span>Limited VIP Passes</span>
+        </div>
+        <p class="hero__meta">
+          <time datetime="2025-01-25">January 25, 2025</time> | Phoenix Concert
+          Grounds, Pune
+        </p>
+        <div class="hero__actions">
+          <a class="btn" href="#register">Register Now</a>
+          <a class="btn" href="#lineup">Explore Artists</a>
+          <a class="btn btn--ghost" href="#details">View Schedule</a>
+        </div>
+      </div>
+
+      <aside class="countdown glass reveal" aria-label="Static countdown visual">
+        <p class="countdown__label">Countdown Snapshot</p>
+        <div class="countdown__grid">
+          <div class="counter">
+            <span class="counter__value">18</span>
+            <span class="counter__unit">Days</span>
+          </div>
+          <div class="counter">
+            <span class="counter__value">06</span>
+            <span class="counter__unit">Hours</span>
+          </div>
+          <div class="counter">
+            <span class="counter__value">42</span>
+            <span class="counter__unit">Minutes</span>
+          </div>
+          <div class="counter">
+            <span class="counter__value">10</span>
+            <span class="counter__unit">Seconds</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="marquee-section" aria-label="Concert vibe banner">
+      <div class="marquee-track">
+        <span>LIVE LIGHTS</span>
+        <span>BASS DROPS</span>
+        <span>OPEN AIR ENERGY</span>
+        <span>ROCK + ELECTRONIC FUSION</span>
+        <span>PUNE ARENA NIGHTS</span>
+        <span>LIVE LIGHTS</span>
+        <span>BASS DROPS</span>
+        <span>OPEN AIR ENERGY</span>
+      </div>
+    </section>
+
+    <section id="register" class="section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Quick Registration</p>
+        <h2>Reserve Your Spot</h2>
+        <p>Submit your details to get event pass updates and access instructions.</p>
+      </div>
+
+      <article class="glass panel reveal register-panel">
+        <div class="register-layout">
+          <aside class="register-perks">
+            <h3>Pass Benefits</h3>
+            <ul>
+              <li>Priority check-in lane</li>
+              <li>Pre-show lineup updates by email</li>
+              <li>On-ground helpdesk support</li>
+              <li>Early access for VIP ticket holders</li>
+            </ul>
+          </aside>
+
+          <div class="register-form-wrap">
+            <form id="register-form" class="register-form" novalidate>
+              <label>
+                Full Name
+                <input type="text" name="fullName" autocomplete="name" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" autocomplete="email" required />
+              </label>
+              <label>
+                Phone
+                <input type="tel" name="phone" autocomplete="tel" pattern="[0-9+\\-() ]{8,20}" required />
+              </label>
+              <label>
+                Tickets
+                <select name="tickets" required>
+                  <option value="">Select ticket count</option>
+                  <option value="1">1 Ticket</option>
+                  <option value="2">2 Tickets</option>
+                  <option value="3">3 Tickets</option>
+                  <option value="4">4 Tickets</option>
+                </select>
+              </label>
+              <button class="btn register-submit" type="submit">Submit Registration</button>
+            </form>
+            <p id="register-status" class="register-status" aria-live="polite"></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="lineup" class="section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">The Performers</p>
+        <h2>Artist Lineup</h2>
+        <p>Meet the sound behind the night.</p>
+      </div>
+
+      <div class="artist-grid">
+        <article class="artist-card glass reveal">
+          <img src="assets/artist-dj-blaze.svg" alt="Promotional image of DJ Blaze with neon lighting." />
+          <div class="artist-card__body">
+            <h3>DJ Blaze</h3>
+            <p class="artist-role">Electronic Headliner</p>
+            <p>
+              Known for thunder-drop bass and kinetic crowd control, DJ Blaze
+              turns arena floors into all-night pulse zones.
+            </p>
+            <div class="social-icons" aria-label="DJ Blaze social handles">
+              <a href="#" aria-label="DJ Blaze on Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm9.25 3.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
+                </svg>
+                <span class="sr-only">Instagram</span>
+              </a>
+              <a href="#" aria-label="DJ Blaze on YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M23 12s0-3.5-.45-5.2a2.8 2.8 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.55.5a2.8 2.8 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.45 5.2a2.8 2.8 0 0 0 2 2c1.75.5 8.55.5 8.55.5s6.8 0 8.55-.5a2.8 2.8 0 0 0 2-2C23 15.5 23 12 23 12zm-13 3V9l5.2 3L10 15z" />
+                </svg>
+                <span class="sr-only">YouTube</span>
+              </a>
+              <a href="#" aria-label="DJ Blaze on X">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.7L6.1 22H3l7.3-8.3L1 2h6.4l4.3 6.1L18.9 2zM17.8 20h1.7L6.4 3.9H4.6L17.8 20z" />
+                </svg>
+                <span class="sr-only">X</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="artist-card glass reveal">
+          <img src="assets/artist-metal-shadows.svg" alt="Promotional image of The Metal Shadows band." />
+          <div class="artist-card__body">
+            <h3>The Metal Shadows</h3>
+            <p class="artist-role">Rock Band</p>
+            <p>
+              Heavy riffs, cinematic breakdowns, and stadium-scale choruses define
+              this Pune favorite that keeps every set peak.
+            </p>
+            <div class="social-icons" aria-label="The Metal Shadows social handles">
+              <a href="#" aria-label="The Metal Shadows on Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm9.25 3.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
+                </svg>
+                <span class="sr-only">Instagram</span>
+              </a>
+              <a href="#" aria-label="The Metal Shadows on YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M23 12s0-3.5-.45-5.2a2.8 2.8 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.55.5a2.8 2.8 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.45 5.2a2.8 2.8 0 0 0 2 2c1.75.5 8.55.5 8.55.5s6.8 0 8.55-.5a2.8 2.8 0 0 0 2-2C23 15.5 23 12 23 12zm-13 3V9l5.2 3L10 15z" />
+                </svg>
+                <span class="sr-only">YouTube</span>
+              </a>
+              <a href="#" aria-label="The Metal Shadows on X">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.7L6.1 22H3l7.3-8.3L1 2h6.4l4.3 6.1L18.9 2zM17.8 20h1.7L6.4 3.9H4.6L17.8 20z" />
+                </svg>
+                <span class="sr-only">X</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="artist-card glass reveal">
+          <img src="assets/artist-aisha-roy.svg" alt="Promotional image of singer Aisha Roy." />
+          <div class="artist-card__body">
+            <h3>Aisha Roy</h3>
+            <p class="artist-role">Live Vocal Set</p>
+            <p>
+              Aisha blends power-pop vocals with indie soul textures, delivering a
+              set built for sing-alongs and spotlight moments.
+            </p>
+            <div class="social-icons" aria-label="Aisha Roy social handles">
+              <a href="#" aria-label="Aisha Roy on Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm9.25 3.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
+                </svg>
+                <span class="sr-only">Instagram</span>
+              </a>
+              <a href="#" aria-label="Aisha Roy on YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M23 12s0-3.5-.45-5.2a2.8 2.8 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.55.5a2.8 2.8 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.45 5.2a2.8 2.8 0 0 0 2 2c1.75.5 8.55.5 8.55.5s6.8 0 8.55-.5a2.8 2.8 0 0 0 2-2C23 15.5 23 12 23 12zm-13 3V9l5.2 3L10 15z" />
+                </svg>
+                <span class="sr-only">YouTube</span>
+              </a>
+              <a href="#" aria-label="Aisha Roy on X">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.7L6.1 22H3l7.3-8.3L1 2h6.4l4.3 6.1L18.9 2zM17.8 20h1.7L6.4 3.9H4.6L17.8 20z" />
+                </svg>
+                <span class="sr-only">X</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="details" class="section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Know Before You Go</p>
+        <h2>Event Details</h2>
+        <p>Schedule, venue layout, promoter, event rules, and FAQs.</p>
+      </div>
+
+      <div class="details-layout">
+        <article class="glass panel reveal">
+          <h3>Schedule</h3>
+          <ul class="schedule">
+            <li><span>5:30 PM</span> Gates Open</li>
+            <li><span>6:15 PM</span> Opening DJ Set</li>
+            <li><span>7:10 PM</span> Aisha Roy Live</li>
+            <li><span>8:05 PM</span> The Metal Shadows</li>
+            <li><span>9:30 PM</span> DJ Blaze Headline Set</li>
+            <li><span>11:00 PM</span> Closing Visual Show</li>
+          </ul>
+        </article>
+
+        <article class="glass panel reveal">
+          <h3>Venue Layout</h3>
+          <figure class="venue-map">
+            <img src="assets/venue-map.svg"
+              alt="Simplified venue map of Phoenix Concert Grounds showing stage, VIP zone, general zones, food court, and entry points." />
+            <figcaption>Phoenix Concert Grounds, Pune</figcaption>
+          </figure>
+        </article>
+      </div>
+
+      <article class="glass panel reveal promoter">
+        <h3>Promoted By</h3>
+        <p>XYZ Entertainment Group</p>
+      </article>
+
+      <div id="rules-faq" class="details-layout details-layout--compact">
+        <article class="glass panel reveal">
+          <h3>Event Rules</h3>
+          <ul class="rules">
+            <li>Government ID is mandatory for entry verification.</li>
+            <li>Outside food, beverages, and professional cameras are not allowed.</li>
+            <li>Security screening at all entrances is compulsory.</li>
+            <li>Entry may be denied for unsafe or disruptive behavior.</li>
+          </ul>
+        </article>
+
+        <article class="glass panel reveal">
+          <h3>FAQs</h3>
+          <details>
+            <summary>Is re-entry allowed after exiting the venue?</summary>
+            <p>No, passes are valid for single entry only.</p>
+          </details>
+          <details>
+            <summary>Is parking available at the venue?</summary>
+            <p>Yes, paid parking is available near Gate B and Gate C.</p>
+          </details>
+          <details>
+            <summary>Can minors attend the event?</summary>
+            <p>
+              Guests under 18 must be accompanied by an adult and carry valid ID.
+            </p>
+          </details>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>EPIC-2003 Live Concert Landing Page</p>
+    <p>
+      Built for CrescifyX Sprint Validation |
+      <span id="year" aria-label="Current year"></span>
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

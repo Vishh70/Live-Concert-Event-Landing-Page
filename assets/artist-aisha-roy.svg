@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ede9fe"/>
+      <stop offset="100%" stop-color="#fce7f3"/>
+    </linearGradient>
+    <linearGradient id="accent3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="50%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <radialGradient id="glow3" cx="50%" cy="42%" r="38%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="500" fill="url(#bg3)" rx="20"/>
+  <ellipse cx="200" cy="215" rx="150" ry="140" fill="url(#glow3)"/>
+  <!-- Spotlight rays -->
+  <path d="M200 40 L160 170" stroke="#c4b5fd" stroke-width="1" opacity="0.2"/>
+  <path d="M200 40 L200 145" stroke="#c4b5fd" stroke-width="1.2" opacity="0.25"/>
+  <path d="M200 40 L240 170" stroke="#c4b5fd" stroke-width="1" opacity="0.2"/>
+  <path d="M200 40 L145 185" stroke="#ddd6fe" stroke-width="0.7" opacity="0.12"/>
+  <path d="M200 40 L255 185" stroke="#ddd6fe" stroke-width="0.7" opacity="0.12"/>
+  <!-- Microphone stand -->
+  <line x1="220" y1="250" x2="220" y2="370" stroke="#a1a1aa" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M192 368 Q206 378 220 373 Q234 378 248 368" fill="none" stroke="#a1a1aa" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Microphone head -->
+  <rect x="208" y="212" width="24" height="42" rx="12" fill="#f5f3ff" stroke="url(#accent3)" stroke-width="2"/>
+  <!-- Mic grille -->
+  <line x1="213" y1="222" x2="227" y2="222" stroke="#c4b5fd" stroke-width="0.8"/>
+  <line x1="213" y1="228" x2="227" y2="228" stroke="#c4b5fd" stroke-width="0.8"/>
+  <line x1="213" y1="234" x2="227" y2="234" stroke="#c4b5fd" stroke-width="0.8"/>
+  <line x1="213" y1="240" x2="227" y2="240" stroke="#c4b5fd" stroke-width="0.8"/>
+  <!-- Singer silhouette — head -->
+  <circle cx="180" cy="168" r="30" fill="#f5f3ff" stroke="url(#accent3)" stroke-width="2"/>
+  <!-- Hair flowing -->
+  <path d="M155 155 Q140 185 144 225 Q146 240 152 248" fill="none" stroke="url(#accent3)" stroke-width="2.5" opacity="0.4"/>
+  <path d="M150 160 Q132 195 138 240" fill="none" stroke="#c4b5fd" stroke-width="1.5" opacity="0.3"/>
+  <path d="M160 150 Q148 175 150 210" fill="none" stroke="#ddd6fe" stroke-width="1" opacity="0.25"/>
+  <!-- Torso -->
+  <path d="M155 194 Q158 230 150 278 Q168 296 198 288 Q208 240 205 194 Z" fill="#f5f3ff" stroke="url(#accent3)" stroke-width="2"/>
+  <!-- Arm reaching to mic -->
+  <path d="M200 215 Q212 218 214 238" fill="none" stroke="url(#accent3)" stroke-width="3" stroke-linecap="round"/>
+  <!-- Music notes -->
+  <g opacity="0.35">
+    <text x="270" y="178" font-family="serif" font-size="22" fill="#8b5cf6">♪</text>
+    <text x="290" y="148" font-family="serif" font-size="16" fill="#ec4899">♫</text>
+    <text x="308" y="198" font-family="serif" font-size="18" fill="#f97316">♪</text>
+    <text x="102" y="132" font-family="serif" font-size="15" fill="#a78bfa">♫</text>
+    <text x="85" y="275" font-family="serif" font-size="20" fill="#c4b5fd">♪</text>
+  </g>
+  <!-- Decorative dots -->
+  <circle cx="320" cy="102" r="3" fill="#8b5cf6" opacity="0.2"/>
+  <circle cx="72" cy="315" r="3.5" fill="#ec4899" opacity="0.25"/>
+  <circle cx="340" cy="298" r="2.5" fill="#f97316" opacity="0.2"/>
+  <circle cx="60" cy="110" r="2" fill="#a78bfa" opacity="0.2"/>
+  <circle cx="340" cy="380" r="3" fill="#fbcfe8" opacity="0.25"/>
+  <!-- Name -->
+  <text x="200" y="435" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="26" fill="#8b5cf6" letter-spacing="3">AISHA ROY</text>
+  <text x="200" y="458" text-anchor="middle" font-family="sans-serif" font-weight="500" font-size="12" fill="#a78bfa" letter-spacing="2">LIVE VOCAL SET</text>
+</svg>

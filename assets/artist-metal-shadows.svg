@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+    <defs>
+        <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fce7f3"/>
+            <stop offset="100%" stop-color="#fff7ed"/>
+        </linearGradient>
+        <linearGradient id="accent2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ec4899"/>
+            <stop offset="50%" stop-color="#f97316"/>
+            <stop offset="100%" stop-color="#f59e0b"/>
+        </linearGradient>
+        <radialGradient id="glow2" cx="50%" cy="45%" r="40%">
+            <stop offset="0%" stop-color="#ec4899" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#ec4899" stop-opacity="0"/>
+        </radialGradient>
+    </defs>
+    <rect width="400" height="500" fill="url(#bg2)" rx="20"/>
+    <ellipse cx="200" cy="230" rx="160" ry="150" fill="url(#glow2)"/>
+    <!-- Electric guitar -->
+    <g transform="translate(92,65)">
+        <!-- Neck -->
+        <rect x="100" y="0" width="14" height="155" rx="4" fill="#fdf2f8" stroke="url(#accent2)" stroke-width="2"/>
+        <!-- Frets -->
+        <line x1="103" y1="30" x2="111" y2="30" stroke="#f9a8d4" stroke-width="1.2"/>
+        <line x1="103" y1="58" x2="111" y2="58" stroke="#f9a8d4" stroke-width="1.2"/>
+        <line x1="103" y1="86" x2="111" y2="86" stroke="#f9a8d4" stroke-width="1.2"/>
+        <line x1="103" y1="114" x2="111" y2="114" stroke="#f9a8d4" stroke-width="1.2"/>
+        <!-- Fret dots -->
+        <circle cx="107" cy="44" r="2" fill="#ec4899" opacity="0.4"/>
+        <circle cx="107" cy="100" r="2" fill="#ec4899" opacity="0.4"/>
+        <!-- Head stock -->
+        <path d="M95 0 L95 -28 Q107 -38 119 -28 L119 0 Z" fill="#fdf2f8" stroke="url(#accent2)" stroke-width="2"/>
+        <circle cx="100" cy="-14" r="3.5" fill="#ec4899" opacity="0.5"/>
+        <circle cx="114" cy="-14" r="3.5" fill="#f97316" opacity="0.5"/>
+        <circle cx="100" cy="-4" r="3.5" fill="#f97316" opacity="0.5"/>
+        <circle cx="114" cy="-4" r="3.5" fill="#ec4899" opacity="0.5"/>
+        <!-- Body -->
+        <path d="M62 155 Q32 175 28 215 Q24 255 52 285 Q80 310 107 305 Q134 310 162 285 Q190 255 186 215 Q182 175 152 155 Z" fill="#fdf2f8" stroke="url(#accent2)" stroke-width="2.5"/>
+        <!-- Pickups -->
+        <rect x="87" y="215" width="40" height="11" rx="4" fill="none" stroke="#ec4899" stroke-width="1.5" opacity="0.5"/>
+        <rect x="87" y="245" width="40" height="11" rx="4" fill="none" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+        <!-- Bridge -->
+        <rect x="97" y="270" width="20" height="7" rx="2" fill="#f9a8d4" opacity="0.5"/>
+        <!-- Pick guard shape -->
+        <path d="M70 180 Q60 220 75 260 Q90 280 107 270" fill="none" stroke="#fbcfe8" stroke-width="1" opacity="0.4"/>
+    </g>
+    <!-- Lightning bolts -->
+    <path d="M62 200 L76 182 L72 196 L86 178" fill="none" stroke="#ec4899" stroke-width="2.5" opacity="0.35" stroke-linecap="round"/>
+    <path d="M318 210 L304 192 L308 206 L294 188" fill="none" stroke="#f97316" stroke-width="2.5" opacity="0.35" stroke-linecap="round"/>
+    <!-- Star bursts -->
+    <circle cx="62" cy="105" r="3" fill="#ec4899" opacity="0.25"/>
+    <circle cx="340" cy="128" r="3.5" fill="#f97316" opacity="0.3"/>
+    <circle cx="52" cy="345" r="3" fill="#f9a8d4" opacity="0.25"/>
+    <circle cx="348" cy="340" r="4" fill="#fed7aa" opacity="0.3"/>
+    <circle cx="320" cy="84" r="2" fill="#ec4899" opacity="0.2"/>
+    <circle cx="75" cy="380" r="2.5" fill="#f97316" opacity="0.2"/>
+    <!-- Name -->
+    <text x="200" y="430" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="22" fill="#ec4899" letter-spacing="3">THE METAL SHADOWS</text>
+    <text x="200" y="455" text-anchor="middle" font-family="sans-serif" font-weight="500" font-size="12" fill="#f9a8d4" letter-spacing="2">ROCK BAND</text>
+</svg>
