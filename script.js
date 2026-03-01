@@ -6,6 +6,32 @@
 (function () {
     'use strict';
 
+    /* ---- Preloader ---- */
+    const preloader = document.getElementById('preloader');
+    const preloaderBar = document.getElementById('preloader-bar');
+    if (preloader) {
+        document.body.classList.add('is-loading');
+        let progress = 0;
+        const tick = setInterval(() => {
+            progress += Math.random() * 18 + 4;
+            if (progress > 92) progress = 92;
+            if (preloaderBar) preloaderBar.style.width = `${progress}%`;
+        }, 200);
+
+        const dismiss = () => {
+            clearInterval(tick);
+            if (preloaderBar) preloaderBar.style.width = '100%';
+            setTimeout(() => {
+                preloader.classList.add('loaded');
+                document.body.classList.remove('is-loading');
+            }, 400);
+            setTimeout(() => preloader.remove(), 1200);
+        };
+
+        window.addEventListener('load', () => setTimeout(dismiss, 600), { once: true });
+        setTimeout(dismiss, 6000); // safety fallback
+    }
+
     const MOBILE_BREAKPOINT = 860;
     const REDUCED_MOTION_QUERY = window.matchMedia('(prefers-reduced-motion: reduce)');
 

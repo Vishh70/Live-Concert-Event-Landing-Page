@@ -43,6 +43,125 @@
   --header-height: 84px;
 }
 
+/* ========== Preloader ========== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, #0d1a35, var(--bg-prime) 70%);
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader__content {
+  text-align: center;
+  position: relative;
+}
+
+.preloader__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  margin: -90px 0 0 -90px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--cyan);
+  border-right-color: var(--plum);
+  animation: preloader-spin 1.4s linear infinite;
+  opacity: 0.6;
+}
+
+.preloader__ring--2 {
+  width: 140px;
+  height: 140px;
+  margin: -70px 0 0 -70px;
+  border-top-color: var(--rose);
+  border-right-color: var(--amber);
+  animation: preloader-spin-reverse 1.8s linear infinite;
+  opacity: 0.5;
+}
+
+.preloader__brand {
+  font-family: var(--ff-display);
+  font-size: clamp(2.8rem, 8vw, 4.5rem);
+  letter-spacing: 0.15em;
+  background: var(--grad-premium);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-move 3s linear infinite;
+  position: relative;
+  z-index: 2;
+}
+
+.preloader__tagline {
+  margin: 8px 0 28px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  animation: preloader-pulse 2s ease-in-out infinite;
+}
+
+.preloader__bar-track {
+  width: 200px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.15);
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.preloader__bar-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--grad-premium);
+  background-size: 300% 100%;
+  border-radius: 999px;
+  animation: progress-shimmer 2s ease infinite;
+  transition: width 0.3s ease;
+}
+
+@keyframes preloader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes preloader-spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes preloader-pulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+body.is-loading {
+  overflow: hidden;
+}
+
 *,
 *::before,
 *::after {
