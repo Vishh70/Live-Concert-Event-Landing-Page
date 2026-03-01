@@ -7,6 +7,8 @@
   <title>EPIC-2003 | Rock Night 2025 - Pune Arena</title>
   <meta name="description"
     content="Official event landing page for Rock Night 2025 - Pune Arena featuring DJ Blaze, The Metal Shadows, and Aisha Roy." />
+  <meta name="theme-color" content="#0a1223" />
+  <link rel="canonical" href="https://vishh70.github.io/Live-Concert-Event-Landing-Page/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap"
@@ -20,8 +22,14 @@
     content="Witness Pune's biggest live music event of 2025. Featuring DJ Blaze, The Metal Shadows, and Aisha Roy." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://vishh70.github.io/Live-Concert-Event-Landing-Page/" />
-  <meta property="og:image" content="assets/artist-dj-blaze.svg" />
+  <meta property="og:image"
+    content="https://raw.githubusercontent.com/Vishh70/Live-Concert-Event-Landing-Page/main/assets/artist-dj-blaze.svg" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EPIC-2003 | Rock Night 2025" />
+  <meta name="twitter:description"
+    content="Witness Pune's biggest live music event of 2025. Featuring DJ Blaze, The Metal Shadows, and Aisha Roy." />
+  <meta name="twitter:image"
+    content="https://raw.githubusercontent.com/Vishh70/Live-Concert-Event-Landing-Page/main/assets/artist-dj-blaze.svg" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -36,18 +44,19 @@
   <header class="site-header glass">
     <a class="brand" href="#hero">EPIC-2003</a>
     <nav aria-label="Primary">
-      <ul class="nav-links">
-        <li><a href="#lineup">Lineup</a></li>
+      <ul class="nav-links" id="primary-nav">
+        <li><a href="#experience">Experience</a></li>
         <li><a href="#register">Register</a></li>
         <li><a href="#details">Details</a></li>
         <li><a href="#rules-faq">FAQ</a></li>
       </ul>
     </nav>
     <a class="btn btn--small" href="#register">Register</a>
-    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="primary-nav">
       <span></span><span></span><span></span>
     </button>
   </header>
+  <button class="nav-backdrop" id="nav-backdrop" type="button" aria-label="Close menu" hidden></button>
 
   <main id="main-content">
     <section id="hero" class="hero section">
@@ -66,28 +75,28 @@
         </p>
         <div class="hero__actions">
           <a class="btn" href="#register">Register Now</a>
-          <a class="btn" href="#lineup">Explore Artists</a>
+          <a class="btn" href="#experience">Explore Artists</a>
           <a class="btn btn--ghost" href="#details">View Schedule</a>
         </div>
       </div>
 
-      <aside class="countdown glass reveal" aria-label="Static countdown visual">
+      <aside class="countdown glass reveal" aria-label="Event countdown timer">
         <p class="countdown__label">Countdown Snapshot</p>
         <div class="countdown__grid">
           <div class="counter">
-            <span class="counter__value">18</span>
+            <span class="counter__value" data-unit="days">18</span>
             <span class="counter__unit">Days</span>
           </div>
           <div class="counter">
-            <span class="counter__value">06</span>
+            <span class="counter__value" data-unit="hours">06</span>
             <span class="counter__unit">Hours</span>
           </div>
           <div class="counter">
-            <span class="counter__value">42</span>
+            <span class="counter__value" data-unit="minutes">42</span>
             <span class="counter__unit">Minutes</span>
           </div>
           <div class="counter">
-            <span class="counter__value">10</span>
+            <span class="counter__value" data-unit="seconds">10</span>
             <span class="counter__unit">Seconds</span>
           </div>
         </div>
@@ -130,7 +139,7 @@
             <form id="register-form" class="register-form" novalidate>
               <label>
                 Full Name
-                <input type="text" name="fullName" autocomplete="name" required />
+                <input type="text" name="fullName" autocomplete="name" minlength="2" required />
               </label>
               <label>
                 Email
@@ -138,7 +147,8 @@
               </label>
               <label>
                 Phone
-                <input type="tel" name="phone" autocomplete="tel" pattern="[0-9+\\-() ]{8,20}" required />
+                <input type="tel" name="phone" autocomplete="tel" inputmode="tel" minlength="8" maxlength="20"
+                  pattern="[0-9+\\-() ]{8,20}" required />
               </label>
               <label>
                 Tickets
@@ -152,122 +162,68 @@
               </label>
               <button class="btn register-submit" type="submit">Submit Registration</button>
             </form>
-            <p id="register-status" class="register-status" aria-live="polite"></p>
+            <p id="register-status" class="register-status" aria-live="polite" role="status"></p>
           </div>
         </div>
       </article>
     </section>
 
-    <section id="lineup" class="section">
+    <section id="experience" class="section">
       <div class="section-heading reveal">
-        <p class="eyebrow">The Performers</p>
-        <h2>Artist Lineup</h2>
-        <p>Meet the sound behind the night.</p>
+        <p class="eyebrow">The Performance Journey</p>
+        <h2>The Experience</h2>
+        <p>Three unique acts, one unforgettable night. January 25, 2025.</p>
       </div>
 
-      <div class="artist-grid">
-        <article class="artist-card glass reveal">
-          <img src="assets/artist-dj-blaze.svg" alt="Promotional image of DJ Blaze with neon lighting." />
-          <div class="artist-card__body">
-            <h3>DJ Blaze</h3>
-            <p class="artist-role">Electronic Headliner</p>
-            <p>
-              Known for thunder-drop bass and kinetic crowd control, DJ Blaze
-              turns arena floors into all-night pulse zones.
-            </p>
-            <div class="social-icons" aria-label="DJ Blaze social handles">
-              <a href="#" aria-label="DJ Blaze on Instagram">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm9.25 3.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
-                </svg>
-                <span class="sr-only">Instagram</span>
-              </a>
-              <a href="#" aria-label="DJ Blaze on YouTube">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M23 12s0-3.5-.45-5.2a2.8 2.8 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.55.5a2.8 2.8 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.45 5.2a2.8 2.8 0 0 0 2 2c1.75.5 8.55.5 8.55.5s6.8 0 8.55-.5a2.8 2.8 0 0 0 2-2C23 15.5 23 12 23 12zm-13 3V9l5.2 3L10 15z" />
-                </svg>
-                <span class="sr-only">YouTube</span>
-              </a>
-              <a href="#" aria-label="DJ Blaze on X">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.7L6.1 22H3l7.3-8.3L1 2h6.4l4.3 6.1L18.9 2zM17.8 20h1.7L6.4 3.9H4.6L17.8 20z" />
-                </svg>
-                <span class="sr-only">X</span>
-              </a>
-            </div>
+      <div class="experience-stack">
+        <!-- Aisha Roy - 7:10 PM -->
+        <article class="spotlight-section reveal active" id="spotlight-aisha">
+          <div class="spotlight-image">
+            <img src="assets/aisha-roy.webp" alt="Aisha Roy performing live vocal set." />
           </div>
-        </article>
-
-        <article class="artist-card glass reveal">
-          <img src="assets/artist-metal-shadows.svg" alt="Promotional image of The Metal Shadows band." />
-          <div class="artist-card__body">
-            <h3>The Metal Shadows</h3>
-            <p class="artist-role">Rock Band</p>
-            <p>
-              Heavy riffs, cinematic breakdowns, and stadium-scale choruses define
-              this Pune favorite that keeps every set peak.
-            </p>
-            <div class="social-icons" aria-label="The Metal Shadows social handles">
-              <a href="#" aria-label="The Metal Shadows on Instagram">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm9.25 3.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
-                </svg>
-                <span class="sr-only">Instagram</span>
-              </a>
-              <a href="#" aria-label="The Metal Shadows on YouTube">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M23 12s0-3.5-.45-5.2a2.8 2.8 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.55.5a2.8 2.8 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.45 5.2a2.8 2.8 0 0 0 2 2c1.75.5 8.55.5 8.55.5s6.8 0 8.55-.5a2.8 2.8 0 0 0 2-2C23 15.5 23 12 23 12zm-13 3V9l5.2 3L10 15z" />
-                </svg>
-                <span class="sr-only">YouTube</span>
-              </a>
-              <a href="#" aria-label="The Metal Shadows on X">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.7L6.1 22H3l7.3-8.3L1 2h6.4l4.3 6.1L18.9 2zM17.8 20h1.7L6.4 3.9H4.6L17.8 20z" />
-                </svg>
-                <span class="sr-only">X</span>
-              </a>
+          <div class="spotlight-content glass">
+            <div class="spotlight-header">
+              <span class="spotlight-time">19:10 - 20:00</span>
+              <span class="spotlight-date">Jan 25</span>
             </div>
-          </div>
-        </article>
-
-        <article class="artist-card glass reveal">
-          <img src="assets/artist-aisha-roy.svg" alt="Promotional image of singer Aisha Roy." />
-          <div class="artist-card__body">
+            <span class="artist-role">Live Vocal Set</span>
             <h3>Aisha Roy</h3>
-            <p class="artist-role">Live Vocal Set</p>
-            <p>
-              Aisha blends power-pop vocals with indie soul textures, delivering a
-              set built for sing-alongs and spotlight moments.
-            </p>
-            <div class="social-icons" aria-label="Aisha Roy social handles">
-              <a href="#" aria-label="Aisha Roy on Instagram">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm9.25 3.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
-                </svg>
-                <span class="sr-only">Instagram</span>
-              </a>
-              <a href="#" aria-label="Aisha Roy on YouTube">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M23 12s0-3.5-.45-5.2a2.8 2.8 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.55.5a2.8 2.8 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.45 5.2a2.8 2.8 0 0 0 2 2c1.75.5 8.55.5 8.55.5s6.8 0 8.55-.5a2.8 2.8 0 0 0 2-2C23 15.5 23 12 23 12zm-13 3V9l5.2 3L10 15z" />
-                </svg>
-                <span class="sr-only">YouTube</span>
-              </a>
-              <a href="#" aria-label="Aisha Roy on X">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.7L6.1 22H3l7.3-8.3L1 2h6.4l4.3 6.1L18.9 2zM17.8 20h1.7L6.4 3.9H4.6L17.8 20z" />
-                </svg>
-                <span class="sr-only">X</span>
-              </a>
+            <p>Aisha blends power-pop vocals with indie soul textures, delivering a set built for sing-alongs and
+              spotlight moments.</p>
+          </div>
+        </article>
+
+        <!-- The Metal Shadows - 8:05 PM -->
+        <article class="spotlight-section reveal" id="spotlight-metal">
+          <div class="spotlight-image">
+            <img src="assets/metal-shadows.webp" alt="The Metal Shadows rock band live performance." />
+          </div>
+          <div class="spotlight-content glass">
+            <div class="spotlight-header">
+              <span class="spotlight-time">20:05 - 21:15</span>
+              <span class="spotlight-date">Jan 25</span>
             </div>
+            <span class="artist-role">Rock Band</span>
+            <h3>The Metal Shadows</h3>
+            <p>Heavy riffs, cinematic breakdowns, and stadium-scale choruses define this Pune favorite that keeps every
+              set peak.</p>
+          </div>
+        </article>
+
+        <!-- DJ Blaze - 9:30 PM -->
+        <article class="spotlight-section reveal" id="spotlight-blaze">
+          <div class="spotlight-image">
+            <img src="assets/dj-blaze.webp" alt="DJ Blaze electronic headliner performance." />
+          </div>
+          <div class="spotlight-content glass">
+            <div class="spotlight-header">
+              <span class="spotlight-time">21:30 - 23:00</span>
+              <span class="spotlight-date">Jan 25</span>
+            </div>
+            <span class="artist-role">Electronic Headliner</span>
+            <h3>DJ Blaze</h3>
+            <p>Known for thunder-drop bass and kinetic crowd control, DJ Blaze turns arena floors into all-night pulse
+              zones.</p>
           </div>
         </article>
       </div>
