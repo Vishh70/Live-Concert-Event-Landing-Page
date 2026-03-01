@@ -1,205 +1,177 @@
-﻿# Live Concert Event Landing Page (EPIC-2003)
+# Live Concert Event Landing Page (EPIC-2003)
 
-A premium, responsive single-page event website built for the **EPIC-2003** sprint deliverable.
+Premium, responsive, single-page event website built for the CrescifyX internship sprint deliverable.
 
-This project implements the Jira stories for:
-- **CIMS-14** Event Hero Page
-- **CIMS-15** Artist Lineup Section
-- **CIMS-16** Event Details Section
-
----
+This implementation maps directly to:
+- `CIMS-14` Event Hero Page
+- `CIMS-15` Artist Lineup Section
+- `CIMS-16` Event Details Section
 
 ## Live Demo
 
 - GitHub Pages: `https://vishh70.github.io/Live-Concert-Event-Landing-Page/`
 
-If the site does not open yet, check:
-1. Repository **Settings > Pages**
-2. Source = `Deploy from a branch`
-3. Branch = `main`, Folder = `/ (root)`
-4. Remove any invalid custom domain value
+If your site does not open:
+1. Go to repository `Settings > Pages`
+2. Set `Source` = `Deploy from a branch`
+3. Select branch `main` and folder `/ (root)`
+4. Remove any invalid custom domain and save
 
----
+## Event Snapshot
 
-## Project Overview
+- Event: `Rock Night 2025 - Pune Arena`
+- Date: `January 25, 2025`
+- Venue: `Phoenix Concert Grounds, Pune`
+- Promoter: `XYZ Entertainment Group`
+- Featured Artists:
+  - DJ Blaze
+  - The Metal Shadows
+  - Aisha Roy
 
-The landing page is designed for a live concert campaign:
-- Event: **Rock Night 2025 - Pune Arena**
-- Date: **January 25, 2025**
-- Venue: **Phoenix Concert Grounds, Pune**
-- Artists: **DJ Blaze**, **The Metal Shadows**, **Aisha Roy**
+## Key Features
 
-Primary goals:
-- Communicate event information quickly
-- Showcase performer lineup clearly
-- Drive registrations with a prominent CTA and form
-- Deliver a premium visual experience with strong mobile responsiveness
+### CIMS-14: Hero Section
+- Large hero layout with bold event title and featured lineup
+- Event date and venue displayed above the fold
+- Countdown block with clear visual cells
+- CTA group for Register, Explore Artists, and View Schedule
 
----
+### CIMS-15: Artist Lineup
+- Three artist spotlight cards
+- Each card includes:
+  - artist name
+  - role
+  - short bio
+  - promo image
+  - social links as icons only (Instagram, YouTube, X)
+- Hover and motion polish with reduced-motion fallback
 
-## Features
+### CIMS-16: Event Details
+- Full schedule timeline
+- Venue layout image with descriptive `alt` text
+- Embedded Google Maps location
+- Promoter block
+- Event rules
+- FAQ accordion using semantic `<details>/<summary>`
+- Added detailed logistics:
+  - event essentials
+  - travel and parking guidance
+  - support and gate flow notes
 
-### 1. Hero Section (CIMS-14)
-- Full viewport hero treatment with bold title and artist names
-- Event metadata (name, date, venue) visible above the fold
-- Static countdown visual layout (non-live timer as required)
-- Primary CTAs for registration and section navigation
+### Registration System
+- Form fields:
+  - full name
+  - email
+  - phone
+  - ticket count
+  - preferred pass
+  - city (optional)
+  - special requests (optional)
+- Client-side validation and inline status messaging
+- Draft persistence via `localStorage`
+- Live character counter for special requests
 
-### 2. Artist Lineup (CIMS-15)
-- Three artist cards with:
-  - Name
-  - Role
-  - Short bio
-  - Promo image (local SVG assets)
-  - Social links shown as **icons only**
-- Enhanced card interactions (hover depth and tilt on supported devices)
-
-### 3. Event Details (CIMS-16)
-- Schedule timeline
-- Venue layout image with descriptive alt text
-- Promoter section: **XYZ Entertainment Group**
-- Event rules list
-- FAQ accordion using semantic `<details>` / `<summary>`
-
-### 4. Registration
-- On-page registration form (name, email, phone, ticket count)
-- Client-side validation
-- Inline success/error feedback
-
-### 5. UI/UX Enhancements
-- Neon-dark premium design language
-- Glassmorphism panels and layered ambient effects
+### UX + Front-End Enhancements
+- Sticky glassmorphic header with active-section highlighting
 - Scroll progress indicator
-- Sticky responsive header
-- Mobile slide-in navigation
+- Responsive mobile navigation with focus handling
+- Scroll reveal sequencing and artist spotlight effects
 - Scroll-to-top button
-- Staggered reveal animations
-
----
+- Copy venue address to clipboard helper
+- SEO/event metadata using JSON-LD (`MusicEvent`)
+- PWA basics:
+  - `manifest.webmanifest`
+  - `sw.js` static shell caching
 
 ## Tech Stack
 
-- **HTML5** (semantic structure)
-- **CSS3** (custom properties, responsive layout, motion, visual effects)
-- **Vanilla JavaScript** (navigation, reveals, validation, interactions)
-- **GitHub Pages** (deployment)
+- HTML5 (semantic markup)
+- CSS3 (custom properties, responsive layout, animation)
+- Vanilla JavaScript (DOM interactions, validation, storage, accessibility)
+- GitHub Pages (deployment)
 
-No frameworks or UI libraries are used.
+No React/Vue/Tailwind/Bootstrap used.
 
----
+## Accessibility
 
-## Accessibility Notes
-
-Implemented accessibility considerations include:
-- Semantic headings and landmarks
-- Keyboard focus visibility via `:focus-visible`
-- `aria-label` usage for icon-only controls
-- `aria-live` updates for form status messages
+- Semantic landmarks and heading hierarchy
+- Visible keyboard focus styles (`:focus-visible`)
 - Skip link for keyboard users
-- `prefers-reduced-motion` support to reduce animation load
-
----
+- ARIA labels for icon-only social controls
+- Live region updates for form/copy status
+- `prefers-reduced-motion` support
 
 ## Performance Notes
 
-- Uses local static assets (SVG) for lightweight media
-- No runtime framework overhead
-- Minimal JavaScript bundle with feature-focused logic
-- CSS animations scoped to key UI moments
+- Local optimized image assets
+- Lazy loading on non-critical media
+- Lightweight vanilla JS
+- Service worker caching for static shell files
+- Section content visibility optimization in CSS
 
----
-
-## Repository Structure
+## Project Structure
 
 ```text
 Live Concert Event Landing Page/
 ├─ assets/
-│  ├─ artist-aisha-roy.svg
-│  ├─ artist-dj-blaze.svg
-│  ├─ artist-metal-shadows.svg
-│  ├─ favicon.svg
-│  └─ venue-map.svg
+│  ├─ aisha-roy.webp
+│  ├─ dj-blaze.webp
+│  ├─ metal-shadows.webp
+│  ├─ venue-map.svg
+│  └─ favicon.svg
+├─ electric_dragon_concert_hero_1772381931809.png
+├─ pro_venue_map_pune_arena_1772383111373.png
 ├─ index.html
 ├─ styles.css
 ├─ script.js
+├─ manifest.webmanifest
+├─ sw.js
 └─ README.md
 ```
 
----
+## Run Locally
 
-## Getting Started (Local)
+Open directly:
+- Double-click `index.html`
 
-### Option 1: Open directly
-Open `index.html` in your browser.
-
-### Option 2: Local static server (recommended)
-From repository root:
+Or run a local server:
 
 ```powershell
 python -m http.server 5500
 ```
 
-Then open:
+Then visit:
+- `http://localhost:5500`
 
-```text
-http://localhost:5500
-```
+## Deploy to GitHub Pages
 
----
-
-## Deployment (GitHub Pages)
-
-1. Push project to `main` branch
-2. Go to **Settings > Pages**
-3. Set:
+1. Commit and push to `main`
+2. Open `Settings > Pages`
+3. Choose:
    - Source: `Deploy from a branch`
    - Branch: `main`
    - Folder: `/ (root)`
-4. Save and wait for GitHub Pages build
-5. Verify at:
-   - `https://vishh70.github.io/Live-Concert-Event-Landing-Page/`
+4. Save and wait for deployment
 
----
+## Jira Mapping
 
-## Jira Story Mapping
-
-| Jira Story | Requirement | Status |
+| Jira | Requirement | Status |
 |---|---|---|
 | CIMS-14 | Hero banner with event + artist visibility | Implemented |
-| CIMS-14 | Static countdown visual | Implemented |
-| CIMS-15 | Artist cards (name, bio, promo image) | Implemented |
+| CIMS-14 | Event name/date/venue visible | Implemented |
+| CIMS-14 | Countdown visual block | Implemented |
+| CIMS-15 | Artist name, bio, promo image | Implemented |
 | CIMS-15 | Social handles as icons only | Implemented |
-| CIMS-16 | Schedule + venue map image | Implemented |
-| CIMS-16 | Promoter + rules + FAQs | Implemented |
-
----
-
-## Future Improvements
-
-- Integrate real backend/API for registration submissions
-- Add analytics events for CTA click tracking
-- Add multilingual support
-- Add automated accessibility and Lighthouse checks in CI
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Commit with clear messages
-5. Open a pull request
-
----
+| CIMS-16 | Schedule section | Implemented |
+| CIMS-16 | Venue layout image | Implemented |
+| CIMS-16 | Promoter section | Implemented |
+| CIMS-16 | Event rules + FAQs | Implemented |
 
 ## Author
 
-Maintained by **Vishh70**.
-
----
+- Vishh70
 
 ## License
 
-This project is currently for educational/internship submission use.  
-Add a `LICENSE` file if you want open-source reuse terms.
+Currently for internship/educational submission usage.
+

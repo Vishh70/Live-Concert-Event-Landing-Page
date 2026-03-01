@@ -6,6 +6,9 @@
 (function () {
     'use strict';
 
+    const MOBILE_BREAKPOINT = 860;
+    const REDUCED_MOTION_QUERY = window.matchMedia('(prefers-reduced-motion: reduce)');
+
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
@@ -17,6 +20,9 @@
     const navList = document.querySelector('.nav-links');
     const navBackdrop = document.getElementById('nav-backdrop');
     const navAnchors = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
+    const copyAddressBtn = document.getElementById('copy-address-btn');
+    const copyAddressStatus = document.getElementById('copy-address-status');
+    const venueAddress = document.getElementById('venue-address');
     const countdownEl = document.querySelector('.countdown');
     const countdownLabelEl = countdownEl ? countdownEl.querySelector('.countdown__label') : null;
     const countdownValueEls = {
@@ -26,6 +32,40 @@
         seconds: countdownEl ? countdownEl.querySelector('[data-unit="seconds"]') : null
     };
     const eventDateEl = document.querySelector('#hero time[datetime]');
+    const isMobileViewport = () => window.innerWidth <= MOBILE_BREAKPOINT;
+    const prefersReducedMotion = () => REDUCED_MOTION_QUERY.matches;
+    const FORM_DRAFT_KEY = 'epic2003.registerDraft.v1';
+    const getHashTarget = (hash) => {
+        if (!hash || hash.length < 2 || hash.charAt(0) !== '#') return null;
+        try {
+            return document.querySelector(hash);
+        } catch {
+            return document.getElementById(hash.slice(1));
+        }
+    };
+
+    const readFormDraft = () => {
+        try {
+            const raw = window.localStorage.getItem(FORM_DRAFT_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch {
+            return null;
+        }
+    };
+
+    const writeFormDraft = (draft) => {
+        try {
+            if (!draft || !Object.keys(draft).length) {
+                window.localStorage.removeItem(FORM_DRAFT_KEY);
+                return;
+            }
+            window.localStorage.setItem(FORM_DRAFT_KEY, JSON.stringify(draft));
+        } catch {
+            // Ignore storage errors (privacy mode, quota, etc.).
+        }
+    };
 
     const setHeaderProgress = () => {
         const scrollTop = window.scrollY || window.pageYOffset;
@@ -50,15 +90,31 @@
     };
 
     const pad2 = (value) => String(Math.max(0, value)).padStart(2, '0');
+    const setCountdownCell = (el, value) => {
+        if (!el) return;
+        const formatted = pad2(value);
+        if (el.textContent === formatted) return;
+
+        el.textContent = formatted;
+        const parent = el.closest('.counter');
+        if (!parent) return;
+
+        parent.classList.remove('is-updated');
+        window.requestAnimationFrame(() => {
+            parent.classList.add('is-updated');
+        });
+    };
+
     const setCountdownValues = (days, hours, minutes, seconds) => {
-        if (countdownValueEls.days) countdownValueEls.days.textContent = pad2(days);
-        if (countdownValueEls.hours) countdownValueEls.hours.textContent = pad2(hours);
-        if (countdownValueEls.minutes) countdownValueEls.minutes.textContent = pad2(minutes);
-        if (countdownValueEls.seconds) countdownValueEls.seconds.textContent = pad2(seconds);
+        setCountdownCell(countdownValueEls.days, days);
+        setCountdownCell(countdownValueEls.hours, hours);
+        setCountdownCell(countdownValueEls.minutes, minutes);
+        setCountdownCell(countdownValueEls.seconds, seconds);
     };
 
     if (countdownEl && countdownLabelEl) {
         let targetDate = null;
+        let countdownTimer = 0;
         const rawDate = eventDateEl ? eventDateEl.getAttribute('datetime') : null;
         if (rawDate) {
             const normalized = rawDate.includes('T') ? rawDate : `${rawDate}T18:00:00`;
@@ -110,34 +166,108 @@
             setCountdownValues(0, 0, 0, 0);
         };
 
+        const startCountdown = () => {
+            if (countdownTimer) return;
+            countdownTimer = window.setInterval(updateCountdown, 1000);
+        };
+
+        const stopCountdown = () => {
+            if (!countdownTimer) return;
+            window.clearInterval(countdownTimer);
+            countdownTimer = 0;
+        };
+
         updateCountdown();
-        window.setInterval(updateCountdown, 1000);
+        startCountdown();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopCountdown();
+                return;
+            }
+
+            updateCountdown();
+            startCountdown();
+        });
     }
 
     const openMobileMenu = () => {
-        if (!hamburger || !navList) return;
+        if (!hamburger || !navList || !isMobileViewport()) return;
         navList.classList.add('open');
         navList.setAttribute('aria-hidden', 'false');
         hamburger.classList.add('active');
         hamburger.setAttribute('aria-expanded', 'true');
         document.body.classList.add('menu-open');
         if (navBackdrop) navBackdrop.removeAttribute('hidden');
+
+        const firstLink = navList.querySelector('a[href]');
+        if (firstLink instanceof HTMLElement) {
+            firstLink.focus();
+        }
     };
 
     const closeMobileMenu = () => {
         if (!hamburger || !navList) return;
+        const focusedInMenu = navList.contains(document.activeElement);
+
         navList.classList.remove('open');
-        navList.setAttribute('aria-hidden', 'true');
+        navList.setAttribute('aria-hidden', isMobileViewport() ? 'true' : 'false');
         hamburger.classList.remove('active');
         hamburger.setAttribute('aria-expanded', 'false');
         document.body.classList.remove('menu-open');
         if (navBackdrop) navBackdrop.setAttribute('hidden', '');
+
+        if (focusedInMenu && isMobileViewport()) {
+            hamburger.focus();
+        }
+    };
+
+    const syncMobileNavState = () => {
+        if (!hamburger || !navList) return;
+
+        if (isMobileViewport()) {
+            const isOpen = navList.classList.contains('open');
+            navList.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            return;
+        }
+
+        closeMobileMenu();
+        navList.setAttribute('aria-hidden', 'false');
+    };
+
+    const trapMenuFocus = (event) => {
+        if (!hamburger || !navList || !isMobileViewport()) return;
+        if (!navList.classList.contains('open')) return;
+        if (event.key !== 'Tab') return;
+
+        const focusable = Array.from(
+            navList.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+        ).filter((el) => el instanceof HTMLElement);
+
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+
+        if (event.shiftKey && active === first) {
+            event.preventDefault();
+            last.focus();
+            return;
+        }
+
+        if (!event.shiftKey && active === last) {
+            event.preventDefault();
+            first.focus();
+        }
     };
 
     if (hamburger && navList) {
-        navList.setAttribute('aria-hidden', 'true');
+        syncMobileNavState();
 
         hamburger.addEventListener('click', () => {
+            if (!isMobileViewport()) return;
             const isOpen = navList.classList.contains('open');
             if (isOpen) {
                 closeMobileMenu();
@@ -155,13 +285,15 @@
         }
 
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') closeMobileMenu();
+            if (event.key === 'Escape' && isMobileViewport()) closeMobileMenu();
         });
+
+        document.addEventListener('keydown', trapMenuFocus);
     }
 
     if (scrollTopBtn) {
         scrollTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
         });
     }
 
@@ -173,11 +305,14 @@
                 return;
             }
 
-            const target = document.querySelector(href);
+            const target = getHashTarget(href);
             if (!target) return;
 
             event.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+            if (window.location.hash !== href) {
+                window.history.replaceState(null, '', href);
+            }
         });
     });
 
@@ -204,11 +339,39 @@
         revealEls.forEach((el) => el.classList.add('visible'));
     }
 
+    const spotlightSections = Array.from(document.querySelectorAll('.spotlight-section'));
+    const setActiveSpotlight = (activeEl) => {
+        spotlightSections.forEach((section) => {
+            section.classList.toggle('active', section === activeEl);
+        });
+    };
+
+    if (spotlightSections.length) {
+        if ('IntersectionObserver' in window) {
+            const spotlightObserver = new IntersectionObserver(
+                (entries) => {
+                    const visibleEntries = entries
+                        .filter((entry) => entry.isIntersecting)
+                        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+                    if (visibleEntries.length) {
+                        setActiveSpotlight(visibleEntries[0].target);
+                    }
+                },
+                { threshold: [0.32, 0.55, 0.78], rootMargin: '-22% 0px -28% 0px' }
+            );
+
+            spotlightSections.forEach((section) => spotlightObserver.observe(section));
+        } else {
+            setActiveSpotlight(spotlightSections[0]);
+        }
+    }
+
     const observedTargets = navAnchors
         .map((anchor) => {
             const href = anchor.getAttribute('href');
             if (!href || href.length < 2) return null;
-            const target = document.querySelector(href);
+            const target = getHashTarget(href);
             return target ? { target, anchor } : null;
         })
         .filter(Boolean);
@@ -228,6 +391,12 @@
         markActiveById(window.location.hash.slice(1));
     }
 
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash;
+        if (!hash || hash.length < 2) return;
+        markActiveById(hash.slice(1));
+    });
+
     if (observedTargets.length && 'IntersectionObserver' in window) {
         const navObserver = new IntersectionObserver(
             (entries) => {
@@ -245,35 +414,98 @@
 
     const registerForm = document.getElementById('register-form');
     const registerStatus = document.getElementById('register-status');
+    const requestField = document.getElementById('special-requests');
+    const requestCounter = document.getElementById('request-counter');
+
+    const clearInvalidState = (control) => {
+        control.classList.remove('invalid');
+        control.removeAttribute('aria-invalid');
+        control.setCustomValidity('');
+    };
+
+    const setInvalidState = (control, message) => {
+        control.classList.add('invalid');
+        control.setAttribute('aria-invalid', 'true');
+        control.setCustomValidity(message);
+    };
+
+    const validateControl = (control) => {
+        const value = String(control.value || '').trim();
+        if (control.value !== value && control.type !== 'password') {
+            control.value = value;
+        }
+
+        if (control.required && value.length === 0) {
+            setInvalidState(control, 'Please fill out this field.');
+            return false;
+        }
+
+        if (control.type === 'email' && value.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            setInvalidState(control, 'Enter a valid email address.');
+            return false;
+        }
+
+        if (control.name === 'phone' && value.length > 0 && !/^[0-9+\-() ]{8,20}$/.test(value)) {
+            setInvalidState(control, 'Enter a valid phone number.');
+            return false;
+        }
+
+        if (!control.checkValidity()) {
+            setInvalidState(control, control.validationMessage || 'Please enter a valid value.');
+            return false;
+        }
+
+        clearInvalidState(control);
+        return true;
+    };
 
     if (registerForm && registerStatus) {
+        const controls = Array.from(registerForm.elements).filter((el) => {
+            return el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement;
+        });
+
+        const savedDraft = readFormDraft();
+        if (savedDraft) {
+            controls.forEach((control) => {
+                const nextValue = savedDraft[control.name];
+                if (typeof nextValue === 'string') {
+                    control.value = nextValue;
+                }
+            });
+        }
+
+        const persistDraft = (() => {
+            let timer = 0;
+            return () => {
+                window.clearTimeout(timer);
+                timer = window.setTimeout(() => {
+                    const draft = controls.reduce((acc, control) => {
+                        const value = String(control.value || '').trim();
+                        if (value.length) acc[control.name] = value;
+                        return acc;
+                    }, {});
+
+                    writeFormDraft(draft);
+                }, 160);
+            };
+        })();
+
         registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
-
-            const controls = Array.from(registerForm.elements).filter((el) => {
-                return el instanceof HTMLInputElement || el instanceof HTMLSelectElement;
-            });
-
-            controls.forEach((el) => el.classList.remove('invalid'));
+            registerForm.setAttribute('aria-busy', 'true');
 
             let firstInvalid = null;
 
             controls.forEach((el) => {
-                const value = (el.value || '').trim();
-                const isRequiredEmpty = el.required && value.length === 0;
-                const badEmail = el.type === 'email' && value.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-                const badPhone = el.name === 'phone' && value.length > 0 && !/^[0-9+\-() ]{8,20}$/.test(value);
-
-                if (isRequiredEmpty || badEmail || badPhone) {
-                    el.classList.add('invalid');
-                    if (!firstInvalid) firstInvalid = el;
-                }
+                const valid = validateControl(el);
+                if (!valid && !firstInvalid) firstInvalid = el;
             });
 
             if (firstInvalid) {
-                registerStatus.textContent = 'Please fill in all fields correctly.';
+                registerStatus.textContent = firstInvalid.validationMessage || 'Please fill in all fields correctly.';
                 registerStatus.className = 'register-status error';
                 firstInvalid.focus();
+                registerForm.setAttribute('aria-busy', 'false');
                 return;
             }
 
@@ -283,12 +515,21 @@
             registerStatus.textContent = `Registration submitted for ${name}. Please check your email for updates.`;
             registerStatus.className = 'register-status success';
             registerForm.reset();
+            writeFormDraft(null);
+            registerForm.setAttribute('aria-busy', 'false');
         });
+
+        registerForm.addEventListener('blur', (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+            validateControl(target);
+        }, true);
 
         registerForm.addEventListener('input', (event) => {
             const target = event.target;
-            if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement)) return;
-            target.classList.remove('invalid');
+            if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+            validateControl(target);
+            persistDraft();
 
             if (registerStatus.textContent) {
                 registerStatus.textContent = '';
@@ -297,11 +538,46 @@
         });
     }
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (requestField && requestCounter) {
+        const max = Number(requestField.getAttribute('maxlength')) || 180;
+        const syncCounter = () => {
+            requestCounter.textContent = `${requestField.value.length} / ${max}`;
+        };
+        syncCounter();
+        requestField.addEventListener('input', syncCounter);
+    }
+
+    if (copyAddressBtn && copyAddressStatus && venueAddress) {
+        copyAddressBtn.addEventListener('click', async () => {
+            const value = venueAddress.textContent ? venueAddress.textContent.trim() : '';
+            if (!value) return;
+
+            try {
+                if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                    await navigator.clipboard.writeText(value);
+                } else {
+                    const fallback = document.createElement('textarea');
+                    fallback.value = value;
+                    fallback.setAttribute('readonly', '');
+                    fallback.style.position = 'absolute';
+                    fallback.style.left = '-9999px';
+                    document.body.appendChild(fallback);
+                    fallback.select();
+                    document.execCommand('copy');
+                    fallback.remove();
+                }
+                copyAddressStatus.textContent = 'Address copied to clipboard.';
+            } catch {
+                copyAddressStatus.textContent = 'Unable to copy. Please copy the address manually.';
+            }
+        });
+    }
+
+    const reducedMotionEnabled = prefersReducedMotion();
     const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 
-    if (!prefersReducedMotion && hasFinePointer) {
-        const cards = Array.from(document.querySelectorAll('.artist-card'));
+    if (!reducedMotionEnabled && hasFinePointer) {
+        const cards = Array.from(document.querySelectorAll('.spotlight-section'));
 
         cards.forEach((card) => {
             let frame = 0;
@@ -341,10 +617,37 @@
         });
     };
 
+    const registerServiceWorker = () => {
+        if (!('serviceWorker' in navigator)) return;
+
+        const hostname = window.location.hostname;
+        const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+        if (window.location.protocol !== 'https:' && !isLocalhost) return;
+
+        const register = () => {
+            navigator.serviceWorker.register('./sw.js').catch(() => {
+                // Service worker is optional enhancement.
+            });
+        };
+
+        if (document.readyState === 'complete') {
+            register();
+            return;
+        }
+
+        window.addEventListener('load', register, { once: true });
+    };
+
     setHeaderProgress();
+    registerServiceWorker();
     window.addEventListener('scroll', onScroll, { passive: true });
+    let resizeFrame = 0;
     window.addEventListener('resize', () => {
-        setHeaderProgress();
-        if (window.innerWidth > 768) closeMobileMenu();
+        if (resizeFrame) return;
+        resizeFrame = window.requestAnimationFrame(() => {
+            setHeaderProgress();
+            syncMobileNavState();
+            resizeFrame = 0;
+        });
     });
 })();
