@@ -16,14 +16,23 @@ If your mail still opens `localhost` or `https://vishh70.github.io/email-templat
 - `ticket_qty`
 - `order_id`
 - `ticket_view_url` (required for working button link)
+- `ticket_download_url` (optional: opens ticket and triggers PDF auto-download)
 - `ticket_route` (optional display/debug)
 - `support_url` (optional support CTA)
+
+The app also sends aliases for compatibility with old templates:
+
+- `ticket_url`
+- `download_url`
+- `link`
+- `url`
 
 ## Required fixes in EmailJS dashboard
 
 1. Open EmailJS template `template_vtgfowt`.
 2. Find ticket button link (`href`) and replace hardcoded URL with:
    - `{{ticket_view_url}}`
+   - or `{{ticket_download_url}}` if you want immediate PDF auto-download after page opens
 3. Set button text to:
    - `View & Download Ticket`
 4. Add plain-text fallback below button:

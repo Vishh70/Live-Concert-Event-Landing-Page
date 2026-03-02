@@ -764,8 +764,10 @@
                         city: cityValue
                     };
                     let ticketViewUrl = '';
+                    let ticketDownloadUrl = '';
                     try {
                         ticketViewUrl = buildTicketUrl(confirmedTicket, { forEmail: true });
+                        ticketDownloadUrl = buildTicketUrl(confirmedTicket, { forEmail: true, autodownload: 'pdf' });
                     } catch (error) {
                         console.error(error);
                         registerStatus.textContent = "Ticket link generation failed. Please try again.";
@@ -802,6 +804,11 @@
                             ticket_qty: tickets,
                             order_id: 'PX-' + Math.floor(Math.random() * 9000 + 1000),
                             ticket_view_url: ticketViewUrl,
+                            ticket_download_url: ticketDownloadUrl,
+                            ticket_url: ticketViewUrl,
+                            download_url: ticketDownloadUrl,
+                            link: ticketViewUrl,
+                            url: ticketViewUrl,
                             ticket_route: CONFIG.APP.TICKET_ROUTE,
                             support_url: CONFIG.APP.SUPPORT_URL
                         }).then(() => {

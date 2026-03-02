@@ -1,4 +1,4 @@
-const CACHE_NAME = 'epic2003-shell-v15';
+const CACHE_NAME = 'epic2003-shell-v16';
 const APP_SHELL = [
   './',
   './index.html',
