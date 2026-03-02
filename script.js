@@ -1,4 +1,4 @@
-﻿/* ===================================================
+/* ===================================================
    PHOENIX LIVE '26 - Rock Night 2026
    Vanilla JS interactions
    =================================================== */
@@ -6,12 +6,29 @@
 (function () {
     'use strict';
 
+    /* ---- Configuration ---- */
+    const CONFIG = {
+        EMAILJS: {
+            PUBLIC_KEY: "PFM389erFMkGQW6r9",
+            SERVICE_ID: "service_5jxxr2o",
+            TEMPLATE_ID: "template_vtgfowt"
+        },
+        STORAGE: {
+            DRAFT: 'epic2003.registerDraft.v1',
+            PLANNER: 'epic2003.planner.v1'
+        },
+        UI: {
+            MOBILE_BREAKPOINT: 860,
+            SCROLL_THRESHOLD: 40,
+            CALENDAR_TYPE: 'google' // 'ics' (file download) or 'google' (web link)
+        }
+    };
+
     /* ---- Email Automation (EmailJS) ---- */
     // Instructions: Go to https://www.emailjs.com/, create a free account, 
-    // and replace placeholders with your Service, Template, and Public IDs.
-    if (typeof emailjs !== 'undefined' && !window.location.href.includes("YOUR_PUBLIC_KEY")) {
-        // Only init if user replaced the placeholder
-        const pk = "YOUR_PUBLIC_KEY";
+    // and replace placeholders in the CONFIG object above.
+    if (typeof emailjs !== 'undefined') {
+        const pk = CONFIG.EMAILJS.PUBLIC_KEY;
         if (pk && pk !== "YOUR_PUBLIC_KEY") emailjs.init(pk);
     }
 
@@ -40,7 +57,6 @@
         setTimeout(dismiss, 6000); // safety fallback
     }
 
-    const MOBILE_BREAKPOINT = 860;
     const REDUCED_MOTION_QUERY = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const yearEl = document.getElementById('year');
@@ -78,10 +94,8 @@
     };
     const eventDateEl = document.querySelector('#hero time[datetime]');
     const eventDayLabel = document.getElementById('event-day-label');
-    const isMobileViewport = () => window.innerWidth <= MOBILE_BREAKPOINT;
+    const isMobileViewport = () => window.innerWidth <= CONFIG.UI.MOBILE_BREAKPOINT;
     const prefersReducedMotion = () => REDUCED_MOTION_QUERY.matches;
-    const FORM_DRAFT_KEY = 'epic2003.registerDraft.v1';
-    const PLANNER_KEY = 'epic2003.planner.v1';
     const getHashTarget = (hash) => {
         if (!hash || hash.length < 2 || hash.charAt(0) !== '#') return null;
         try {
@@ -93,7 +107,7 @@
 
     const readFormDraft = () => {
         try {
-            const raw = window.localStorage.getItem(FORM_DRAFT_KEY);
+            const raw = window.localStorage.getItem(CONFIG.STORAGE.DRAFT);
             if (!raw) return null;
             const parsed = JSON.parse(raw);
             return parsed && typeof parsed === 'object' ? parsed : null;
@@ -105,10 +119,10 @@
     const writeFormDraft = (draft) => {
         try {
             if (!draft || !Object.keys(draft).length) {
-                window.localStorage.removeItem(FORM_DRAFT_KEY);
+                window.localStorage.removeItem(CONFIG.STORAGE.DRAFT);
                 return;
             }
-            window.localStorage.setItem(FORM_DRAFT_KEY, JSON.stringify(draft));
+            window.localStorage.setItem(CONFIG.STORAGE.DRAFT, JSON.stringify(draft));
         } catch {
             // Ignore storage errors (privacy mode, quota, etc.).
         }
@@ -116,7 +130,7 @@
 
     const readPlannerState = () => {
         try {
-            const raw = window.localStorage.getItem(PLANNER_KEY);
+            const raw = window.localStorage.getItem(CONFIG.STORAGE.PLANNER);
             if (!raw) return null;
             const parsed = JSON.parse(raw);
             return parsed && typeof parsed === 'object' ? parsed : null;
@@ -128,10 +142,10 @@
     const writePlannerState = (state) => {
         try {
             if (!state || !Object.keys(state).length) {
-                window.localStorage.removeItem(PLANNER_KEY);
+                window.localStorage.removeItem(CONFIG.STORAGE.PLANNER);
                 return;
             }
-            window.localStorage.setItem(PLANNER_KEY, JSON.stringify(state));
+            window.localStorage.setItem(CONFIG.STORAGE.PLANNER, JSON.stringify(state));
         } catch {
             // Ignore storage errors.
         }
@@ -149,6 +163,9 @@
         }
     }
 
+    let isHeaderScrolled = false;
+    let isScrollTopVisible = false;
+
     const setHeaderProgress = () => {
         const scrollTop = window.scrollY || window.pageYOffset;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -159,14 +176,19 @@
         }
 
         if (headerEl) {
-            headerEl.classList.toggle('scrolled', scrollTop > 40);
+            const shouldBeScrolled = scrollTop > CONFIG.UI.SCROLL_THRESHOLD;
+            if (shouldBeScrolled !== isHeaderScrolled) {
+                isHeaderScrolled = shouldBeScrolled;
+                headerEl.classList.toggle('scrolled', shouldBeScrolled);
+            }
         }
 
         if (scrollTopBtn) {
-            if (scrollTop > 420) {
-                scrollTopBtn.removeAttribute('hidden');
-            } else {
-                scrollTopBtn.setAttribute('hidden', '');
+            const shouldBeVisible = scrollTop > 420;
+            if (shouldBeVisible !== isScrollTopVisible) {
+                isScrollTopVisible = shouldBeVisible;
+                if (shouldBeVisible) scrollTopBtn.removeAttribute('hidden');
+                else scrollTopBtn.setAttribute('hidden', '');
             }
         }
     };
@@ -537,7 +559,7 @@
 
         // 3. Phone Pattern
         if (control.name === 'phone' && value.length > 0) {
-            const phoneRegex = /^[0-9+.\-\s()]{7,25}$/;
+            const phoneRegex = /^[0-9+\-() ]{8,20}$/;
             if (!phoneRegex.test(value)) {
                 setInvalidState(control, 'Enter a valid phone number.');
                 return false;
@@ -587,6 +609,24 @@
             };
         })();
 
+        // --- Shared Modal Elements (Scoped to register-form block) ---
+        const modal = document.getElementById('register-modal');
+        const modalName = document.getElementById('modal-name');
+        const modalEmail = document.getElementById('modal-email');
+        const modalPass = document.getElementById('modal-pass');
+        const modalTickets = document.getElementById('modal-tickets');
+        const passName = document.getElementById('pass-name');
+        const passTier = document.getElementById('pass-tier');
+        const passQty = document.getElementById('pass-qty');
+        const viewEmailBtn = document.getElementById('view-email-btn');
+        const viewPassBtn = document.getElementById('view-pass-btn');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        const modalLogsView = document.getElementById('modal-logs-view');
+
+        // Scoped variable to hold registration data for View E-ticket
+        let lastConfirmedTicket = null;
+
         registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
             registerForm.setAttribute('aria-busy', 'true');
@@ -633,20 +673,6 @@
             registerStatus.className = 'register-status';
 
             setTimeout(() => {
-                // Populate Modal Views
-                const modal = document.getElementById('register-modal');
-                const modalName = document.getElementById('modal-name');
-                const modalEmail = document.getElementById('modal-email');
-                const modalPass = document.getElementById('modal-pass');
-                const modalTickets = document.getElementById('modal-tickets');
-
-                // Digital Pass Views
-                const passName = document.getElementById('pass-name');
-                const passTier = document.getElementById('pass-tier');
-                const passQty = document.getElementById('pass-qty');
-
-                const emailValue = String(formData.get('email') || '').trim();
-
                 if (modal && modalName && modalPass && modalTickets) {
                     modalName.textContent = name;
                     if (modalEmail) modalEmail.textContent = emailValue;
@@ -672,9 +698,8 @@
                     setTimeout(() => logLiveMail?.classList.add('active'), 2800);
 
                     // ---- Real Email Dispatch (EmailJS) ----
-                    // This creates the live email to the user's inbox
                     if (typeof emailjs !== 'undefined') {
-                        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                        emailjs.send(CONFIG.EMAILJS.SERVICE_ID, CONFIG.EMAILJS.TEMPLATE_ID, {
                             to_name: name,
                             to_email: emailValue,
                             pass_type: pass,
@@ -686,6 +711,22 @@
                             console.log("FAILED: Check Public Key at EmailJS.com", error);
                         });
                     }
+
+                    // Store confirmation data for View E-ticket
+                    lastConfirmedTicket = {
+                        name: name,
+                        pass: pass,
+                        qty: tickets,
+                        email: emailValue
+                    };
+
+                    // Also update dataset as fallback
+                    if (viewEmailBtn) {
+                        viewEmailBtn.dataset.name = name;
+                        viewEmailBtn.dataset.pass = pass;
+                        viewEmailBtn.dataset.qty = tickets;
+                        viewEmailBtn.dataset.email = emailValue;
+                    }
                 } else {
                     console.warn("Missing one or more modal elements. Check IDs: register-modal, modal-name, modal-pass, modal-tickets.");
                 }
@@ -694,24 +735,29 @@
                 writeFormDraft(null);
                 registerForm.setAttribute('aria-busy', 'false');
                 registerStatus.textContent = "";
-
-                // View E-ticket Logic
-                const viewEmailBtn = document.getElementById('view-email-btn');
-                if (viewEmailBtn) {
-                    viewEmailBtn.onclick = () => {
-                        const url = `email-template.html?name=${encodeURIComponent(name)}&pass=${encodeURIComponent(pass)}&qty=${encodeURIComponent(tickets)}&email=${encodeURIComponent(emailValue)}`;
-                        window.open(url, '_blank');
-                    };
-                }
             }, 1200);
         });
 
-        // Modal View Toggle (View Wallet Pass)
-        const viewPassBtn = document.getElementById('view-pass-btn');
-        const digitalPassPreview = document.getElementById('digital-pass-preview');
-        const modalSummaryView = document.getElementById('modal-summary-view');
-        const modalLogsView = document.getElementById('modal-logs-view');
+        // View E-ticket Listener (Global to this block)
+        if (viewEmailBtn) {
+            viewEmailBtn.addEventListener('click', () => {
+                const data = lastConfirmedTicket || {
+                    name: viewEmailBtn.dataset.name || 'Attendee',
+                    pass: viewEmailBtn.dataset.pass || 'Standard',
+                    qty: viewEmailBtn.dataset.qty || '1',
+                    email: viewEmailBtn.dataset.email || ''
+                };
 
+                if (!lastConfirmedTicket && !viewEmailBtn.dataset.name) {
+                    console.warn("View E-ticket clicked but no registration data found.");
+                }
+
+                const url = `ticket.html?name=${encodeURIComponent(data.name)}&pass=${encodeURIComponent(data.pass)}&qty=${encodeURIComponent(data.qty)}&email=${encodeURIComponent(data.email)}`;
+                window.open(url, '_blank');
+            });
+        }
+
+        // Modal View Toggle (View Wallet Pass)
         if (viewPassBtn && digitalPassPreview && modalSummaryView && modalLogsView) {
             viewPassBtn.addEventListener('click', () => {
                 const isViewingPass = !digitalPassPreview.hidden;
@@ -730,8 +776,6 @@
         }
 
         // Close Modal Logic
-        const modal = document.getElementById('register-modal');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
         if (modal && modalCloseBtn) {
             modalCloseBtn.addEventListener('click', () => {
                 modal.classList.add('fade-out');
@@ -745,7 +789,7 @@
                     if (digitalPassPreview) digitalPassPreview.hidden = true;
                     if (modalSummaryView) modalSummaryView.hidden = false;
                     if (modalLogsView) modalLogsView.hidden = false;
-                    if (viewEmailBtn) viewEmailBtn.textContent = "View My Ticket";
+                    if (viewEmailBtn) viewEmailBtn.textContent = "View E-ticket";
 
                     document.getElementById('log-email')?.classList.remove('active');
                     document.getElementById('log-sms')?.classList.remove('active');
@@ -837,6 +881,20 @@
             }, 2800);
         };
 
+        const generateGoogleCalendarUrl = (eventStart, eventEnd, title, location, description) => {
+            const start = formatIcsDateUtc(eventStart);
+            const end = formatIcsDateUtc(eventEnd);
+            const url = new URL('https://www.google.com/calendar/render');
+            url.searchParams.append('action', 'TEMPLATE');
+            url.searchParams.append('text', title);
+            url.searchParams.append('dates', `${start}/${end}`);
+            url.searchParams.append('details', description);
+            url.searchParams.append('location', location);
+            url.searchParams.append('sf', 'true');
+            url.searchParams.append('output', 'xml');
+            return url.toString();
+        };
+
         addCalendarBtn.addEventListener('click', () => {
             try {
                 const fallbackStart = new Date('2026-03-16T17:30:00+05:30');
@@ -845,6 +903,15 @@
                 const eventEnd = new Date(eventStart.getTime() + (5.5 * 60 * 60 * 1000));
                 const uidDate = formatIcsDateUtc(eventStart).slice(0, 8);
                 const eventTitle = 'Rock Night 2026 - Pune Arena';
+                const eventLoc = 'Phoenix Concert Grounds, Pune';
+                const eventDesc = 'Live concert featuring DJ Blaze, The Metal Shadows, and Aisha Roy.';
+
+                if (CONFIG.UI.CALENDAR_TYPE === 'google') {
+                    const gUrl = generateGoogleCalendarUrl(eventStart, eventEnd, eventTitle, eventLoc, eventDesc);
+                    window.open(gUrl, '_blank');
+                    setCalendarStatus('Opening Google Calendar...', 'success');
+                    return;
+                }
 
                 const icsContent = [
                     'BEGIN:VCALENDAR',
@@ -856,8 +923,8 @@
                     `DTSTART:${formatIcsDateUtc(eventStart)}`,
                     `DTEND:${formatIcsDateUtc(eventEnd)}`,
                     `SUMMARY:${eventTitle}`,
-                    'LOCATION:Phoenix Concert Grounds\\, Pune',
-                    'DESCRIPTION:Live concert featuring DJ Blaze\\, The Metal Shadows\\, and Aisha Roy.',
+                    `LOCATION:${eventLoc.replace(/,/g, '\\,')}`,
+                    `DESCRIPTION:${eventDesc.replace(/,/g, '\\,')}`,
                     'END:VEVENT',
                     'END:VCALENDAR'
                 ].join('\r\n');

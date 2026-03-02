@@ -511,10 +511,7 @@
             animation: fadeIn 0.8s ease-out;
         }
 
-        /* Hide objects in PDF capture if needed */
-        [data-html2canvas-ignore] {
-            display: none !important;
-        }
+        /* html2pdf handles data-html2canvas-ignore internally - no CSS needed */
 
         @media print {
             body {

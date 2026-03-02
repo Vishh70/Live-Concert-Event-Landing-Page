@@ -1,4 +1,4 @@
-const CACHE_NAME = 'epic2003-shell-v5';
+const CACHE_NAME = 'epic2003-shell-v9';
 const APP_SHELL = [
   './',
   './index.html',
@@ -38,15 +38,18 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Never cache or intercept the e-ticket page (it needs live query params)
+  if (url.pathname.includes('email-template')) return;
+
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', copy));
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html')))
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }
