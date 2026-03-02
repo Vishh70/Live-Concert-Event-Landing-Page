@@ -1,6 +1,6 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,81 +10,574 @@
   <title>PHOENIX LIVE '26 - Official E-Ticket</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;700;800;900&display=swap"
+    rel="stylesheet" />
   <style>
     :root {
-      --bg1:#030712; --bg2:#0f172a; --surface:#0b1222; --line:rgba(148,163,184,.24);
-      --text:#e2e8f0; --muted:#94a3b8; --dim:#64748b; --cyan:#22d3ee; --indigo:#6366f1;
-      --success:#34d399; --danger:#fb7185; --shadow:0 24px 60px rgba(2,6,23,.5);
+      --bg1: #030712;
+      --bg2: #081125;
+      --surface: rgba(15, 23, 42, 0.7);
+      --glass: rgba(30, 41, 59, 0.45);
+      --line: rgba(148, 163, 184, 0.15);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --dim: #64748b;
+      --cyan: #22d3ee;
+      --indigo: #818cf8;
+      --neon-cyan: 0 0 15px rgba(34, 211, 238, 0.4);
+      --neon-indigo: 0 0 15px rgba(129, 140, 248, 0.4);
+      --shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{min-height:100%;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);overflow-x:hidden;
-      background:radial-gradient(1100px 420px at 18% -8%,rgba(34,211,238,.16),transparent 62%),
-      radial-gradient(960px 420px at 82% 10%,rgba(99,102,241,.2),transparent 60%),
-      linear-gradient(180deg,var(--bg1),var(--bg2));}
-    .page-frame{max-width:760px;margin:30px auto 56px;padding:0 16px}
-    .ticket-error{display:none;margin-bottom:16px;padding:14px 16px;border-radius:12px;border:1px solid rgba(251,113,133,.45);background:rgba(127,29,29,.25);color:#fecdd3;font-weight:700;text-align:center}
-    .ticket-error.show{display:block}
-    #ticket-container.arena-pass{border-radius:26px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(8,15,30,.88),rgba(10,19,35,.96));box-shadow:var(--shadow);overflow:hidden}
-    .main-header{position:relative;padding:46px 34px;background:linear-gradient(126deg,#07132d,#102347 64%,#162d59);border-bottom:1px solid var(--line)}
-    .main-header::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 48%,rgba(34,211,238,.17),transparent 48%),radial-gradient(circle at 84% 40%,rgba(99,102,241,.24),transparent 53%);pointer-events:none}
-    .header-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
-    .brand-name{font-family:'Outfit',sans-serif;font-size:clamp(30px,4vw,46px);letter-spacing:.14em;font-weight:900;color:#38bdf8;text-transform:uppercase}
-    .partner-seal{border-radius:14px;padding:10px 14px;border:1px solid rgba(56,189,248,.42);background:rgba(30,41,59,.5);font-size:11px;letter-spacing:.06em;font-weight:700;text-transform:uppercase;line-height:1.35}
-    .partner-seal b{color:#38bdf8}
-    .status-badge{position:relative;z-index:1;display:inline-flex;justify-content:center;align-items:center;margin:0 auto;padding:10px 24px;border-radius:999px;border:1px solid rgba(52,211,153,.5);background:rgba(6,78,59,.34);color:#6ee7b7;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-    .content-body{padding:34px}
-    .hero-msg{text-align:center;margin-bottom:28px}
-    .hero-msg h1{font-family:'Outfit',sans-serif;font-size:clamp(32px,4vw,46px);line-height:1.08;margin-bottom:10px;letter-spacing:-.03em}
-    .hero-msg p{margin:0 auto;max-width:620px;color:var(--muted);font-size:17px;line-height:1.62}
-    .receipt-section{border-radius:20px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(17,27,49,.7),rgba(12,23,41,.85));padding:22px;margin-bottom:24px}
-    .section-label{display:block;margin-bottom:14px;color:#7dd3fc;font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
-    .receipt-grid{border-top:1px solid var(--line)}
-    .receipt-row{display:flex;justify-content:space-between;gap:18px;padding:13px 0;border-bottom:1px dashed var(--line);font-size:15px}
-    .receipt-row .label{color:var(--muted)} .receipt-row .value{font-weight:700;text-align:right;word-break:break-word}
-    .total-strip{margin-top:12px;padding-top:14px;border-top:1px solid rgba(148,163,184,.38);display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .total-label{font-size:18px;font-weight:800} .total-status{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;border-radius:10px;padding:7px 12px;color:#86efac;border:1px solid rgba(74,222,128,.4);background:rgba(6,78,59,.28)}
-    .ticket-box{border:1px solid rgba(96,165,250,.5);border-radius:20px;overflow:hidden;margin-bottom:24px;background:linear-gradient(180deg,#0f1d36,#0d172b)}
-    .ticket-top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px;background:linear-gradient(90deg,#2563eb,var(--indigo));border-bottom:1px solid rgba(148,163,184,.36)}
-    .ticket-top .pass-badge{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#eaf1ff}
-    .ticket-top .serial-badge{font-size:11px;color:#dbeafe;font-weight:800;letter-spacing:.06em}
-    .ticket-main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:1px dashed var(--line)}
-    .ticket-cell{padding:14px 16px;border-bottom:1px dashed var(--line)}
-    .ticket-cell:nth-child(odd){border-right:1px dashed var(--line)}
-    .cell-label{display:block;margin-bottom:8px;color:#93c5fd;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
-    .cell-value{color:#f8fbff;font-size:18px;font-weight:800;line-height:1.3;word-break:break-word}
-    .qr-area{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;padding:22px 18px;gap:10px}
-    .qr-container{width:152px;height:152px;border-radius:12px;overflow:hidden;background:#f8fafc;border:1px solid rgba(148,163,184,.36);display:grid;place-items:center}
-    .qr-placeholder{width:136px;height:136px;display:block;object-fit:contain}
-    .scan-msg{color:#7dd3fc;font-size:12px;text-transform:uppercase;font-weight:800;letter-spacing:.18em;text-align:center}
-    .footer-info{display:grid;gap:14px}
-    .info-card{border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(15,27,47,.72),rgba(13,24,42,.82));padding:18px}
-    .info-card h3{font-family:'Outfit',sans-serif;font-size:22px;line-height:1.2;margin-bottom:14px;color:#e6edf7}
-    .lineup-item{display:flex;gap:12px;padding:7px 0} .lineup-time{width:98px;flex-shrink:0;color:#38bdf8;font-weight:800}
-    .lineup-act{color:#cbd5e1;line-height:1.4}
-    .rules-list{list-style:none} .rules-list li{position:relative;padding-left:16px;margin-bottom:9px;color:#cbd5e1;line-height:1.5}
-    .rules-list li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:#38bdf8}
-    .site-footer{border-top:1px solid var(--line);margin-top:26px;padding:24px 34px 28px;text-align:center;background:linear-gradient(180deg,rgba(8,14,27,.9),rgba(7,12,23,.95))}
-    .footer-logo{font-family:'Outfit',sans-serif;color:#38bdf8;font-size:21px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin-bottom:10px}
-    .footer-text{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:12px}
-    .footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-bottom:10px}
-    .footer-links a{color:#93c5fd;text-decoration:none;font-weight:700;font-size:13px}
-    .copyright{font-size:12px;color:var(--dim)}
-    .ticket-controls{margin-top:20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .control-btn{min-height:46px;border:0;border-radius:12px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;text-align:center;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;color:#e2e8f0;background:linear-gradient(92deg,#0f274d,#1d2e58);box-shadow:0 8px 22px rgba(3,7,18,.45);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
-    .control-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(2,6,23,.6);filter:brightness(1.08)}
-    .control-btn:active{transform:translateY(0)}
-    .control-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-    .control-btn.primary{color:#031225;background:linear-gradient(92deg,var(--cyan),#60a5fa);box-shadow:0 10px 28px rgba(34,211,238,.32)}
-    .control-btn.secondary{background:linear-gradient(92deg,#1f3f66,#2a4e80)} .control-btn.tertiary{background:linear-gradient(92deg,#27335f,#3c3c8f)}
-    .control-btn.wallet{background:linear-gradient(92deg,#3f3f46,#52525b);color:#e5e7eb;cursor:not-allowed;opacity:.82}
-    .control-btn[disabled]{cursor:not-allowed;opacity:.6;transform:none;filter:none}
-    .action-status{min-height:24px;margin-top:12px;color:#7dd3fc;font-size:13px;text-align:center;font-weight:600;letter-spacing:.02em}
-    .action-status.error{color:#fda4af} .action-status.success{color:#86efac}
-    @media (max-width:980px){.ticket-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width:760px){.page-frame{margin:20px auto 46px;padding:0 10px}.main-header{padding:30px 18px}.header-top{flex-direction:column;align-items:flex-start}.brand-name{letter-spacing:.09em}.content-body{padding:20px 16px}.site-footer{padding:20px 16px 24px}.ticket-main{grid-template-columns:1fr}.ticket-cell:nth-child(odd){border-right:none}.lineup-item{flex-direction:column;gap:4px}.lineup-time{width:auto}.ticket-controls{grid-template-columns:1fr}}
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+      background: radial-gradient(1200px 500px at 15% -10%, rgba(34, 211, 238, 0.2), transparent 70%),
+        radial-gradient(1000px 500px at 85% 15%, rgba(99, 102, 241, 0.25), transparent 70%),
+        #030712;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-frame {
+      max-width: 780px;
+      margin: 40px auto 60px;
+      padding: 0 20px;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ticket-error {
+      display: none;
+      margin-bottom: 20px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(251, 113, 133, 0.4);
+      background: rgba(127, 29, 29, 0.3);
+      color: #fecdd3;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .ticket-error.show {
+      display: block;
+    }
+
+    #ticket-container.arena-pass {
+      border-radius: 32px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .main-header {
+      position: relative;
+      padding: 50px 40px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.5));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .main-header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 40%, rgba(34, 211, 238, 0.15), transparent 50%),
+        radial-gradient(circle at 90% 60%, rgba(129, 140, 248, 0.2), transparent 50%);
+      pointer-events: none;
+    }
+
+    .header-top {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(32px, 5vw, 48px);
+      letter-spacing: 0.15em;
+      font-weight: 900;
+      color: #ffffff;
+      text-transform: uppercase;
+      text-shadow: var(--neon-cyan);
+    }
+
+    .partner-seal {
+      border-radius: 16px;
+      padding: 12px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .partner-seal b {
+      color: var(--cyan);
+    }
+
+    .status-badge {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 28px;
+      border-radius: 99px;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      background: rgba(16, 185, 129, 0.1);
+      color: #34d399;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(52, 211, 153, 0.1);
+    }
+
+    .content-body {
+      padding: 40px;
+    }
+
+    .hero-msg {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .hero-msg h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(36px, 5vw, 52px);
+      line-height: 1.1;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .hero-msg p {
+      margin: 0 auto;
+      max-width: 600px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .receipt-section {
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      padding: 28px;
+      margin-bottom: 30px;
+    }
+
+    .section-label {
+      display: block;
+      margin-bottom: 18px;
+      color: var(--indigo);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    .receipt-grid {
+      border-top: 1px solid var(--line);
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: 15px;
+    }
+
+    .receipt-row .label {
+      color: var(--muted);
+    }
+
+    .receipt-row .value {
+      font-weight: 700;
+      text-align: right;
+      color: #fff;
+    }
+
+    .total-strip {
+      margin-top: 15px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-label {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .total-status {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-radius: 12px;
+      padding: 8px 16px;
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      background: rgba(52, 211, 153, 0.1);
+    }
+
+    .ticket-box {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 30px;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.8));
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .ticket-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 25px;
+      background: linear-gradient(90deg, var(--indigo), var(--cyan));
+      color: #fff;
+    }
+
+    .pass-badge {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .serial-badge {
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .ticket-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .ticket-cell {
+      padding: 20px 25px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .ticket-cell:nth-child(odd) {
+      border-right: 1px dashed var(--line);
+    }
+
+    .cell-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--dim);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .cell-value {
+      color: #fff;
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .qr-area {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .qr-container {
+      width: 160px;
+      height: 160px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      display: grid;
+      place-items: center;
+      padding: 10px;
+    }
+
+    .qr-placeholder {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .scan-msg {
+      color: var(--cyan);
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+    }
+
+    .footer-info {
+      display: grid;
+      gap: 20px;
+    }
+
+    .info-card {
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      padding: 25px;
+    }
+
+    .info-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      margin-bottom: 18px;
+      color: #fff;
+    }
+
+    .lineup-item {
+      display: flex;
+      gap: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .lineup-time {
+      width: 100px;
+      flex-shrink: 0;
+      color: var(--cyan);
+      font-weight: 800;
+    }
+
+    .lineup-act {
+      color: #cbd5e1;
+    }
+
+    .rules-list {
+      list-style: none;
+    }
+
+    .rules-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 12px;
+      color: #94a3b8;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .rules-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--indigo);
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--line);
+      margin-top: 30px;
+      padding: 35px 40px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .footer-logo {
+      font-family: 'Outfit', sans-serif;
+      color: var(--cyan);
+      font-size: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .footer-text {
+      color: var(--dim);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 15px;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #fff;
+    }
+
+    .copyright {
+      font-size: 12px;
+      color: var(--dim);
+      opacity: 0.7;
+    }
+
+    .ticket-controls {
+      margin-top: 25px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .control-btn {
+      min-height: 52px;
+      border: 0;
+      border-radius: 14px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 13px;
+    }
+
+    .control-btn.primary {
+      background: linear-gradient(135deg, var(--cyan), var(--indigo));
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(34, 211, 238, 0.3);
+    }
+
+    .control-btn.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .control-btn.tertiary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .control-btn.wallet {
+      background: #222;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    .control-btn:hover:not([disabled]) {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      filter: brightness(1.15);
+    }
+
+    .action-status {
+      min-height: 25px;
+      margin-top: 15px;
+      color: var(--cyan);
+      font-size: 14px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .action-status.error {
+      color: #fda4af;
+    }
+
+    .action-status.success {
+      color: #34d399;
+    }
+
+    @media (max-width: 980px) {
+      .ticket-controls {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-frame {
+        margin: 20px auto 40px;
+        padding: 0 12px;
+      }
+
+      .main-header {
+        padding: 35px 25px;
+      }
+
+      .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .content-body {
+        padding: 25px 20px;
+      }
+
+      .ticket-main {
+        grid-template-columns: 1fr;
+      }
+
+      .ticket-cell:nth-child(odd) {
+        border-right: none;
+      }
+
+      .ticket-controls {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
   <main class="page-frame" aria-label="Phoenix Live Ticket Page">
     <div id="ticket-error" class="ticket-error" role="alert" aria-live="assertive">Invalid Ticket URL</div>
@@ -99,20 +592,29 @@
       <div class="content-body">
         <section class="hero-msg" aria-label="Attendee Greeting">
           <h1 id="greet-name">Hi Attendee,</h1>
-          <p>You're all set for the biggest night of the year. This is your official e-ticket and entry pass for <strong>Phoenix Live '26</strong>. Present your QR code at the main entrance gate.</p>
+          <p>You're all set for the biggest night of the year. This is your official e-ticket and entry pass for
+            <strong>Phoenix Live '26</strong>. Present your QR code at the main entrance gate.</p>
         </section>
         <section class="receipt-section" aria-label="Order Receipt">
           <span class="section-label">Detailed Order Receipt</span>
           <div class="receipt-grid">
-            <div class="receipt-row"><span class="label">Reference Order ID</span><span class="value" id="receipt-id">#PX-2026-00000</span></div>
-            <div class="receipt-row"><span class="label">Booking Email</span><span class="value" id="receipt-email">-</span></div>
-            <div class="receipt-row"><span class="label">Contact Mobile</span><span class="value" id="receipt-phone">-</span></div>
-            <div class="receipt-row"><span class="label">City</span><span class="value" id="receipt-city">Pune</span></div>
-            <div class="receipt-row"><span class="label">Pass Category</span><span class="value" id="receipt-pass">General Admission</span></div>
-            <div class="receipt-row"><span class="label">Reserved Slots</span><span class="value" id="receipt-qty">1 Person(s)</span></div>
-            <div class="receipt-row"><span class="label">Processing Method</span><span class="value">Gateway / UPI Secure</span></div>
+            <div class="receipt-row"><span class="label">Reference Order ID</span><span class="value"
+                id="receipt-id">#PX-2026-00000</span></div>
+            <div class="receipt-row"><span class="label">Booking Email</span><span class="value"
+                id="receipt-email">-</span></div>
+            <div class="receipt-row"><span class="label">Contact Mobile</span><span class="value"
+                id="receipt-phone">-</span></div>
+            <div class="receipt-row"><span class="label">City</span><span class="value" id="receipt-city">Pune</span>
+            </div>
+            <div class="receipt-row"><span class="label">Pass Category</span><span class="value"
+                id="receipt-pass">General Admission</span></div>
+            <div class="receipt-row"><span class="label">Reserved Slots</span><span class="value" id="receipt-qty">1
+                Person(s)</span></div>
+            <div class="receipt-row"><span class="label">Processing Method</span><span class="value">Gateway / UPI
+                Secure</span></div>
           </div>
-          <div class="total-strip"><span class="total-label">Total Amount Paid</span><span class="total-status">Paid in Full</span></div>
+          <div class="total-strip"><span class="total-label">Total Amount Paid</span><span class="total-status">Paid in
+              Full</span></div>
         </section>
         <section class="ticket-box" aria-label="Official Venue Ticket">
           <div class="ticket-top">
@@ -120,17 +622,27 @@
             <span class="serial-badge">Official Entry Pass</span>
           </div>
           <div class="ticket-main">
-            <div class="ticket-cell"><span class="cell-label">Attendee Name</span><span class="cell-value" id="pass-name">Attendee</span></div>
-            <div class="ticket-cell"><span class="cell-label">Event Venue</span><span class="cell-value">Pune Arena, MH</span></div>
-            <div class="ticket-cell"><span class="cell-label">Category / Access</span><span class="cell-value" id="pass-cat">General Admission</span></div>
-            <div class="ticket-cell"><span class="cell-label">Total Qty</span><span class="cell-value" id="pass-total">1 Ticket(s)</span></div>
-            <div class="ticket-cell"><span class="cell-label">Booking Email</span><span class="cell-value" id="pass-email">-</span></div>
-            <div class="ticket-cell"><span class="cell-label">Contact Mobile</span><span class="cell-value" id="pass-phone">-</span></div>
-            <div class="ticket-cell"><span class="cell-label">City</span><span class="cell-value" id="pass-city">Pune</span></div>
-            <div class="ticket-cell"><span class="cell-label">Entry / Stage Time</span><span class="cell-value">Gate A | 5:30 PM</span></div>
+            <div class="ticket-cell"><span class="cell-label">Attendee Name</span><span class="cell-value"
+                id="pass-name">Attendee</span></div>
+            <div class="ticket-cell"><span class="cell-label">Event Venue</span><span class="cell-value">Pune Arena,
+                MH</span></div>
+            <div class="ticket-cell"><span class="cell-label">Category / Access</span><span class="cell-value"
+                id="pass-cat">General Admission</span></div>
+            <div class="ticket-cell"><span class="cell-label">Total Qty</span><span class="cell-value" id="pass-total">1
+                Ticket(s)</span></div>
+            <div class="ticket-cell"><span class="cell-label">Booking Email</span><span class="cell-value"
+                id="pass-email">-</span></div>
+            <div class="ticket-cell"><span class="cell-label">Contact Mobile</span><span class="cell-value"
+                id="pass-phone">-</span></div>
+            <div class="ticket-cell"><span class="cell-label">City</span><span class="cell-value"
+                id="pass-city">Pune</span></div>
+            <div class="ticket-cell"><span class="cell-label">Entry / Stage Time</span><span class="cell-value">Gate A |
+                5:30 PM</span></div>
             <div class="qr-area">
               <div class="qr-container">
-                <img id="qr-img" class="qr-placeholder" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PX-2026-CONFIRMED" alt="Ticket QR Code" />
+                <img id="qr-img" class="qr-placeholder"
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PX-2026-CONFIRMED"
+                  alt="Ticket QR Code" />
               </div>
               <div class="scan-msg">Verify at Entrance Gate</div>
             </div>
@@ -139,10 +651,14 @@
         <section class="footer-info" aria-label="Event Information">
           <div class="info-card">
             <h3>Official Setlist Schedule</h3>
-            <div class="lineup-item"><span class="lineup-time">06:30 PM</span><span class="lineup-act">Intro DJ Set - Arena Warmup</span></div>
-            <div class="lineup-item"><span class="lineup-time">07:45 PM</span><span class="lineup-act">The Metal Shadows - Live Set</span></div>
-            <div class="lineup-item"><span class="lineup-time">09:15 PM</span><span class="lineup-act">Aisha Roy - Headline Performance</span></div>
-            <div class="lineup-item"><span class="lineup-time">11:00 PM</span><span class="lineup-act">Closing Visual Grand Finale</span></div>
+            <div class="lineup-item"><span class="lineup-time">06:30 PM</span><span class="lineup-act">Intro DJ Set -
+                Arena Warmup</span></div>
+            <div class="lineup-item"><span class="lineup-time">07:45 PM</span><span class="lineup-act">The Metal Shadows
+                - Live Set</span></div>
+            <div class="lineup-item"><span class="lineup-time">09:15 PM</span><span class="lineup-act">Aisha Roy -
+                Headline Performance</span></div>
+            <div class="lineup-item"><span class="lineup-time">11:00 PM</span><span class="lineup-act">Closing Visual
+                Grand Finale</span></div>
           </div>
           <div class="info-card">
             <h3>Security &amp; Rules</h3>
@@ -157,8 +673,10 @@
       </div>
       <footer class="site-footer">
         <div class="footer-logo">Phoenix Live '26</div>
-        <p class="footer-text">This is an automated receipt and official entry document.<br />Location: Pune Arena Ground, Sector 4, Pune, MH 411001</p>
-        <div class="footer-links"><a href="#">Support Center</a><a href="#">Privacy Policy</a><a href="#">Terms of Event</a></div>
+        <p class="footer-text">This is an automated receipt and official entry document.<br />Location: Pune Arena
+          Ground, Sector 4, Pune, MH 411001</p>
+        <div class="footer-links"><a href="#">Support Center</a><a href="#">Privacy Policy</a><a href="#">Terms of
+            Event</a></div>
         <div class="copyright">&copy; 2026 Phoenix Events India Ltd. All rights reserved.</div>
       </footer>
     </div>
@@ -428,4 +946,5 @@
     initTicketPage();
   </script>
 </body>
+
 </html>

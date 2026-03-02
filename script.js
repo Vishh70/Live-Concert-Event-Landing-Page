@@ -112,8 +112,35 @@
     };
 
     const getBaseUrl = ({ forEmail = false } = {}) => {
-        const raw = forEmail ? CONFIG.APP.PROD_BASE_URL : window.location.origin;
-        return String(raw || '').replace(/\/+$/, '');
+        const configuredProdBase = String(CONFIG.APP.PROD_BASE_URL || '').replace(/\/+$/, '');
+        if (forEmail) {
+            return configuredProdBase;
+        }
+
+        const runtimeOrigin = String(window.location.origin || '').replace(/\/+$/, '');
+        if (!runtimeOrigin) {
+            return configuredProdBase;
+        }
+
+        // On GitHub Pages project sites, window.location.origin points to the user root
+        // (https://<user>.github.io). We must preserve the repository path segment.
+        try {
+            const prodUrl = new URL(`${configuredProdBase}/`);
+            if (
+                window.location.hostname.includes('github.io') &&
+                window.location.hostname === prodUrl.hostname
+            ) {
+                const repoPath = prodUrl.pathname.replace(/\/+$/, '');
+                if (repoPath && repoPath !== '/') {
+                    return `${runtimeOrigin}${repoPath}`;
+                }
+                return configuredProdBase;
+            }
+        } catch {
+            // Fallback to runtime origin when PROD_BASE_URL is malformed.
+        }
+
+        return runtimeOrigin;
     };
 
     const buildTicketUrl = (ticketData, { forEmail = false, autodownload = '' } = {}) => {
