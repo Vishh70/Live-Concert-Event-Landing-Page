@@ -103,7 +103,16 @@
         <li><a href="#rules-faq">FAQ</a></li>
       </ul>
     </nav>
-    <a class="btn btn--small" href="#register">Register</a>
+    <div class="header-actions">
+      <button class="btn btn--small btn--account" id="account-badge" type="button" aria-label="Account">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        <span id="account-badge-label">Sign In</span>
+      </button>
+      <a class="btn btn--small" href="#register">Register</a>
+    </div>
     <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="primary-nav">
       <span></span><span></span><span></span>
     </button>
@@ -349,6 +358,18 @@
           </aside>
 
           <div class="register-form-wrap">
+            <!-- Auth Gate: shown when user has no account -->
+            <div id="auth-gate" class="auth-gate" hidden>
+              <div class="auth-gate__content glass">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <h3>Create Your Account First</h3>
+                <p>Register a free Phoenix Tribe account to book tickets, receive e-tickets, and track your history.</p>
+                <button class="btn" id="auth-gate-btn" type="button">Create Account</button>
+              </div>
+            </div>
             <form id="register-form" class="register-form" novalidate aria-describedby="register-trust register-status">
               <label for="full-name">
                 Full Name
@@ -767,9 +788,99 @@
     </div>
   </div>
 
+  <!-- Account Registration Modal -->
+  <div id="account-modal" class="modal-overlay" aria-hidden="true" hidden>
+    <div class="modal-content glass account-modal-content">
+      <div class="modal-header">
+        <div class="success-icon account-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <line x1="20" y1="8" x2="20" y2="14" />
+            <line x1="23" y1="11" x2="17" y2="11" />
+          </svg>
+        </div>
+        <h2 id="account-modal-title">Join the Phoenix Tribe</h2>
+        <p>Create your account to book tickets and track your history.</p>
+      </div>
+      <div class="modal-body">
+        <form id="account-form" class="register-form" novalidate>
+          <label for="acct-name">
+            Full Name
+            <input id="acct-name" type="text" name="acctName" autocomplete="name" minlength="2" required />
+          </label>
+          <label for="acct-email">
+            Email
+            <input id="acct-email" type="email" name="acctEmail" autocomplete="email" required />
+          </label>
+          <label for="acct-phone">
+            Phone
+            <input id="acct-phone" type="tel" name="acctPhone" autocomplete="tel" inputmode="tel" minlength="8"
+              maxlength="20" pattern="[0-9+\-() ]{8,20}" required />
+          </label>
+          <label for="acct-city">
+            City (Optional)
+            <input id="acct-city" type="text" name="acctCity" autocomplete="address-level2" maxlength="40" />
+          </label>
+          <button class="btn register-submit" type="submit">Create My Account</button>
+        </form>
+        <p id="account-status" class="register-status" aria-live="polite" role="status"></p>
+
+        <!-- Logged-in Profile View (toggled after login) -->
+        <div id="account-profile-view" class="account-profile-view" hidden>
+          <div class="profile-card glass">
+            <div class="profile-avatar" id="profile-avatar">A</div>
+            <h3 id="profile-display-name">---</h3>
+            <p id="profile-display-email">---</p>
+            <p id="profile-display-phone">---</p>
+          </div>
+          <div class="profile-actions">
+            <button class="btn btn--ghost" id="view-history-btn" type="button">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 8v4l3 3" />
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+              My Ticket History
+            </button>
+            <button class="btn btn--ghost btn--danger" id="logout-btn" type="button">Sign Out</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="account-modal-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket History Modal -->
+  <div id="history-modal" class="modal-overlay" aria-hidden="true" hidden>
+    <div class="modal-content glass history-modal-content">
+      <div class="modal-header">
+        <div class="success-icon history-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 8v4l3 3" />
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+        </div>
+        <h2>My Ticket History</h2>
+        <p>All your past registrations and e-tickets.</p>
+      </div>
+      <div class="modal-body">
+        <div id="history-list" class="history-list">
+          <p class="history-empty" id="history-empty">No tickets yet. Register for an event to see your history here!
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--ghost" id="history-clear-btn" type="button">Clear History</button>
+        <button class="btn" id="history-modal-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Email Automation SDK (EmailJS) -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="script.js?v=20260302-5" defer></script>
+  <script src="script.js?v=20260302-6" defer></script>
 </body>
 
 </html>

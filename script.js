@@ -21,7 +21,9 @@
         STORAGE: {
             DRAFT: 'epic2003.registerDraft.v1',
             PLANNER: 'epic2003.planner.v1',
-            CONFIRMED_TICKET: 'epic2003.confirmedTicket.v1'
+            CONFIRMED_TICKET: 'epic2003.confirmedTicket.v1',
+            USER_PROFILE: 'epic2003.userProfile.v1',
+            PURCHASE_HISTORY: 'epic2003.purchaseHistory.v1'
         },
         UI: {
             MOBILE_BREAKPOINT: 860,
@@ -241,6 +243,58 @@
         } catch {
             // Ignore storage errors.
         }
+    };
+
+    /* ---- Account Profile Helpers ---- */
+    const readUserProfile = () => {
+        try {
+            const raw = window.localStorage.getItem(CONFIG.STORAGE.USER_PROFILE);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' && parsed.name ? parsed : null;
+        } catch { return null; }
+    };
+
+    const writeUserProfile = (profile) => {
+        try {
+            if (!profile) {
+                window.localStorage.removeItem(CONFIG.STORAGE.USER_PROFILE);
+                return;
+            }
+            window.localStorage.setItem(CONFIG.STORAGE.USER_PROFILE, JSON.stringify(profile));
+        } catch { /* ignore */ }
+    };
+
+    const readPurchaseHistory = () => {
+        try {
+            const raw = window.localStorage.getItem(CONFIG.STORAGE.PURCHASE_HISTORY);
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch { return []; }
+    };
+
+    const writePurchaseHistory = (history) => {
+        try {
+            if (!history || !history.length) {
+                window.localStorage.removeItem(CONFIG.STORAGE.PURCHASE_HISTORY);
+                return;
+            }
+            window.localStorage.setItem(CONFIG.STORAGE.PURCHASE_HISTORY, JSON.stringify(history));
+        } catch { /* ignore */ }
+    };
+
+    const addToHistory = (ticket) => {
+        const history = readPurchaseHistory();
+        const entry = {
+            ...ticket,
+            orderId: 'PX-' + Math.floor(Math.random() * 9000 + 1000),
+            date: new Date().toISOString(),
+            id: Date.now()
+        };
+        history.unshift(entry);
+        writePurchaseHistory(history);
+        return entry;
     };
 
     const formatIcsDateUtc = (date) => {
@@ -854,6 +908,9 @@
                     lastConfirmedTicket = confirmedTicket;
                     writeConfirmedTicket(lastConfirmedTicket);
 
+                    // Save to purchase history
+                    addToHistory(confirmedTicket);
+
                     // Also update dataset as fallback
                     if (viewEmailBtn) {
                         viewEmailBtn.dataset.name = name;
@@ -965,6 +1022,263 @@
                 registerStatus.className = 'register-status';
             }
         });
+    }
+
+    /* ========== Account System ========== */
+    const accountBadge = document.getElementById('account-badge');
+    const accountBadgeLabel = document.getElementById('account-badge-label');
+    const accountModal = document.getElementById('account-modal');
+    const accountForm = document.getElementById('account-form');
+    const accountStatus = document.getElementById('account-status');
+    const accountModalClose = document.getElementById('account-modal-close');
+    const accountModalTitle = document.getElementById('account-modal-title');
+    const accountProfileView = document.getElementById('account-profile-view');
+    const profileAvatar = document.getElementById('profile-avatar');
+    const profileDisplayName = document.getElementById('profile-display-name');
+    const profileDisplayEmail = document.getElementById('profile-display-email');
+    const profileDisplayPhone = document.getElementById('profile-display-phone');
+    const logoutBtn = document.getElementById('logout-btn');
+    const viewHistoryBtn = document.getElementById('view-history-btn');
+    const authGate = document.getElementById('auth-gate');
+    const authGateBtn = document.getElementById('auth-gate-btn');
+
+    const historyModal = document.getElementById('history-modal');
+    const historyList = document.getElementById('history-list');
+    const historyEmpty = document.getElementById('history-empty');
+    const historyClearBtn = document.getElementById('history-clear-btn');
+    const historyModalClose = document.getElementById('history-modal-close');
+
+    const openModal = (modal) => {
+        if (!modal) return;
+        modal.hidden = false;
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = (modal) => {
+        if (!modal) return;
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+            modal.hidden = true;
+            modal.setAttribute('aria-hidden', 'true');
+            modal.classList.remove('fade-out');
+            document.body.style.overflow = '';
+        }, 400);
+    };
+
+    const syncAccountUI = () => {
+        const profile = readUserProfile();
+        const isLoggedIn = !!profile;
+
+        // Header badge
+        if (accountBadge && accountBadgeLabel) {
+            if (isLoggedIn) {
+                const first = profile.name.charAt(0).toUpperCase();
+                accountBadgeLabel.textContent = profile.name.split(' ')[0];
+                accountBadge.classList.add('logged-in');
+            } else {
+                accountBadgeLabel.textContent = 'Sign In';
+                accountBadge.classList.remove('logged-in');
+            }
+        }
+
+        // Auth gate on ticket form
+        if (authGate) {
+            authGate.hidden = isLoggedIn;
+        }
+
+        // Account modal: toggle form vs profile view
+        if (accountForm && accountProfileView) {
+            if (isLoggedIn) {
+                accountForm.hidden = true;
+                accountProfileView.hidden = false;
+                if (accountModalTitle) accountModalTitle.textContent = 'Your Profile';
+                if (profileAvatar) profileAvatar.textContent = profile.name.charAt(0).toUpperCase();
+                if (profileDisplayName) profileDisplayName.textContent = profile.name;
+                if (profileDisplayEmail) profileDisplayEmail.textContent = profile.email || '---';
+                if (profileDisplayPhone) profileDisplayPhone.textContent = profile.phone || '---';
+            } else {
+                accountForm.hidden = false;
+                accountProfileView.hidden = true;
+                if (accountModalTitle) accountModalTitle.textContent = 'Join the Phoenix Tribe';
+            }
+        }
+
+        // Auto-fill ticket form if logged in
+        if (isLoggedIn && registerForm) {
+            const nameField = registerForm.querySelector('[name="fullName"]');
+            const emailField = registerForm.querySelector('[name="email"]');
+            const phoneField = registerForm.querySelector('[name="phone"]');
+            const cityField = registerForm.querySelector('[name="city"]');
+            if (nameField && !nameField.value) nameField.value = profile.name || '';
+            if (emailField && !emailField.value) emailField.value = profile.email || '';
+            if (phoneField && !phoneField.value) phoneField.value = profile.phone || '';
+            if (cityField && !cityField.value) cityField.value = profile.city || '';
+        }
+    };
+
+    // Initialize account UI
+    syncAccountUI();
+
+    // Account badge click -> open account modal
+    if (accountBadge) {
+        accountBadge.addEventListener('click', () => {
+            syncAccountUI();
+            openModal(accountModal);
+        });
+    }
+
+    // Auth gate click -> open account modal
+    if (authGateBtn) {
+        authGateBtn.addEventListener('click', () => {
+            openModal(accountModal);
+        });
+    }
+
+    // Account form submission
+    if (accountForm && accountStatus) {
+        accountForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(accountForm);
+            const name = String(formData.get('acctName') || '').trim();
+            const email = String(formData.get('acctEmail') || '').trim();
+            const phone = String(formData.get('acctPhone') || '').trim();
+            const city = String(formData.get('acctCity') || '').trim();
+
+            if (!name || name.length < 2) {
+                accountStatus.textContent = 'Please enter your full name (min 2 characters).';
+                accountStatus.className = 'register-status error';
+                return;
+            }
+            if (!email || !/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+                accountStatus.textContent = 'Please enter a valid email address.';
+                accountStatus.className = 'register-status error';
+                return;
+            }
+            if (!phone || phone.length < 8) {
+                accountStatus.textContent = 'Please enter a valid phone number.';
+                accountStatus.className = 'register-status error';
+                return;
+            }
+
+            const profile = { name, email, phone, city, createdAt: new Date().toISOString() };
+            writeUserProfile(profile);
+            accountStatus.textContent = 'Account created! Welcome to the Phoenix Tribe!';
+            accountStatus.className = 'register-status';
+            syncAccountUI();
+
+            setTimeout(() => {
+                accountStatus.textContent = '';
+            }, 3000);
+        });
+    }
+
+    // Account modal close
+    if (accountModalClose) {
+        accountModalClose.addEventListener('click', () => closeModal(accountModal));
+    }
+
+    // Logout
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            writeUserProfile(null);
+            syncAccountUI();
+            if (accountForm) accountForm.reset();
+            closeModal(accountModal);
+        });
+    }
+
+    // History rendering
+    const renderHistory = () => {
+        if (!historyList || !historyEmpty) return;
+        const history = readPurchaseHistory();
+
+        // Remove old ticket cards
+        historyList.querySelectorAll('.history-ticket').forEach(el => el.remove());
+
+        if (!history.length) {
+            historyEmpty.hidden = false;
+            return;
+        }
+
+        historyEmpty.hidden = true;
+
+        history.forEach((ticket) => {
+            const card = document.createElement('div');
+            card.className = 'history-ticket';
+
+            const dateStr = ticket.date ? new Date(ticket.date).toLocaleDateString('en-IN', {
+                day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            }) : 'Unknown';
+
+            card.innerHTML = `
+                <div class="history-ticket__header">
+                    <span class="history-ticket__id">#${ticket.orderId || 'PX-0000'}</span>
+                    <span class="history-ticket__date">${dateStr}</span>
+                </div>
+                <div class="history-ticket__details">
+                    <div class="history-ticket__field">
+                        <span class="history-ticket__label">Name</span>
+                        <span class="history-ticket__value">${ticket.name || '---'}</span>
+                    </div>
+                    <div class="history-ticket__field">
+                        <span class="history-ticket__label">Pass</span>
+                        <span class="history-ticket__value">${ticket.pass || '---'}</span>
+                    </div>
+                    <div class="history-ticket__field">
+                        <span class="history-ticket__label">Qty</span>
+                        <span class="history-ticket__value">${ticket.qty || '1'}</span>
+                    </div>
+                    <div class="history-ticket__field">
+                        <span class="history-ticket__label">Email</span>
+                        <span class="history-ticket__value">${ticket.email || '---'}</span>
+                    </div>
+                </div>
+                <div class="history-ticket__actions">
+                    <button class="btn btn--ghost btn--small history-view-ticket" data-ticket='${JSON.stringify(ticket)}' type="button">View E-Ticket</button>
+                </div>
+            `;
+
+            // View E-Ticket button
+            const viewBtn = card.querySelector('.history-view-ticket');
+            if (viewBtn) {
+                viewBtn.addEventListener('click', () => {
+                    try {
+                        const data = JSON.parse(viewBtn.dataset.ticket);
+                        const ticketUrl = buildTicketUrl(data, { forEmail: false });
+                        window.open(ticketUrl, '_blank', 'noopener');
+                    } catch (err) {
+                        console.error('Could not open ticket:', err);
+                    }
+                });
+            }
+
+            historyList.appendChild(card);
+        });
+    };
+
+    // View History button
+    if (viewHistoryBtn) {
+        viewHistoryBtn.addEventListener('click', () => {
+            closeModal(accountModal);
+            setTimeout(() => {
+                renderHistory();
+                openModal(historyModal);
+            }, 450);
+        });
+    }
+
+    // History clear
+    if (historyClearBtn) {
+        historyClearBtn.addEventListener('click', () => {
+            writePurchaseHistory([]);
+            renderHistory();
+        });
+    }
+
+    // History modal close
+    if (historyModalClose) {
+        historyModalClose.addEventListener('click', () => closeModal(historyModal));
     }
 
     if (requestField && requestCounter) {

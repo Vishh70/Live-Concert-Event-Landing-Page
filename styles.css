@@ -2728,3 +2728,275 @@ details p {
     display: none;
   }
 }
+
+/* ========== Header Actions ========== */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn--account {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  box-shadow: none;
+  font-size: 0.78rem;
+  color: var(--cyan);
+  transition: all 0.3s var(--ease-soft);
+}
+
+.btn--account svg {
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.btn--account:hover,
+.btn--account:focus-visible {
+  background: rgba(34, 211, 238, 0.22);
+  border-color: var(--cyan);
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn--account.logged-in {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(154, 107, 255, 0.18));
+  border-color: rgba(154, 107, 255, 0.4);
+  color: var(--text-base);
+}
+
+/* ========== Auth Gate ========== */
+.auth-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 18, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+}
+
+.auth-gate__content {
+  text-align: center;
+  padding: 40px 32px;
+  border-radius: var(--radius-lg);
+  max-width: 380px;
+}
+
+.auth-gate__content svg {
+  margin: 0 auto 16px;
+  color: var(--amber);
+  filter: drop-shadow(0 0 16px rgba(255, 179, 71, 0.4));
+}
+
+.auth-gate__content h3 {
+  margin: 0 0 8px;
+  font-family: var(--ff-display);
+  font-size: 1.8rem;
+  letter-spacing: 0.04em;
+  color: var(--text-base);
+}
+
+.auth-gate__content p {
+  margin: 0 0 20px;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* ========== Account Modal ========== */
+.account-modal-content {
+  max-width: 480px;
+}
+
+.account-icon svg {
+  color: var(--plum);
+  filter: drop-shadow(0 0 20px rgba(154, 107, 255, 0.5));
+}
+
+.account-profile-view {
+  text-align: center;
+}
+
+.profile-card {
+  padding: 28px 24px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: var(--grad-action);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ff-display);
+  font-size: 1.6rem;
+  color: #fff;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 20px rgba(111, 125, 255, 0.35);
+}
+
+.profile-card h3 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+  color: var(--text-base);
+}
+
+.profile-card p {
+  margin: 0 0 2px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.profile-actions .btn svg {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.btn--danger {
+  color: #fb7185 !important;
+  border-color: rgba(251, 113, 133, 0.4) !important;
+}
+
+.btn--danger:hover,
+.btn--danger:focus-visible {
+  background: rgba(251, 113, 133, 0.14) !important;
+  border-color: #fb7185 !important;
+}
+
+/* ========== History Modal ========== */
+.history-modal-content {
+  max-width: 560px;
+}
+
+.history-icon svg {
+  color: var(--amber);
+  filter: drop-shadow(0 0 20px rgba(255, 179, 71, 0.5));
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.history-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.3);
+  border-radius: 999px;
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px 16px;
+  font-size: 0.92rem;
+}
+
+.history-ticket {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  border: var(--border-subtle);
+  background: var(--grad-surface);
+  transition: all 0.3s var(--ease-soft);
+}
+
+.history-ticket:hover {
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.history-ticket__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.history-ticket__id {
+  font-family: var(--ff-display);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: var(--cyan);
+}
+
+.history-ticket__date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.history-ticket__details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 14px;
+}
+
+.history-ticket__field {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-ticket__label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.history-ticket__value {
+  font-size: 0.88rem;
+  color: var(--text-base);
+  font-weight: 600;
+}
+
+.history-ticket__actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.history-ticket__actions .btn {
+  padding: 6px 14px;
+  font-size: 0.72rem;
+}
+
+/* ========== Register form wrap: relative for auth gate ========== */
+.register-form-wrap {
+  position: relative;
+}
+
+@media (max-width: 860px) {
+  .header-actions {
+    display: none;
+  }
+
+  .btn--account {
+    display: none;
+  }
+}
