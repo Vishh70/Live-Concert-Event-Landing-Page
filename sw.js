@@ -1,4 +1,4 @@
-const CACHE_NAME = 'epic2003-shell-v9';
+const CACHE_NAME = 'epic2003-shell-v11';
 const APP_SHELL = [
   './',
   './index.html',
@@ -38,8 +38,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Never cache or intercept the e-ticket page (it needs live query params)
-  if (url.pathname.includes('email-template')) return;
+  // Never cache or intercept ticket pages (they need live query params)
+  if (/\/(?:email-template|ticket)(?:\.html|\/|$)/.test(url.pathname)) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(

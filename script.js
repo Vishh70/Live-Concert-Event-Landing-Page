@@ -752,8 +752,13 @@
                     console.warn("View E-ticket clicked but no registration data found.");
                 }
 
-                const url = `ticket.html?name=${encodeURIComponent(data.name)}&pass=${encodeURIComponent(data.pass)}&qty=${encodeURIComponent(data.qty)}&email=${encodeURIComponent(data.email)}`;
-                window.open(url, '_blank');
+                const ticketUrl = new URL('/email-template.html', window.location.origin);
+                ticketUrl.searchParams.set('name', String(data.name || 'Attendee'));
+                ticketUrl.searchParams.set('pass', String(data.pass || 'General Admission'));
+                ticketUrl.searchParams.set('qty', String(data.qty || '1'));
+                ticketUrl.searchParams.set('email', String(data.email || ''));
+                ticketUrl.searchParams.set('_v', String(Date.now()));
+                window.open(ticketUrl.toString(), '_blank', 'noopener');
             });
         }
 

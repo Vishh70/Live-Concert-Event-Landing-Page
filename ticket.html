@@ -1,827 +1,393 @@
+﻿
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PHOENIX LIVE '26 - Official E-Ticket & Receipt</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;800;900&display=swap"
-        rel="stylesheet" />
-
-    <style>
-        /* ============================================
-           ROOT & COLOR SYSTEM
-        ============================================ */
-        :root {
-            --primary: #0f172a;
-            --brand: #38bdf8;
-            --brand-alt: #818cf8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --bg-light: #f1f5f9;
-            --surface: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-
-        /* ============================================
-           BASE RESET
-        ============================================ */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html,
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        /* ============================================
-           DOCUMENT WRAPPER
-        ============================================ */
-        .page-container {
-            max-width: 680px;
-            margin: 40px auto;
-            background: var(--surface);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border);
-            position: relative;
-        }
-
-        /* ============================================
-           PREMIUM HEADER
-        ============================================ */
-        .main-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 60px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .main-header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.1), transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(129, 140, 248, 0.1), transparent 50%);
-            pointer-events: none;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .brand-name {
-            font-family: 'Outfit', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--brand);
-            letter-spacing: 5px;
-            text-transform: uppercase;
-        }
-
-        .partner-seal {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            padding: 8px 16px;
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-align: left;
-            backdrop-filter: blur(4px);
-        }
-
-        .partner-seal b {
-            color: var(--brand);
-            display: block;
-            margin-top: 2px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 50px;
-            padding: 10px 24px;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ============================================
-           CONTENT BODY
-        ============================================ */
-        .content-body {
-            padding: 40px 40px 20px;
-        }
-
-        .hero-msg {
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .hero-msg h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 34px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-        }
-
-        .hero-msg p {
-            font-size: 16px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        /* ============================================
-           INVOICE/RECEIPT SECTION
-        ============================================ */
-        .receipt-section {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 40px;
-            position: relative;
-        }
-
-        .section-label {
-            font-size: 11px;
-            font-weight: 800;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .receipt-grid {
-            border-top: 1px solid var(--border);
-        }
-
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px dashed var(--border);
-            font-size: 14px;
-        }
-
-        .receipt-row:last-child {
-            border-bottom: none;
-        }
-
-        .receipt-row .label {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .receipt-row .value {
-            color: var(--text-main);
-            font-weight: 700;
-            text-align: right;
-        }
-
-        .total-strip {
-            margin-top: 10px;
-            padding-top: 20px;
-            border-top: 2px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .total-strip .total-label {
-            font-size: 18px;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        .total-strip .total-status {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--success);
-            background: rgba(16, 185, 129, 0.1);
-            padding: 6px 14px;
-            border-radius: 8px;
-        }
-
-        /* ============================================
-           OFFICIAL TICKET CARD
-        ============================================ */
-        .ticket-box {
-            border: 2px solid #0f172a;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-            background: #ffffff;
-        }
-
-        .ticket-top {
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            color: #ffffff;
-            padding: 18px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ticket-top .pass-badge {
-            font-family: 'Outfit', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .ticket-top .serial-badge {
-            font-size: 12px;
-            font-weight: 700;
-            background: rgba(0, 0, 0, 0.15);
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-
-        .ticket-main {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            padding: 0;
-        }
-
-        .ticket-cell {
-            padding: 22px 24px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .ticket-cell:nth-child(odd) {
-            border-right: 1px solid #f1f5f9;
-        }
-
-        .cell-label {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .cell-value {
-            font-size: 16px;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        .qr-area {
-            grid-column: span 2;
-            background: #fafafa;
-            border-top: 2px dashed var(--border);
-            padding: 30px;
-            text-align: center;
-        }
-
-        .qr-container {
-            display: inline-block;
-            background: #ffffff;
-            padding: 15px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-        }
-
-        .qr-placeholder {
-            width: 140px;
-            height: 140px;
-            display: block;
-        }
-
-        .scan-msg {
-            margin-top: 15px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* ============================================
-           SCHEDULE & RULES
-        ============================================ */
-        .footer-info {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-
-        .info-card {
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 25px;
-        }
-
-        .info-card h3 {
-            font-size: 15px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .lineup-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .lineup-time {
-            min-width: 80px;
-            font-weight: 800;
-            color: var(--brand);
-        }
-
-        .lineup-act {
-            color: var(--text-main);
-            font-weight: 500;
-        }
-
-        .rules-list {
-            list-style: none;
-        }
-
-        .rules-list li {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .rules-list li::before {
-            content: '✓';
-            color: var(--brand);
-            font-weight: 900;
-        }
-
-        /* ============================================
-           DOWNLOAD INTERACTIVE AREA
-        ============================================ */
-        .action-area {
-            background: #f1f5f9;
-            padding: 50px 40px;
-            text-align: center;
-            border-top: 1px solid var(--border);
-        }
-
-        .download-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: #0f172a;
-            color: #ffffff;
-            padding: 22px 40px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 900;
-            width: 100%;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .download-button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.3);
-            opacity: 0.95;
-        }
-
-        .download-button:active {
-            transform: translateY(0);
-        }
-
-        .download-button span.icon {
-            margin-right: 15px;
-            font-size: 22px;
-        }
-
-        /* ============================================
-           FOOTER
-        ============================================ */
-        .site-footer {
-            padding: 40px;
-            background: #ffffff;
-            border-top: 1px solid var(--border);
-            text-align: center;
-        }
-
-        .footer-logo {
-            font-family: 'Outfit', sans-serif;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--brand);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-        }
-
-        .footer-text {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .footer-links {
-            margin-top: 20px;
-            font-size: 12px;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: 600;
-        }
-
-        .footer-links a:hover {
-            color: var(--brand);
-        }
-
-        .copyright {
-            margin-top: 25px;
-            font-size: 11px;
-            color: #cbd5e1;
-        }
-
-        /* ============================================
-           ANIMATIONS & OVERRIDES
-        ============================================ */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .page-container {
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        /* html2pdf handles data-html2canvas-ignore internally - no CSS needed */
-
-        @media print {
-            body {
-                background: white;
-                margin: 0;
-            }
-
-            .page-container {
-                margin: 0;
-                box-shadow: none;
-                border: none;
-                border-radius: 0;
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-
-            .action-area {
-                display: none !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>PHOENIX LIVE '26 - Official E-Ticket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg1:#030712; --bg2:#0f172a; --surface:#0b1222; --line:rgba(148,163,184,.24);
+      --text:#e2e8f0; --muted:#94a3b8; --dim:#64748b; --cyan:#22d3ee; --indigo:#6366f1;
+      --success:#34d399; --danger:#fb7185; --shadow:0 24px 60px rgba(2,6,23,.5);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);overflow-x:hidden;
+      background:radial-gradient(1100px 420px at 18% -8%,rgba(34,211,238,.16),transparent 62%),
+      radial-gradient(960px 420px at 82% 10%,rgba(99,102,241,.2),transparent 60%),
+      linear-gradient(180deg,var(--bg1),var(--bg2));}
+    .page-frame{max-width:760px;margin:30px auto 56px;padding:0 16px}
+    .ticket-error{display:none;margin-bottom:16px;padding:14px 16px;border-radius:12px;border:1px solid rgba(251,113,133,.45);background:rgba(127,29,29,.25);color:#fecdd3;font-weight:700;text-align:center}
+    .ticket-error.show{display:block}
+    #ticket-container.arena-pass{border-radius:26px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(8,15,30,.88),rgba(10,19,35,.96));box-shadow:var(--shadow);overflow:hidden}
+    .main-header{position:relative;padding:46px 34px;background:linear-gradient(126deg,#07132d,#102347 64%,#162d59);border-bottom:1px solid var(--line)}
+    .main-header::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 48%,rgba(34,211,238,.17),transparent 48%),radial-gradient(circle at 84% 40%,rgba(99,102,241,.24),transparent 53%);pointer-events:none}
+    .header-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+    .brand-name{font-family:'Outfit',sans-serif;font-size:clamp(30px,4vw,46px);letter-spacing:.14em;font-weight:900;color:#38bdf8;text-transform:uppercase}
+    .partner-seal{border-radius:14px;padding:10px 14px;border:1px solid rgba(56,189,248,.42);background:rgba(30,41,59,.5);font-size:11px;letter-spacing:.06em;font-weight:700;text-transform:uppercase;line-height:1.35}
+    .partner-seal b{color:#38bdf8}
+    .status-badge{position:relative;z-index:1;display:inline-flex;justify-content:center;align-items:center;margin:0 auto;padding:10px 24px;border-radius:999px;border:1px solid rgba(52,211,153,.5);background:rgba(6,78,59,.34);color:#6ee7b7;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .content-body{padding:34px}
+    .hero-msg{text-align:center;margin-bottom:28px}
+    .hero-msg h1{font-family:'Outfit',sans-serif;font-size:clamp(32px,4vw,46px);line-height:1.08;margin-bottom:10px;letter-spacing:-.03em}
+    .hero-msg p{margin:0 auto;max-width:620px;color:var(--muted);font-size:17px;line-height:1.62}
+    .receipt-section{border-radius:20px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(17,27,49,.7),rgba(12,23,41,.85));padding:22px;margin-bottom:24px}
+    .section-label{display:block;margin-bottom:14px;color:#7dd3fc;font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+    .receipt-grid{border-top:1px solid var(--line)}
+    .receipt-row{display:flex;justify-content:space-between;gap:18px;padding:13px 0;border-bottom:1px dashed var(--line);font-size:15px}
+    .receipt-row .label{color:var(--muted)} .receipt-row .value{font-weight:700;text-align:right;word-break:break-word}
+    .total-strip{margin-top:12px;padding-top:14px;border-top:1px solid rgba(148,163,184,.38);display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .total-label{font-size:18px;font-weight:800} .total-status{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;border-radius:10px;padding:7px 12px;color:#86efac;border:1px solid rgba(74,222,128,.4);background:rgba(6,78,59,.28)}
+    .ticket-box{border:1px solid rgba(96,165,250,.5);border-radius:20px;overflow:hidden;margin-bottom:24px;background:linear-gradient(180deg,#0f1d36,#0d172b)}
+    .ticket-top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px;background:linear-gradient(90deg,#2563eb,var(--indigo));border-bottom:1px solid rgba(148,163,184,.36)}
+    .ticket-top .pass-badge{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#eaf1ff}
+    .ticket-top .serial-badge{font-size:11px;color:#dbeafe;font-weight:800;letter-spacing:.06em}
+    .ticket-main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:1px dashed var(--line)}
+    .ticket-cell{padding:14px 16px;border-bottom:1px dashed var(--line)}
+    .ticket-cell:nth-child(odd){border-right:1px dashed var(--line)}
+    .cell-label{display:block;margin-bottom:8px;color:#93c5fd;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .cell-value{color:#f8fbff;font-size:18px;font-weight:800;line-height:1.3;word-break:break-word}
+    .qr-area{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;padding:22px 18px;gap:10px}
+    .qr-container{width:152px;height:152px;border-radius:12px;overflow:hidden;background:#f8fafc;border:1px solid rgba(148,163,184,.36);display:grid;place-items:center}
+    .qr-placeholder{width:136px;height:136px;display:block;object-fit:contain}
+    .scan-msg{color:#7dd3fc;font-size:12px;text-transform:uppercase;font-weight:800;letter-spacing:.18em;text-align:center}
+    .footer-info{display:grid;gap:14px}
+    .info-card{border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(15,27,47,.72),rgba(13,24,42,.82));padding:18px}
+    .info-card h3{font-family:'Outfit',sans-serif;font-size:22px;line-height:1.2;margin-bottom:14px;color:#e6edf7}
+    .lineup-item{display:flex;gap:12px;padding:7px 0} .lineup-time{width:98px;flex-shrink:0;color:#38bdf8;font-weight:800}
+    .lineup-act{color:#cbd5e1;line-height:1.4}
+    .rules-list{list-style:none} .rules-list li{position:relative;padding-left:16px;margin-bottom:9px;color:#cbd5e1;line-height:1.5}
+    .rules-list li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:#38bdf8}
+    .site-footer{border-top:1px solid var(--line);margin-top:26px;padding:24px 34px 28px;text-align:center;background:linear-gradient(180deg,rgba(8,14,27,.9),rgba(7,12,23,.95))}
+    .footer-logo{font-family:'Outfit',sans-serif;color:#38bdf8;font-size:21px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin-bottom:10px}
+    .footer-text{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:12px}
+    .footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-bottom:10px}
+    .footer-links a{color:#93c5fd;text-decoration:none;font-weight:700;font-size:13px}
+    .copyright{font-size:12px;color:var(--dim)}
+    .ticket-controls{margin-top:20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .control-btn{min-height:46px;border:0;border-radius:12px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;text-align:center;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;color:#e2e8f0;background:linear-gradient(92deg,#0f274d,#1d2e58);box-shadow:0 8px 22px rgba(3,7,18,.45);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+    .control-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(2,6,23,.6);filter:brightness(1.08)}
+    .control-btn:active{transform:translateY(0)}
+    .control-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+    .control-btn.primary{color:#031225;background:linear-gradient(92deg,var(--cyan),#60a5fa);box-shadow:0 10px 28px rgba(34,211,238,.32)}
+    .control-btn.secondary{background:linear-gradient(92deg,#1f3f66,#2a4e80)} .control-btn.tertiary{background:linear-gradient(92deg,#27335f,#3c3c8f)}
+    .control-btn.wallet{background:linear-gradient(92deg,#3f3f46,#52525b);color:#e5e7eb;cursor:not-allowed;opacity:.82}
+    .control-btn[disabled]{cursor:not-allowed;opacity:.6;transform:none;filter:none}
+    .action-status{min-height:24px;margin-top:12px;color:#7dd3fc;font-size:13px;text-align:center;font-weight:600;letter-spacing:.02em}
+    .action-status.error{color:#fda4af} .action-status.success{color:#86efac}
+    @media (max-width:980px){.ticket-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:760px){.page-frame{margin:20px auto 46px;padding:0 10px}.main-header{padding:30px 18px}.header-top{flex-direction:column;align-items:flex-start}.brand-name{letter-spacing:.09em}.content-body{padding:20px 16px}.site-footer{padding:20px 16px 24px}.ticket-main{grid-template-columns:1fr}.ticket-cell:nth-child(odd){border-right:none}.lineup-item{flex-direction:column;gap:4px}.lineup-time{width:auto}.ticket-controls{grid-template-columns:1fr}}
+  </style>
 </head>
-
 <body>
-
-    <div class="page-container" id="printable-ticket">
-
-        <!-- PRO HEADER -->
-        <header class="main-header">
-            <div class="header-top">
-                <div class="brand-name">PHOENIX LIVE</div>
-                <div class="partner-seal">
-                    OFFICIAL PARTNER
-                    <b>DEEP-SOUND RECORDS</b>
-                </div>
-            </div>
-            <div class="status-badge">Payment Verified • Confirmed</div>
-        </header>
-
-        <!-- MAIN BODY -->
-        <div class="content-body">
-
-            <!-- HERO TEXT -->
-            <div class="hero-msg">
-                <h1 id="greet-name">Hi Vishnu Aware,</h1>
-                <p>You're all set for the biggest night of the year! Below is your official e-ticket and entry pass for
-                    <b>Phoenix Live '26</b>. Please present the QR code at the main entrance.
-                </p>
-            </div>
-
-            <!-- RECEIPT -->
-            <div class="receipt-section">
-                <span class="section-label">Detailed Order Receipt</span>
-                <div class="receipt-grid">
-                    <div class="receipt-row">
-                        <span class="label">Reference Order ID</span>
-                        <span class="value" id="receipt-id">#PX-2026-67891</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="label">Booking Email</span>
-                        <span class="value" id="receipt-email">vishnuaware7066@gmail.com</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="label">Pass Category</span>
-                        <span class="value" id="receipt-pass">VIP ARENA PASS</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="label">Reserved Slots</span>
-                        <span class="value" id="receipt-qty">2 Person(s)</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="label">Processing Method</span>
-                        <span class="value">G-Pay / UPI Secured</span>
-                    </div>
-                </div>
-
-                <div class="total-strip">
-                    <span class="total-label">Total Amount Paid</span>
-                    <span class="total-status">PAID IN FULL</span>
-                </div>
-            </div>
-
-            <!-- OFFICIAL PASS -->
-            <div class="section-label">Official Venue Ticket</div>
-            <div class="ticket-box">
-                <div class="ticket-top">
-                    <span class="pass-badge">PHOENIX LIVE ARENA PASS</span>
-                    <span class="serial-badge" id="pass-id-badge">#PX-2026-67891</span>
-                </div>
-                <div class="ticket-main">
-                    <div class="ticket-cell">
-                        <span class="cell-label">Attendee Name</span>
-                        <span class="cell-value" id="pass-name">Vishnu Aware</span>
-                    </div>
-                    <div class="ticket-cell">
-                        <span class="cell-label">Event Venue</span>
-                        <span class="cell-value">Pune Arena, MH</span>
-                    </div>
-                    <div class="ticket-cell">
-                        <span class="cell-label">Category / Access</span>
-                        <span class="cell-value" id="pass-cat">VIP ARENA PASS</span>
-                    </div>
-                    <div class="ticket-cell">
-                        <span class="cell-label">Total Qty</span>
-                        <span class="cell-value" id="pass-total">2 Ticket(s)</span>
-                    </div>
-                    <div class="ticket-cell">
-                        <span class="cell-label">Entry Gate</span>
-                        <span class="cell-value">Gate A (VIP Entry)</span>
-                    </div>
-                    <div class="ticket-cell">
-                        <span class="cell-label">Stage Time</span>
-                        <span class="cell-value">5:30 PM Onwards</span>
-                    </div>
-
-                    <!-- QR Area -->
-                    <div class="qr-area">
-                        <div class="qr-container">
-                            <img id="qr-img" class="qr-placeholder"
-                                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PX-2026-CONFIRMED"
-                                alt="QR" />
-                        </div>
-                        <div class="scan-msg">Verify at Entrance Gate</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- EXTRA DETAILS -->
-            <div class="footer-info">
-                <div class="info-card">
-                    <h3><span>🔥</span> Official Setlist Schedule</h3>
-                    <div class="lineup-item">
-                        <span class="lineup-time">06:30 PM</span>
-                        <span class="lineup-act">Intro DJ Set — Arena Warmup</span>
-                    </div>
-                    <div class="lineup-item">
-                        <span class="lineup-time">07:45 PM</span>
-                        <span class="lineup-act">The Metal Shadows — Live Set</span>
-                    </div>
-                    <div class="lineup-item">
-                        <span class="lineup-time">09:15 PM</span>
-                        <span class="lineup-act">Aisha Roy — Headline Performance</span>
-                    </div>
-                    <div class="lineup-item">
-                        <span class="lineup-time">11:00 PM</span>
-                        <span class="lineup-act">Closing Visual Grand Finale</span>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <h3><span>⚠️</span> Security & Rules</h3>
-                    <ul class="rules-list">
-                        <li>Valid Govt-issued ID is mandatory at the gate.</li>
-                        <li>Outside food, drinks, and backpacks are prohibited.</li>
-                        <li>Professional cameras require a prior media pass.</li>
-                        <li>Parking is first-come, first-serve inside the Arena.</li>
-                    </ul>
-                </div>
-            </div>
-
-        </div> <!-- /content-body -->
-
-        <!-- INTERACTIVE AREA -->
-        <div class="action-area" data-html2canvas-ignore="true">
-            <button class="download-button" id="download-trigger">
-                <span class="icon">⬇</span>
-                <span id="btn-text">DOWNLOAD FULL PDF TICKET</span>
-            </button>
-            <p style="margin-top:20px; font-size: 13px; color: var(--text-muted);">
-                Trouble downloading? <a href="javascript:window.print()"
-                    style="color:var(--brand); text-decoration: none; font-weight: 700;">Click to Print</a>
-            </p>
+  <main class="page-frame" aria-label="Phoenix Live Ticket Page">
+    <div id="ticket-error" class="ticket-error" role="alert" aria-live="assertive">Invalid Ticket URL</div>
+    <div id="ticket-container" class="arena-pass">
+      <header class="main-header">
+        <div class="header-top">
+          <div class="brand-name">Phoenix Live</div>
+          <div class="partner-seal">Official Partner <b>Deep-Sound Records</b></div>
         </div>
-
-        <!-- FOOTER -->
-        <footer class="site-footer">
-            <div class="footer-logo">PHOENIX LIVE '26</div>
-            <p class="footer-text">This is an automated receipt and official entry document. No further action
-                needed.<br>Location: Pune Arena Ground, Sector 4, Pune, MH 411001</p>
-            <div class="footer-links">
-                <a href="#">Support Center</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Event</a>
+        <div class="status-badge">Payment Verified - Confirmed</div>
+      </header>
+      <div class="content-body">
+        <section class="hero-msg" aria-label="Attendee Greeting">
+          <h1 id="greet-name">Hi Attendee,</h1>
+          <p>You're all set for the biggest night of the year. This is your official e-ticket and entry pass for <strong>Phoenix Live '26</strong>. Present your QR code at the main entrance gate.</p>
+        </section>
+        <section class="receipt-section" aria-label="Order Receipt">
+          <span class="section-label">Detailed Order Receipt</span>
+          <div class="receipt-grid">
+            <div class="receipt-row"><span class="label">Reference Order ID</span><span class="value" id="receipt-id">#PX-2026-00000</span></div>
+            <div class="receipt-row"><span class="label">Booking Email</span><span class="value" id="receipt-email">-</span></div>
+            <div class="receipt-row"><span class="label">Pass Category</span><span class="value" id="receipt-pass">General Admission</span></div>
+            <div class="receipt-row"><span class="label">Reserved Slots</span><span class="value" id="receipt-qty">1 Person(s)</span></div>
+            <div class="receipt-row"><span class="label">Processing Method</span><span class="value">Gateway / UPI Secure</span></div>
+          </div>
+          <div class="total-strip"><span class="total-label">Total Amount Paid</span><span class="total-status">Paid in Full</span></div>
+        </section>
+        <section class="ticket-box" aria-label="Official Venue Ticket">
+          <div class="ticket-top">
+            <span class="pass-badge" id="pass-id-badge">#PX-2026-00000</span>
+            <span class="serial-badge">Official Entry Pass</span>
+          </div>
+          <div class="ticket-main">
+            <div class="ticket-cell"><span class="cell-label">Attendee Name</span><span class="cell-value" id="pass-name">Attendee</span></div>
+            <div class="ticket-cell"><span class="cell-label">Event Venue</span><span class="cell-value">Pune Arena, MH</span></div>
+            <div class="ticket-cell"><span class="cell-label">Category / Access</span><span class="cell-value" id="pass-cat">General Admission</span></div>
+            <div class="ticket-cell"><span class="cell-label">Total Qty</span><span class="cell-value" id="pass-total">1 Ticket(s)</span></div>
+            <div class="ticket-cell"><span class="cell-label">Booking Email</span><span class="cell-value" id="pass-email">-</span></div>
+            <div class="ticket-cell"><span class="cell-label">Entry / Stage Time</span><span class="cell-value">Gate A | 5:30 PM</span></div>
+            <div class="qr-area">
+              <div class="qr-container">
+                <img id="qr-img" class="qr-placeholder" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PX-2026-CONFIRMED" alt="Ticket QR Code" />
+              </div>
+              <div class="scan-msg">Verify at Entrance Gate</div>
             </div>
-            <div class="copyright">© 2026 Phoenix Events India Ltd. All rights reserved.</div>
-        </footer>
-
-    </div> <!-- /page-container -->
-
-    <!-- FORCE UNREGISTER OLD SERVICE WORKER -->
-    <script>
-        // This MUST run first to kill any old cached SW
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function (registrations) {
-                registrations.forEach(function (reg) {
-                    reg.unregister().then(function () {
-                        console.log('Old Service Worker unregistered for email-template page');
-                    });
-                });
-            });
-            // Also clear caches
-            if (window.caches) {
-                caches.keys().then(function (names) {
-                    names.forEach(function (name) { caches.delete(name); });
-                });
-            }
+          </div>
+        </section>
+        <section class="footer-info" aria-label="Event Information">
+          <div class="info-card">
+            <h3>Official Setlist Schedule</h3>
+            <div class="lineup-item"><span class="lineup-time">06:30 PM</span><span class="lineup-act">Intro DJ Set - Arena Warmup</span></div>
+            <div class="lineup-item"><span class="lineup-time">07:45 PM</span><span class="lineup-act">The Metal Shadows - Live Set</span></div>
+            <div class="lineup-item"><span class="lineup-time">09:15 PM</span><span class="lineup-act">Aisha Roy - Headline Performance</span></div>
+            <div class="lineup-item"><span class="lineup-time">11:00 PM</span><span class="lineup-act">Closing Visual Grand Finale</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Security &amp; Rules</h3>
+            <ul class="rules-list">
+              <li>Valid government-issued ID is mandatory at the gate.</li>
+              <li>Outside food, drinks, and backpacks are prohibited.</li>
+              <li>Professional cameras require a prior media pass.</li>
+              <li>Parking is first-come, first-serve inside the arena.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+      <footer class="site-footer">
+        <div class="footer-logo">Phoenix Live '26</div>
+        <p class="footer-text">This is an automated receipt and official entry document.<br />Location: Pune Arena Ground, Sector 4, Pune, MH 411001</p>
+        <div class="footer-links"><a href="#">Support Center</a><a href="#">Privacy Policy</a><a href="#">Terms of Event</a></div>
+        <div class="copyright">&copy; 2026 Phoenix Events India Ltd. All rights reserved.</div>
+      </footer>
+    </div>
+    <div class="ticket-controls" aria-label="Ticket Actions">
+      <button type="button" id="view-ticket-btn" class="control-btn primary">View Ticket</button>
+      <button type="button" id="download-image-btn" class="control-btn secondary">Download As Image</button>
+      <button type="button" id="download-pdf-btn" class="control-btn tertiary">Download As PDF</button>
+      <button type="button" id="wallet-btn" class="control-btn wallet" disabled>Add To Wallet (Coming Soon)</button>
+    </div>
+    <p id="action-status" class="action-status" aria-live="polite"></p>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    'use strict';
+    const TICKET_CONFIG = { fileNameImage: 'Phoenix_Live_Ticket.png', fileNamePdf: 'Phoenix_Live_Ticket.pdf', minCaptureScale: 2, maxCaptureScale: 4, autoDownloadDelayMs: 3000 };
+    const state = { valid: false, errors: [], data: null, serial: String(Math.floor(Math.random() * 90000 + 10000)), orderId: '', autoDownloadTriggered: false, downloadBusy: false };
+    function sanitizeText(value, fallback, maxLen) {
+      const safeFallback = fallback || '';
+      if (typeof value !== 'string') return safeFallback;
+      const normalized = value.trim().replace(/\s+/g, ' ');
+      if (!normalized) return safeFallback;
+      return normalized.slice(0, maxLen || 80);
+    }
+    function parseAndValidateParams() {
+      const params = new URLSearchParams(window.location.search);
+      const keys = ['name', 'pass', 'qty', 'email'];
+      const hasMeaningfulParams = keys.some((key) => {
+        const raw = params.get(key);
+        return typeof raw === 'string' && raw.trim() !== '';
+      });
+      const rawName = params.get('name');
+      const rawPass = params.get('pass');
+      const rawQty = params.get('qty');
+      const rawEmail = params.get('email');
+      const data = { name: sanitizeText(rawName, 'Attendee', 70), pass: sanitizeText(rawPass, 'General Admission', 70), qty: 1, email: sanitizeText(rawEmail, '-', 120) };
+      const errors = [];
+      if (rawQty !== null && rawQty.trim() !== '') {
+        const parsedQty = Number(rawQty);
+        if (!Number.isFinite(parsedQty) || parsedQty <= 0 || !Number.isInteger(parsedQty)) {
+          errors.push('Invalid quantity: qty must be a positive integer.');
+        } else {
+          data.qty = parsedQty;
         }
-    </script>
-
-    <!-- DEPENDENCY: HTML2PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <!-- MAIN LOGIC -->
-    <script>
-        (function () {
-            'use strict';
-
-            // ============ 1. DATA FROM URL ============
-            const params = new URLSearchParams(window.location.search);
-            const name = params.get('name') || 'Attendee';
-            const pass = params.get('pass') || 'General Admission';
-            const qty = params.get('qty') || '1';
-            const email = params.get('email') || '—';
-
-            // ============ 2. UNIQUE ORDER ID ============
-            const serialNum = Math.floor(Math.random() * 90000 + 10000);
-            const orderId = 'PX-2026-' + serialNum;
-
-            // ============ 3. FILL ALL FIELDS ============
-            const fill = (id, text) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = text;
-            };
-
-            fill('greet-name', 'Hi ' + name + ',');
-            fill('receipt-id', '#' + orderId);
-            fill('receipt-email', email);
-            fill('receipt-pass', pass);
-            fill('receipt-qty', qty + ' Person(s)');
-            fill('pass-id-badge', '#' + orderId);
-            fill('pass-name', name);
-            fill('pass-cat', pass);
-            fill('pass-total', qty + ' Ticket(s)');
-
-            // ============ 4. QR CODE ============
-            const qrImg = document.getElementById('qr-img');
-            const qrData = encodeURIComponent('ORDER:' + orderId + '|NAME:' + name + '|PASS:' + pass + '|QTY:' + qty);
-            if (qrImg) {
-                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + qrData;
-            }
-
-            // ============ 5. PDF GENERATION FUNCTION ============
-            function generatePDF(isAuto) {
-                var element = document.getElementById('printable-ticket');
-                var btnText = document.getElementById('btn-text');
-                var dlBtn = document.getElementById('download-trigger');
-                var fileName = 'PHOENIX-LIVE-26-' + name.replace(/\s+/g, '-') + '-' + serialNum + '.pdf';
-
-                if (btnText) btnText.textContent = 'GENERATING PDF...';
-                if (dlBtn) { dlBtn.style.opacity = '0.7'; dlBtn.disabled = true; }
-
-                var opt = {
-                    margin: [4, 0],
-                    filename: fileName,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 3, useCORS: true, letterRendering: true },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                html2pdf().set(opt).from(element).save().then(function () {
-                    console.log('PDF Downloaded: ' + fileName);
-                    if (btnText) btnText.textContent = '✓ TICKET DOWNLOADED';
-                    if (dlBtn) {
-                        dlBtn.style.background = '#10b981';
-                        dlBtn.style.opacity = '1';
-                        dlBtn.disabled = false;
-                    }
-                    setTimeout(function () {
-                        if (btnText) btnText.textContent = '⬇ DOWNLOAD AGAIN';
-                        if (dlBtn) dlBtn.style.background = '#0f172a';
-                    }, 4000);
-                }).catch(function (err) {
-                    console.error('PDF Error:', err);
-                    if (btnText) btnText.textContent = '⬇ DOWNLOAD FULL PDF TICKET';
-                    if (dlBtn) { dlBtn.disabled = false; dlBtn.style.opacity = '1'; }
-                    if (!isAuto) window.print();
-                });
-            }
-
-            // ============ 6. MANUAL DOWNLOAD BUTTON ============
-            var dlBtn = document.getElementById('download-trigger');
-            if (dlBtn) {
-                dlBtn.addEventListener('click', function () {
-                    generatePDF(false);
-                });
-            }
-
-            // ============ 7. AUTO-DOWNLOAD ON PAGE LOAD ============
-            // Wait for QR code image to load, then auto-download
-            var hasParams = params.get('name') && params.get('pass');
-            if (hasParams) {
-                // Wait 3 seconds for QR image and fonts to fully load
-                setTimeout(function () {
-                    console.log('Auto-downloading PDF ticket...');
-                    generatePDF(true);
-                }, 3000);
-            }
-
-        })();
-    </script>
+      }
+      if (!data.name) data.name = 'Attendee';
+      return { valid: errors.length === 0, data, errors, hasMeaningfulParams };
+    }
+    function fillText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
+    function setActionStatus(message, tone) {
+      const statusEl = document.getElementById('action-status');
+      if (!statusEl) return;
+      statusEl.textContent = message || '';
+      statusEl.className = 'action-status';
+      if (tone) statusEl.classList.add(tone);
+    }
+    function setTicketError(errors) {
+      const errorEl = document.getElementById('ticket-error');
+      if (!errorEl) return;
+      if (errors && errors.length) {
+        errorEl.textContent = errors[0] || 'Invalid Ticket URL';
+        errorEl.classList.add('show');
+        return;
+      }
+      errorEl.classList.remove('show');
+      errorEl.textContent = 'Invalid Ticket URL';
+    }
+    function setDownloadButtonsDisabled(disabled) {
+      const imageBtn = document.getElementById('download-image-btn');
+      const pdfBtn = document.getElementById('download-pdf-btn');
+      if (imageBtn) imageBtn.disabled = !!disabled;
+      if (pdfBtn) pdfBtn.disabled = !!disabled;
+    }
+    function getCaptureScale() {
+      const dpr = window.devicePixelRatio || 1;
+      const scaled = dpr * 1.8;
+      return Math.max(TICKET_CONFIG.minCaptureScale, Math.min(TICKET_CONFIG.maxCaptureScale, scaled));
+    }
+    async function captureTicketCanvas() {
+      const ticketContainer = document.getElementById('ticket-container');
+      if (!ticketContainer) throw new Error('Ticket container not found.');
+      try {
+        return await html2canvas(ticketContainer, { scale: getCaptureScale(), useCORS: true, backgroundColor: null, logging: false });
+      } catch (error) {
+        // Retry by excluding external QR image if browser marks canvas as tainted.
+        return html2canvas(ticketContainer, {
+          scale: getCaptureScale(),
+          useCORS: true,
+          backgroundColor: null,
+          logging: false,
+          ignoreElements: function (el) { return el && el.id === 'qr-img'; }
+        });
+      }
+    }
+    function setQrFallbackImage(imgEl, qrPayload) {
+      const encoded = encodeURIComponent(qrPayload);
+      imgEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encoded;
+    }
+    function setQrImage(imgEl, qrPayload) {
+      imgEl.crossOrigin = 'anonymous';
+      imgEl.referrerPolicy = 'no-referrer';
+      if (window.QRCode && typeof window.QRCode.toDataURL === 'function') {
+        window.QRCode.toDataURL(qrPayload, {
+          errorCorrectionLevel: 'M',
+          margin: 1,
+          width: 160,
+          color: { dark: '#0b1222', light: '#ffffff' }
+        }, function (err, dataUrl) {
+          if (!err && dataUrl) {
+            imgEl.src = dataUrl;
+            return;
+          }
+          setQrFallbackImage(imgEl, qrPayload);
+        });
+        return;
+      }
+      setQrFallbackImage(imgEl, qrPayload);
+    }
+    function scrollToTicket() {
+      const ticketContainer = document.getElementById('ticket-container');
+      if (!ticketContainer) return;
+      ticketContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    async function downloadImage() {
+      if (!state.valid || state.downloadBusy) return;
+      state.downloadBusy = true;
+      try {
+        setActionStatus('Preparing high-resolution PNG...', null);
+        const canvas = await captureTicketCanvas();
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png', 1);
+        link.download = TICKET_CONFIG.fileNameImage;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setActionStatus('Image downloaded successfully.', 'success');
+      } catch (error) {
+        console.error('Image download failed:', error);
+        setActionStatus('Image download failed. Please try again.', 'error');
+      } finally {
+        state.downloadBusy = false;
+      }
+    }
+    async function downloadPDF(options) {
+      const opts = options || {};
+      if (!state.valid || state.downloadBusy) return;
+      state.downloadBusy = true;
+      try {
+        setActionStatus(opts.auto ? 'Auto-generating ticket PDF...' : 'Generating ticket PDF...', null);
+        const canvas = await captureTicketCanvas();
+        const imgData = canvas.toDataURL('image/png', 1);
+        const jspdfNamespace = window.jspdf;
+        if (!jspdfNamespace || !jspdfNamespace.jsPDF) throw new Error('jsPDF not available.');
+        const pdf = new jspdfNamespace.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 8;
+        const maxWidth = pageWidth - margin * 2;
+        const maxHeight = pageHeight - margin * 2;
+        const imageWidth = canvas.width;
+        const imageHeight = canvas.height;
+        const ratio = Math.min(maxWidth / imageWidth, maxHeight / imageHeight);
+        const renderWidth = imageWidth * ratio;
+        const renderHeight = imageHeight * ratio;
+        const x = (pageWidth - renderWidth) / 2;
+        const y = (pageHeight - renderHeight) / 2;
+        pdf.addImage(imgData, 'PNG', x, y, renderWidth, renderHeight, undefined, 'FAST');
+        pdf.save(TICKET_CONFIG.fileNamePdf);
+        setActionStatus('PDF downloaded successfully.', 'success');
+      } catch (error) {
+        console.error('PDF download failed:', error);
+        setActionStatus('PDF download failed. Please try again.', 'error');
+      } finally {
+        state.downloadBusy = false;
+      }
+    }
+    function renderTicketData(data) {
+      state.orderId = 'PX-2026-' + state.serial;
+      fillText('greet-name', 'Hi ' + data.name + ',');
+      fillText('receipt-id', '#' + state.orderId);
+      fillText('receipt-email', data.email);
+      fillText('receipt-pass', data.pass);
+      fillText('receipt-qty', data.qty + ' Person(s)');
+      fillText('pass-id-badge', '#' + state.orderId);
+      fillText('pass-name', data.name);
+      fillText('pass-cat', data.pass);
+      fillText('pass-total', data.qty + ' Ticket(s)');
+      fillText('pass-email', data.email);
+      const qrImg = document.getElementById('qr-img');
+      if (qrImg) {
+        const qrPayload = 'ORDER:' + state.orderId + '|NAME:' + data.name + '|PASS:' + data.pass + '|QTY:' + data.qty + '|EMAIL:' + data.email;
+        setQrImage(qrImg, qrPayload);
+      }
+    }
+    function maybeAutoDownloadPDF() {
+      if (!state.valid || state.autoDownloadTriggered) return;
+      state.autoDownloadTriggered = true;
+      window.setTimeout(() => { downloadPDF({ auto: true }); }, TICKET_CONFIG.autoDownloadDelayMs);
+    }
+    function attachEvents() {
+      const viewBtn = document.getElementById('view-ticket-btn');
+      const imageBtn = document.getElementById('download-image-btn');
+      const pdfBtn = document.getElementById('download-pdf-btn');
+      if (viewBtn) viewBtn.addEventListener('click', scrollToTicket);
+      if (imageBtn) imageBtn.addEventListener('click', downloadImage);
+      if (pdfBtn) pdfBtn.addEventListener('click', () => downloadPDF({ auto: false }));
+    }
+    function initTicketPage() {
+      const result = parseAndValidateParams();
+      state.valid = result.valid;
+      state.errors = result.errors;
+      state.data = result.data;
+      renderTicketData(result.data);
+      attachEvents();
+      if (!result.valid) {
+        setTicketError(result.errors);
+        setDownloadButtonsDisabled(true);
+        setActionStatus('Please check your ticket link and try again.', 'error');
+        return;
+      }
+      setTicketError([]);
+      setDownloadButtonsDisabled(false);
+      setActionStatus(result.hasMeaningfulParams ? 'Ticket loaded. You can download image or PDF.' : 'Preview mode active. Add query params for attendee-specific ticket.', null);
+      if (result.hasMeaningfulParams) {
+        maybeAutoDownloadPDF();
+      }
+    }
+    window.downloadImage = downloadImage;
+    window.downloadPDF = downloadPDF;
+    window.scrollToTicket = scrollToTicket;
+    window.parseAndValidateParams = parseAndValidateParams;
+    initTicketPage();
+  </script>
 </body>
-
 </html>
