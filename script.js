@@ -40,32 +40,105 @@
         if (pk && pk !== "YOUR_PUBLIC_KEY") emailjs.init(pk);
     }
 
+    const REDUCED_MOTION_QUERY = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const REDUCED_DATA_QUERY = window.matchMedia('(prefers-reduced-data: reduce)');
+    const prefersReducedMotion = () => REDUCED_MOTION_QUERY.matches;
+    const prefersReducedData = () => REDUCED_DATA_QUERY.matches;
+
     const preloader = document.getElementById('preloader');
     const preloaderBar = document.getElementById('preloader-bar');
+    const heroSection = document.getElementById('hero');
+    const heroRevealEls = heroSection ? Array.from(heroSection.querySelectorAll('.reveal')) : [];
+    let heroIntroStarted = false;
+
+    const startHeroIntro = () => {
+        if (!heroSection || heroIntroStarted) return;
+        heroIntroStarted = true;
+
+        heroRevealEls.forEach((el) => el.classList.add('visible'));
+
+        if (prefersReducedMotion()) {
+            heroSection.classList.add('hero--ready');
+            return;
+        }
+
+        heroSection.classList.add('hero--armed');
+        window.requestAnimationFrame(() => {
+            window.setTimeout(() => {
+                heroSection.classList.add('hero--ready');
+            }, 80);
+        });
+    };
+
     if (preloader) {
         document.body.classList.add('is-loading');
-        let progress = 0;
-        const tick = setInterval(() => {
-            progress += Math.random() * 18 + 4;
-            if (progress > 92) progress = 92;
-            if (preloaderBar) preloaderBar.style.width = `${progress}%`;
-        }, 200);
+        preloader.classList.add('is-active');
 
-        const dismiss = () => {
-            clearInterval(tick);
-            if (preloaderBar) preloaderBar.style.width = '100%';
-            setTimeout(() => {
-                preloader.classList.add('loaded');
-                document.body.classList.remove('is-loading');
-            }, 400);
-            setTimeout(() => preloader.remove(), 1200);
+        let rafId = 0;
+        let progress = 4;
+        let simulatedTarget = 78;
+        let didStartExit = false;
+        const startedAt = performance.now();
+        const minVisibleMs = (prefersReducedMotion() || prefersReducedData()) ? 220 : 920;
+
+        const setProgress = (value) => {
+            if (!preloaderBar) return;
+            const safeValue = Math.max(0, Math.min(100, value));
+            preloaderBar.style.width = `${safeValue.toFixed(2)}%`;
         };
 
-        window.addEventListener('load', () => setTimeout(dismiss, 600), { once: true });
-        setTimeout(dismiss, 6000); // safety fallback
-    }
+        const runProgress = (now) => {
+            const elapsed = now - startedAt;
+            if (elapsed > 1500) simulatedTarget = 84;
+            if (elapsed > 2900) simulatedTarget = 89;
 
-    const REDUCED_MOTION_QUERY = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const gap = simulatedTarget - progress;
+            progress += gap * 0.06;
+            if (progress > 93 && !didStartExit) progress = 93;
+            setProgress(progress);
+
+            if (!didStartExit) {
+                rafId = window.requestAnimationFrame(runProgress);
+            }
+        };
+
+        const finishPreloader = () => {
+            if (didStartExit) return;
+            didStartExit = true;
+            preloader.classList.add('is-ready');
+
+            const elapsed = performance.now() - startedAt;
+            const holdMs = Math.max(0, minVisibleMs - elapsed);
+            const preExitMs = (prefersReducedMotion() || prefersReducedData()) ? 30 : 220;
+            const removeDelayMs = (prefersReducedMotion() || prefersReducedData()) ? 120 : 920;
+
+            window.setTimeout(() => {
+                if (rafId) window.cancelAnimationFrame(rafId);
+                setProgress(100);
+
+                window.setTimeout(() => {
+                    preloader.classList.add('loaded');
+                    document.body.classList.remove('is-loading');
+
+                    window.setTimeout(() => {
+                        preloader.remove();
+                        startHeroIntro();
+                    }, removeDelayMs);
+                }, preExitMs);
+            }, holdMs);
+        };
+
+        rafId = window.requestAnimationFrame(runProgress);
+
+        if (document.readyState === 'complete') {
+            window.setTimeout(finishPreloader, 120);
+        } else {
+            window.addEventListener('load', finishPreloader, { once: true });
+        }
+        window.setTimeout(finishPreloader, 8500);
+    } else {
+        startHeroIntro();
+    }
 
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
@@ -103,7 +176,6 @@
     const eventDateEl = document.querySelector('#hero time[datetime]');
     const eventDayLabel = document.getElementById('event-day-label');
     const isMobileViewport = () => window.innerWidth <= CONFIG.UI.MOBILE_BREAKPOINT;
-    const prefersReducedMotion = () => REDUCED_MOTION_QUERY.matches;
     const getHashTarget = (hash) => {
         if (!hash || hash.length < 2 || hash.charAt(0) !== '#') return null;
         try {
@@ -566,10 +638,29 @@
         });
     });
 
-    const revealEls = Array.from(document.querySelectorAll('.reveal'));
+    const revealEls = Array.from(document.querySelectorAll('.reveal')).filter((el) => !el.closest('#hero'));
     revealEls.forEach((el, index) => {
-        const delay = Math.min(index * 45, 320);
+        const isHeading = el.classList.contains('section-heading');
+        const isSpotlight = el.classList.contains('spotlight-section');
+
+        let revealVariant = 'rise';
+        if (isHeading) {
+            revealVariant = 'soft';
+        } else if (isSpotlight) {
+            revealVariant = index % 2 === 0 ? 'left' : 'right';
+        } else if (index % 4 === 1) {
+            revealVariant = 'left';
+        } else if (index % 4 === 2) {
+            revealVariant = 'right';
+        } else if (index % 5 === 0) {
+            revealVariant = 'soft';
+        }
+
+        const delay = Math.min(36 + index * 34, 360);
+        const duration = revealVariant === 'soft' ? 620 : 760;
+        el.dataset.reveal = revealVariant;
         el.style.setProperty('--reveal-delay', `${delay}ms`);
+        el.style.setProperty('--reveal-duration', `${duration}ms`);
     });
 
     if ('IntersectionObserver' in window) {
@@ -581,7 +672,9 @@
                     observer.unobserve(entry.target);
                 });
             },
-            { threshold: 0.12, rootMargin: '0px 0px -38px 0px' }
+            isMobileViewport()
+                ? { threshold: 0.1, rootMargin: '0px 0px -22px 0px' }
+                : { threshold: 0.16, rootMargin: '0px 0px -64px 0px' }
         );
 
         revealEls.forEach((el) => revealObserver.observe(el));
@@ -765,6 +858,7 @@
         const passTier = document.getElementById('pass-tier');
         const passQty = document.getElementById('pass-qty');
         const viewPassBtn = document.getElementById('view-pass-btn');
+        const viewEmailBtn = document.getElementById('view-email-btn');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalSummaryView = document.getElementById('modal-summary-view');
         const digitalPassPreview = document.getElementById('digital-pass-preview');
@@ -933,6 +1027,21 @@
             });
         }
 
+        // View E-ticket (External Page)
+        if (viewEmailBtn) {
+            viewEmailBtn.addEventListener('click', () => {
+                if (lastConfirmedTicket) {
+                    try {
+                        const url = buildTicketUrl(lastConfirmedTicket, { forEmail: false });
+                        window.open(url, '_blank');
+                    } catch (err) {
+                        console.error("View E-ticket failed:", err);
+                        viewEmailBtn.textContent = "Error Opening";
+                    }
+                }
+            });
+        }
+
         // Close Modal Logic
         if (modal && modalCloseBtn) {
             modalCloseBtn.addEventListener('click', () => {
@@ -947,6 +1056,7 @@
                     if (digitalPassPreview) digitalPassPreview.hidden = true;
                     if (modalSummaryView) modalSummaryView.hidden = false;
                     if (modalLogsView) modalLogsView.hidden = false;
+                    if (viewEmailBtn) viewEmailBtn.textContent = "View E-ticket";
 
                     document.getElementById('log-email')?.classList.remove('active');
                     document.getElementById('log-sms')?.classList.remove('active');
@@ -1463,7 +1573,50 @@
     const reducedMotionEnabled = prefersReducedMotion();
     const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 
-    if (!reducedMotionEnabled && hasFinePointer) {
+    if (!reducedMotionEnabled && !prefersReducedData() && hasFinePointer) {
+        const heroVisual = document.querySelector('.hero__visual');
+        const heroImageWrap = heroVisual ? heroVisual.querySelector('.hero__image-wrap') : null;
+        if (heroVisual && heroImageWrap) {
+            let parallaxFrame = 0;
+            let targetX = 0;
+            let targetY = 0;
+            let easedX = 0;
+            let easedY = 0;
+
+            const renderHeroParallax = () => {
+                parallaxFrame = 0;
+                easedX += (targetX - easedX) * 0.16;
+                easedY += (targetY - easedY) * 0.16;
+
+                heroImageWrap.style.setProperty('--hero-offset-x', `${easedX.toFixed(2)}px`);
+                heroImageWrap.style.setProperty('--hero-offset-y', `${easedY.toFixed(2)}px`);
+
+                if (Math.abs(targetX - easedX) > 0.05 || Math.abs(targetY - easedY) > 0.05) {
+                    parallaxFrame = window.requestAnimationFrame(renderHeroParallax);
+                }
+            };
+
+            const queueHeroParallaxFrame = () => {
+                if (parallaxFrame) return;
+                parallaxFrame = window.requestAnimationFrame(renderHeroParallax);
+            };
+
+            heroVisual.addEventListener('pointermove', (event) => {
+                const rect = heroVisual.getBoundingClientRect();
+                const normalizedX = (event.clientX - rect.left) / rect.width - 0.5;
+                const normalizedY = (event.clientY - rect.top) / rect.height - 0.5;
+                targetX = normalizedX * 10;
+                targetY = normalizedY * 8;
+                queueHeroParallaxFrame();
+            });
+
+            heroVisual.addEventListener('pointerleave', () => {
+                targetX = 0;
+                targetY = 0;
+                queueHeroParallaxFrame();
+            });
+        }
+
         const tiltElements = Array.from(document.querySelectorAll('.spotlight-section, .venue-big-display, .register-panel'));
 
         tiltElements.forEach((el) => {

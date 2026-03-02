@@ -57,7 +57,7 @@ A **world-class**, dark-themed concert landing page for **Rock Night 2026** at P
 | 🕐 **Time** | 5:30 PM — 11:00 PM |
 | 📍 **Venue** | Phoenix Concert Grounds, Pune |
 | 🎫 **Capacity** | 12,000+ fans |
-| 🏢 **Promoter** | XYZ Entertainment Group |
+| 🏢 **Promoter** | C C Company |
 
 ### 🎙️ Featured Artists
 
