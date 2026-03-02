@@ -106,6 +106,8 @@
           <div class="receipt-grid">
             <div class="receipt-row"><span class="label">Reference Order ID</span><span class="value" id="receipt-id">#PX-2026-00000</span></div>
             <div class="receipt-row"><span class="label">Booking Email</span><span class="value" id="receipt-email">-</span></div>
+            <div class="receipt-row"><span class="label">Contact Mobile</span><span class="value" id="receipt-phone">-</span></div>
+            <div class="receipt-row"><span class="label">City</span><span class="value" id="receipt-city">Pune</span></div>
             <div class="receipt-row"><span class="label">Pass Category</span><span class="value" id="receipt-pass">General Admission</span></div>
             <div class="receipt-row"><span class="label">Reserved Slots</span><span class="value" id="receipt-qty">1 Person(s)</span></div>
             <div class="receipt-row"><span class="label">Processing Method</span><span class="value">Gateway / UPI Secure</span></div>
@@ -123,6 +125,8 @@
             <div class="ticket-cell"><span class="cell-label">Category / Access</span><span class="cell-value" id="pass-cat">General Admission</span></div>
             <div class="ticket-cell"><span class="cell-label">Total Qty</span><span class="cell-value" id="pass-total">1 Ticket(s)</span></div>
             <div class="ticket-cell"><span class="cell-label">Booking Email</span><span class="cell-value" id="pass-email">-</span></div>
+            <div class="ticket-cell"><span class="cell-label">Contact Mobile</span><span class="cell-value" id="pass-phone">-</span></div>
+            <div class="ticket-cell"><span class="cell-label">City</span><span class="cell-value" id="pass-city">Pune</span></div>
             <div class="ticket-cell"><span class="cell-label">Entry / Stage Time</span><span class="cell-value">Gate A | 5:30 PM</span></div>
             <div class="qr-area">
               <div class="qr-container">
@@ -193,7 +197,7 @@
     }
     function parseAndValidateParams() {
       const params = new URLSearchParams(window.location.search);
-      const keys = ['name', 'pass', 'qty', 'email'];
+      const keys = ['name', 'pass', 'qty', 'email', 'phone', 'city'];
       const hasMeaningfulParams = keys.some((key) => {
         const raw = params.get(key);
         return typeof raw === 'string' && raw.trim() !== '';
@@ -203,11 +207,15 @@
       const rawPass = params.get('pass');
       const rawQty = params.get('qty');
       const rawEmail = params.get('email');
+      const rawPhone = params.get('phone');
+      const rawCity = params.get('city');
       const data = {
         name: sanitizeText(rawName, sanitizeText(stored && stored.name, 'Attendee', 70), 70),
         pass: sanitizeText(rawPass, sanitizeText(stored && stored.pass, 'General Admission', 70), 70),
         qty: 1,
-        email: sanitizeText(rawEmail, sanitizeText(stored && stored.email, '-', 120), 120)
+        email: sanitizeText(rawEmail, sanitizeText(stored && stored.email, '-', 120), 120),
+        phone: sanitizeText(rawPhone, sanitizeText(stored && stored.phone, '-', 24), 24),
+        city: sanitizeText(rawCity, sanitizeText(stored && stored.city, 'Pune', 40), 40)
       };
       const errors = [];
       const hasParamQty = rawQty !== null && rawQty.trim() !== '';
@@ -226,7 +234,7 @@
         }
       }
       if (!data.name) data.name = 'Attendee';
-      const hasStoredTicketData = !!(stored && (stored.name || stored.pass || stored.email || stored.qty));
+      const hasStoredTicketData = !!(stored && (stored.name || stored.pass || stored.email || stored.phone || stored.city || stored.qty));
       return { valid: errors.length === 0, data, errors, hasMeaningfulParams: hasMeaningfulParams || hasStoredTicketData };
     }
     function fillText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
@@ -362,6 +370,8 @@
       fillText('greet-name', 'Hi ' + data.name + ',');
       fillText('receipt-id', '#' + state.orderId);
       fillText('receipt-email', data.email);
+      fillText('receipt-phone', data.phone);
+      fillText('receipt-city', data.city);
       fillText('receipt-pass', data.pass);
       fillText('receipt-qty', data.qty + ' Person(s)');
       fillText('pass-id-badge', '#' + state.orderId);
@@ -369,9 +379,11 @@
       fillText('pass-cat', data.pass);
       fillText('pass-total', data.qty + ' Ticket(s)');
       fillText('pass-email', data.email);
+      fillText('pass-phone', data.phone);
+      fillText('pass-city', data.city);
       const qrImg = document.getElementById('qr-img');
       if (qrImg) {
-        const qrPayload = 'ORDER:' + state.orderId + '|NAME:' + data.name + '|PASS:' + data.pass + '|QTY:' + data.qty + '|EMAIL:' + data.email;
+        const qrPayload = 'ORDER:' + state.orderId + '|NAME:' + data.name + '|PASS:' + data.pass + '|QTY:' + data.qty + '|EMAIL:' + data.email + '|PHONE:' + data.phone + '|CITY:' + data.city;
         setQrImage(qrImg, qrPayload);
       }
     }

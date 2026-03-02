@@ -656,6 +656,8 @@
             viewEmailBtn.dataset.pass = String(lastConfirmedTicket.pass || '');
             viewEmailBtn.dataset.qty = String(lastConfirmedTicket.qty || '');
             viewEmailBtn.dataset.email = String(lastConfirmedTicket.email || '');
+            viewEmailBtn.dataset.phone = String(lastConfirmedTicket.phone || '');
+            viewEmailBtn.dataset.city = String(lastConfirmedTicket.city || '');
         }
 
         registerForm.addEventListener('submit', (event) => {
@@ -695,6 +697,8 @@
             const formData = new FormData(registerForm);
             const name = String(formData.get('fullName') || 'Guest').trim();
             const emailValue = String(formData.get('email') || '').trim();
+            const phoneValue = String(formData.get('phone') || '').trim();
+            const cityValue = String(formData.get('city') || '').trim();
             const pass = String(formData.get('passType') || 'Standard').replace('-', ' ').toUpperCase();
             const tickets = String(formData.get('tickets') || '1');
 
@@ -748,7 +752,9 @@
                         name: name,
                         pass: pass,
                         qty: tickets,
-                        email: emailValue
+                        email: emailValue,
+                        phone: phoneValue,
+                        city: cityValue
                     };
                     writeConfirmedTicket(lastConfirmedTicket);
 
@@ -758,6 +764,8 @@
                         viewEmailBtn.dataset.pass = pass;
                         viewEmailBtn.dataset.qty = tickets;
                         viewEmailBtn.dataset.email = emailValue;
+                        viewEmailBtn.dataset.phone = phoneValue;
+                        viewEmailBtn.dataset.city = cityValue;
                     }
                 } else {
                     console.warn("Missing one or more modal elements. Check IDs: register-modal, modal-name, modal-pass, modal-tickets.");
@@ -777,7 +785,9 @@
                     name: viewEmailBtn.dataset.name || 'Attendee',
                     pass: viewEmailBtn.dataset.pass || 'Standard',
                     qty: viewEmailBtn.dataset.qty || '1',
-                    email: viewEmailBtn.dataset.email || ''
+                    email: viewEmailBtn.dataset.email || '',
+                    phone: viewEmailBtn.dataset.phone || '',
+                    city: viewEmailBtn.dataset.city || ''
                 };
 
                 if (!lastConfirmedTicket && !viewEmailBtn.dataset.name) {
@@ -789,6 +799,8 @@
                 ticketUrl.searchParams.set('pass', String(data.pass || 'General Admission'));
                 ticketUrl.searchParams.set('qty', String(data.qty || '1'));
                 ticketUrl.searchParams.set('email', String(data.email || ''));
+                ticketUrl.searchParams.set('phone', String(data.phone || ''));
+                ticketUrl.searchParams.set('city', String(data.city || ''));
                 ticketUrl.searchParams.set('_v', String(Date.now()));
                 window.open(ticketUrl.toString(), '_blank', 'noopener');
             });
