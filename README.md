@@ -229,6 +229,19 @@ Then visit: **`http://localhost:5500`**
 
 ---
 
+## ✉️ Email Ticket Link Fix (EmailJS)
+
+If the ticket button in Gmail opens `localhost` or a GitHub 404 page, update your EmailJS template.
+
+1. Open EmailJS template `template_vtgfowt`
+2. Set button `href` to `{{ticket_view_url}}`
+3. Remove any hardcoded localhost/GitHub root ticket links
+4. Send a new registration test email
+
+Full guide: [EMAILJS_TEMPLATE_SETUP.md](EMAILJS_TEMPLATE_SETUP.md)
+
+---
+
 ## 📊 Jira Ticket Mapping
 
 | Jira ID | Requirement | Status |

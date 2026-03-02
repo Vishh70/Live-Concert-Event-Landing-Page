@@ -793,6 +793,7 @@
                     setTimeout(() => logLiveMail?.classList.add('active'), 2800);
 
                     // ---- Real Email Dispatch (EmailJS) ----
+                    // IMPORTANT: EmailJS template must use {{ticket_view_url}} for CTA href.
                     if (typeof emailjs !== 'undefined') {
                         emailjs.send(CONFIG.EMAILJS.SERVICE_ID, CONFIG.EMAILJS.TEMPLATE_ID, {
                             to_name: name,
@@ -807,6 +808,8 @@
                             console.log("SUCCESS: Real Email Sent!");
                         }, (error) => {
                             console.log("FAILED: Check Public Key at EmailJS.com", error);
+                            registerStatus.textContent = "Registration confirmed, but email delivery failed. Use View E-ticket.";
+                            registerStatus.className = 'register-status error';
                         });
                     } else {
                         registerStatus.textContent = "Email service unavailable. Use View E-ticket to access your ticket.";
