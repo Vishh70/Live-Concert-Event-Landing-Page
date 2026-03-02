@@ -202,6 +202,7 @@
         const raw = params.get(key);
         return typeof raw === 'string' && raw.trim() !== '';
       });
+      const autoDownloadMode = sanitizeText(params.get('autodownload') || '', '', 20).toLowerCase();
       const stored = readStoredTicket();
       const rawName = params.get('name');
       const rawPass = params.get('pass');
@@ -235,7 +236,7 @@
       }
       if (!data.name) data.name = 'Attendee';
       const hasStoredTicketData = !!(stored && (stored.name || stored.pass || stored.email || stored.phone || stored.city || stored.qty));
-      return { valid: errors.length === 0, data, errors, hasMeaningfulParams: hasMeaningfulParams || hasStoredTicketData };
+      return { valid: errors.length === 0, data, errors, hasMeaningfulParams: hasMeaningfulParams || hasStoredTicketData, autoDownloadMode };
     }
     function fillText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
     function setActionStatus(message, tone) {
@@ -416,7 +417,7 @@
       setTicketError([]);
       setDownloadButtonsDisabled(false);
       setActionStatus(result.hasMeaningfulParams ? 'Ticket loaded. You can download image or PDF.' : 'Preview mode active. Add query params for attendee-specific ticket.', null);
-      if (result.hasMeaningfulParams) {
+      if (result.hasMeaningfulParams && result.autoDownloadMode === 'pdf') {
         maybeAutoDownloadPDF();
       }
     }

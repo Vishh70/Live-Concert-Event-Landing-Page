@@ -13,6 +13,11 @@
             SERVICE_ID: "service_5jxxr2o",
             TEMPLATE_ID: "template_vtgfowt"
         },
+        APP: {
+            PROD_BASE_URL: "https://vishh70.github.io/Live-Concert-Event-Landing-Page",
+            TICKET_ROUTE: "email-template.html",
+            SUPPORT_URL: "https://vishh70.github.io/Live-Concert-Event-Landing-Page/#register"
+        },
         STORAGE: {
             DRAFT: 'epic2003.registerDraft.v1',
             PLANNER: 'epic2003.planner.v1',
@@ -104,6 +109,42 @@
         } catch {
             return document.getElementById(hash.slice(1));
         }
+    };
+
+    const getBaseUrl = ({ forEmail = false } = {}) => {
+        const raw = forEmail ? CONFIG.APP.PROD_BASE_URL : window.location.origin;
+        return String(raw || '').replace(/\/+$/, '');
+    };
+
+    const buildTicketUrl = (ticketData, { forEmail = false, autodownload = '' } = {}) => {
+        if (!ticketData || typeof ticketData !== 'object') {
+            throw new Error('Ticket URL generation failed: missing ticket data.');
+        }
+
+        const base = getBaseUrl({ forEmail });
+        if (!base) {
+            throw new Error('Ticket URL generation failed: base URL unavailable.');
+        }
+
+        const route = String(CONFIG.APP.TICKET_ROUTE || 'email-template.html').replace(/^\/+/, '');
+        const url = new URL(route, `${base}/`);
+        const data = {
+            name: String(ticketData.name || 'Attendee'),
+            pass: String(ticketData.pass || 'General Admission'),
+            qty: String(ticketData.qty || '1'),
+            email: String(ticketData.email || ''),
+            phone: String(ticketData.phone || ''),
+            city: String(ticketData.city || '')
+        };
+
+        Object.entries(data).forEach(([key, value]) => url.searchParams.set(key, value));
+        url.searchParams.set('_v', String(Date.now()));
+
+        if (autodownload) {
+            url.searchParams.set('autodownload', String(autodownload));
+        }
+
+        return url.toString();
     };
 
     const readFormDraft = () => {
@@ -714,6 +755,25 @@
                     modalPass.textContent = pass;
                     modalTickets.textContent = tickets;
 
+                    const confirmedTicket = {
+                        name: name,
+                        pass: pass,
+                        qty: tickets,
+                        email: emailValue,
+                        phone: phoneValue,
+                        city: cityValue
+                    };
+                    let ticketViewUrl = '';
+                    try {
+                        ticketViewUrl = buildTicketUrl(confirmedTicket, { forEmail: true });
+                    } catch (error) {
+                        console.error(error);
+                        registerStatus.textContent = "Ticket link generation failed. Please try again.";
+                        registerStatus.className = 'register-status error';
+                        registerForm.setAttribute('aria-busy', 'false');
+                        return;
+                    }
+
                     // Populate Pass Mockup
                     if (passName) passName.textContent = name;
                     if (passTier) passTier.textContent = pass;
@@ -739,23 +799,22 @@
                             to_email: emailValue,
                             pass_type: pass,
                             ticket_qty: tickets,
-                            order_id: 'PX-' + Math.floor(Math.random() * 9000 + 1000)
+                            order_id: 'PX-' + Math.floor(Math.random() * 9000 + 1000),
+                            ticket_view_url: ticketViewUrl,
+                            ticket_route: CONFIG.APP.TICKET_ROUTE,
+                            support_url: CONFIG.APP.SUPPORT_URL
                         }).then(() => {
                             console.log("SUCCESS: Real Email Sent!");
                         }, (error) => {
                             console.log("FAILED: Check Public Key at EmailJS.com", error);
                         });
+                    } else {
+                        registerStatus.textContent = "Email service unavailable. Use View E-ticket to access your ticket.";
+                        registerStatus.className = 'register-status';
                     }
 
                     // Store confirmation data for View E-ticket
-                    lastConfirmedTicket = {
-                        name: name,
-                        pass: pass,
-                        qty: tickets,
-                        email: emailValue,
-                        phone: phoneValue,
-                        city: cityValue
-                    };
+                    lastConfirmedTicket = confirmedTicket;
                     writeConfirmedTicket(lastConfirmedTicket);
 
                     // Also update dataset as fallback
@@ -794,15 +853,14 @@
                     console.warn("View E-ticket clicked but no registration data found.");
                 }
 
-                const ticketUrl = new URL('/email-template.html', window.location.origin);
-                ticketUrl.searchParams.set('name', String(data.name || 'Attendee'));
-                ticketUrl.searchParams.set('pass', String(data.pass || 'General Admission'));
-                ticketUrl.searchParams.set('qty', String(data.qty || '1'));
-                ticketUrl.searchParams.set('email', String(data.email || ''));
-                ticketUrl.searchParams.set('phone', String(data.phone || ''));
-                ticketUrl.searchParams.set('city', String(data.city || ''));
-                ticketUrl.searchParams.set('_v', String(Date.now()));
-                window.open(ticketUrl.toString(), '_blank', 'noopener');
+                try {
+                    const ticketUrl = buildTicketUrl(data, { forEmail: false });
+                    window.open(ticketUrl, '_blank', 'noopener');
+                } catch (error) {
+                    console.error(error);
+                    registerStatus.textContent = "Unable to open ticket right now. Please try again.";
+                    registerStatus.className = 'register-status error';
+                }
             });
         }
 
