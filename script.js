@@ -764,23 +764,15 @@
         const passName = document.getElementById('pass-name');
         const passTier = document.getElementById('pass-tier');
         const passQty = document.getElementById('pass-qty');
-        const viewEmailBtn = document.getElementById('view-email-btn');
         const viewPassBtn = document.getElementById('view-pass-btn');
         const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalSummaryView = document.getElementById('modal-summary-view');
+        const digitalPassPreview = document.getElementById('digital-pass-preview');
 
         const modalLogsView = document.getElementById('modal-logs-view');
 
         // Scoped variable to hold registration data for View E-ticket
         let lastConfirmedTicket = readConfirmedTicket();
-
-        if (viewEmailBtn && lastConfirmedTicket) {
-            viewEmailBtn.dataset.name = String(lastConfirmedTicket.name || '');
-            viewEmailBtn.dataset.pass = String(lastConfirmedTicket.pass || '');
-            viewEmailBtn.dataset.qty = String(lastConfirmedTicket.qty || '');
-            viewEmailBtn.dataset.email = String(lastConfirmedTicket.email || '');
-            viewEmailBtn.dataset.phone = String(lastConfirmedTicket.phone || '');
-            viewEmailBtn.dataset.city = String(lastConfirmedTicket.city || '');
-        }
 
         registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -911,15 +903,7 @@
                     // Save to purchase history
                     addToHistory(confirmedTicket);
 
-                    // Also update dataset as fallback
-                    if (viewEmailBtn) {
-                        viewEmailBtn.dataset.name = name;
-                        viewEmailBtn.dataset.pass = pass;
-                        viewEmailBtn.dataset.qty = tickets;
-                        viewEmailBtn.dataset.email = emailValue;
-                        viewEmailBtn.dataset.phone = phoneValue;
-                        viewEmailBtn.dataset.city = cityValue;
-                    }
+                    if (modalSummaryView) modalSummaryView.hidden = true;
                 } else {
                     console.warn("Missing one or more modal elements. Check IDs: register-modal, modal-name, modal-pass, modal-tickets.");
                 }
@@ -930,33 +914,6 @@
                 registerStatus.textContent = "";
             }, 1200);
         });
-
-        // View E-ticket Listener (Global to this block)
-        if (viewEmailBtn) {
-            viewEmailBtn.addEventListener('click', () => {
-                const data = lastConfirmedTicket || {
-                    name: viewEmailBtn.dataset.name || 'Attendee',
-                    pass: viewEmailBtn.dataset.pass || 'Standard',
-                    qty: viewEmailBtn.dataset.qty || '1',
-                    email: viewEmailBtn.dataset.email || '',
-                    phone: viewEmailBtn.dataset.phone || '',
-                    city: viewEmailBtn.dataset.city || ''
-                };
-
-                if (!lastConfirmedTicket && !viewEmailBtn.dataset.name) {
-                    console.warn("View E-ticket clicked but no registration data found.");
-                }
-
-                try {
-                    const ticketUrl = buildTicketUrl(data, { forEmail: false });
-                    window.open(ticketUrl, '_blank', 'noopener');
-                } catch (error) {
-                    console.error(error);
-                    registerStatus.textContent = "Unable to open ticket right now. Please try again.";
-                    registerStatus.className = 'register-status error';
-                }
-            });
-        }
 
         // Modal View Toggle (View Wallet Pass)
         if (viewPassBtn && digitalPassPreview && modalSummaryView && modalLogsView) {
@@ -990,7 +947,6 @@
                     if (digitalPassPreview) digitalPassPreview.hidden = true;
                     if (modalSummaryView) modalSummaryView.hidden = false;
                     if (modalLogsView) modalLogsView.hidden = false;
-                    if (viewEmailBtn) viewEmailBtn.textContent = "View E-ticket";
 
                     document.getElementById('log-email')?.classList.remove('active');
                     document.getElementById('log-sms')?.classList.remove('active');

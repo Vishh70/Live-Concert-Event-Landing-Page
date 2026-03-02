@@ -470,7 +470,7 @@
     .ticket-controls {
       margin-top: 25px;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 15px;
     }
 
@@ -539,7 +539,7 @@
 
     @media (max-width: 980px) {
       .ticket-controls {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr 1fr;
       }
     }
 
@@ -593,7 +593,8 @@
         <section class="hero-msg" aria-label="Attendee Greeting">
           <h1 id="greet-name">Hi Attendee,</h1>
           <p>You're all set for the biggest night of the year. This is your official e-ticket and entry pass for
-            <strong>Phoenix Live '26</strong>. Present your QR code at the main entrance gate.</p>
+            <strong>Phoenix Live '26</strong>. Present your QR code at the main entrance gate.
+          </p>
         </section>
         <section class="receipt-section" aria-label="Order Receipt">
           <span class="section-label">Detailed Order Receipt</span>
@@ -681,9 +682,8 @@
       </footer>
     </div>
     <div class="ticket-controls" aria-label="Ticket Actions">
-      <button type="button" id="view-ticket-btn" class="control-btn primary">View Ticket</button>
-      <button type="button" id="download-image-btn" class="control-btn secondary">Download As Image</button>
-      <button type="button" id="download-pdf-btn" class="control-btn tertiary">Download As PDF</button>
+      <button type="button" id="download-image-btn" class="control-btn primary">Download As Image</button>
+      <button type="button" id="download-pdf-btn" class="control-btn secondary">Download As PDF</button>
       <button type="button" id="wallet-btn" class="control-btn wallet" disabled>Add To Wallet (Coming Soon)</button>
     </div>
     <p id="action-status" class="action-status" aria-live="polite"></p>
@@ -912,10 +912,8 @@
       window.setTimeout(() => { downloadPDF({ auto: true }); }, TICKET_CONFIG.autoDownloadDelayMs);
     }
     function attachEvents() {
-      const viewBtn = document.getElementById('view-ticket-btn');
       const imageBtn = document.getElementById('download-image-btn');
       const pdfBtn = document.getElementById('download-pdf-btn');
-      if (viewBtn) viewBtn.addEventListener('click', scrollToTicket);
       if (imageBtn) imageBtn.addEventListener('click', downloadImage);
       if (pdfBtn) pdfBtn.addEventListener('click', () => downloadPDF({ auto: false }));
     }
