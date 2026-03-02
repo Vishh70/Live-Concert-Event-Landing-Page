@@ -15,7 +15,8 @@
         },
         STORAGE: {
             DRAFT: 'epic2003.registerDraft.v1',
-            PLANNER: 'epic2003.planner.v1'
+            PLANNER: 'epic2003.planner.v1',
+            CONFIRMED_TICKET: 'epic2003.confirmedTicket.v1'
         },
         UI: {
             MOBILE_BREAKPOINT: 860,
@@ -146,6 +147,29 @@
                 return;
             }
             window.localStorage.setItem(CONFIG.STORAGE.PLANNER, JSON.stringify(state));
+        } catch {
+            // Ignore storage errors.
+        }
+    };
+
+    const readConfirmedTicket = () => {
+        try {
+            const raw = window.localStorage.getItem(CONFIG.STORAGE.CONFIRMED_TICKET);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch {
+            return null;
+        }
+    };
+
+    const writeConfirmedTicket = (ticket) => {
+        try {
+            if (!ticket || !Object.keys(ticket).length) {
+                window.localStorage.removeItem(CONFIG.STORAGE.CONFIRMED_TICKET);
+                return;
+            }
+            window.localStorage.setItem(CONFIG.STORAGE.CONFIRMED_TICKET, JSON.stringify(ticket));
         } catch {
             // Ignore storage errors.
         }
@@ -625,7 +649,14 @@
         const modalLogsView = document.getElementById('modal-logs-view');
 
         // Scoped variable to hold registration data for View E-ticket
-        let lastConfirmedTicket = null;
+        let lastConfirmedTicket = readConfirmedTicket();
+
+        if (viewEmailBtn && lastConfirmedTicket) {
+            viewEmailBtn.dataset.name = String(lastConfirmedTicket.name || '');
+            viewEmailBtn.dataset.pass = String(lastConfirmedTicket.pass || '');
+            viewEmailBtn.dataset.qty = String(lastConfirmedTicket.qty || '');
+            viewEmailBtn.dataset.email = String(lastConfirmedTicket.email || '');
+        }
 
         registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -719,6 +750,7 @@
                         qty: tickets,
                         email: emailValue
                     };
+                    writeConfirmedTicket(lastConfirmedTicket);
 
                     // Also update dataset as fallback
                     if (viewEmailBtn) {

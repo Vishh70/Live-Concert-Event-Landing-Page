@@ -171,6 +171,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     'use strict';
+    const TICKET_STORAGE_KEY = 'epic2003.confirmedTicket.v1';
     const TICKET_CONFIG = { fileNameImage: 'Phoenix_Live_Ticket.png', fileNamePdf: 'Phoenix_Live_Ticket.pdf', minCaptureScale: 2, maxCaptureScale: 4, autoDownloadDelayMs: 3000 };
     const state = { valid: false, errors: [], data: null, serial: String(Math.floor(Math.random() * 90000 + 10000)), orderId: '', autoDownloadTriggered: false, downloadBusy: false };
     function sanitizeText(value, fallback, maxLen) {
@@ -180,6 +181,16 @@
       if (!normalized) return safeFallback;
       return normalized.slice(0, maxLen || 80);
     }
+    function readStoredTicket() {
+      try {
+        const raw = window.localStorage.getItem(TICKET_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : null;
+      } catch {
+        return null;
+      }
+    }
     function parseAndValidateParams() {
       const params = new URLSearchParams(window.location.search);
       const keys = ['name', 'pass', 'qty', 'email'];
@@ -187,22 +198,36 @@
         const raw = params.get(key);
         return typeof raw === 'string' && raw.trim() !== '';
       });
+      const stored = readStoredTicket();
       const rawName = params.get('name');
       const rawPass = params.get('pass');
       const rawQty = params.get('qty');
       const rawEmail = params.get('email');
-      const data = { name: sanitizeText(rawName, 'Attendee', 70), pass: sanitizeText(rawPass, 'General Admission', 70), qty: 1, email: sanitizeText(rawEmail, '-', 120) };
+      const data = {
+        name: sanitizeText(rawName, sanitizeText(stored && stored.name, 'Attendee', 70), 70),
+        pass: sanitizeText(rawPass, sanitizeText(stored && stored.pass, 'General Admission', 70), 70),
+        qty: 1,
+        email: sanitizeText(rawEmail, sanitizeText(stored && stored.email, '-', 120), 120)
+      };
       const errors = [];
-      if (rawQty !== null && rawQty.trim() !== '') {
-        const parsedQty = Number(rawQty);
+      const hasParamQty = rawQty !== null && rawQty.trim() !== '';
+      const storedQtyRaw = stored && stored.qty !== undefined ? String(stored.qty) : '';
+      const hasStoredQty = storedQtyRaw.trim() !== '';
+      if (hasParamQty || hasStoredQty) {
+        const parsedQty = Number(hasParamQty ? rawQty : storedQtyRaw);
         if (!Number.isFinite(parsedQty) || parsedQty <= 0 || !Number.isInteger(parsedQty)) {
-          errors.push('Invalid quantity: qty must be a positive integer.');
+          if (hasParamQty) {
+            errors.push('Invalid quantity: qty must be a positive integer.');
+          } else {
+            data.qty = 1;
+          }
         } else {
           data.qty = parsedQty;
         }
       }
       if (!data.name) data.name = 'Attendee';
-      return { valid: errors.length === 0, data, errors, hasMeaningfulParams };
+      const hasStoredTicketData = !!(stored && (stored.name || stored.pass || stored.email || stored.qty));
+      return { valid: errors.length === 0, data, errors, hasMeaningfulParams: hasMeaningfulParams || hasStoredTicketData };
     }
     function fillText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
     function setActionStatus(message, tone) {
