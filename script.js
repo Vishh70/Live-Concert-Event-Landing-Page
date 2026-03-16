@@ -13,6 +13,14 @@
             SERVICE_ID: "service_5jxxr2o",
             TEMPLATE_ID: "template_vtgfowt"
         },
+        FIREBASE: {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        },
         APP: {
             PROD_BASE_URL: "https://vishh70.github.io/Live-Concert-Event-Landing-Page",
             TICKET_ROUTE: "email-template.html",
@@ -38,6 +46,18 @@
     if (typeof emailjs !== 'undefined') {
         const pk = CONFIG.EMAILJS.PUBLIC_KEY;
         if (pk && pk !== "YOUR_PUBLIC_KEY") emailjs.init(pk);
+    }
+
+    /* ---- Firebase Initialization ---- */
+    // Instructions: Create a project at console.firebase.google.com and replace YOUR_* above.
+    let db = null;
+    if (typeof firebase !== 'undefined' && CONFIG.FIREBASE.apiKey !== "YOUR_API_KEY") {
+        try {
+            firebase.initializeApp(CONFIG.FIREBASE);
+            db = firebase.firestore();
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+        }
     }
 
     const REDUCED_MOTION_QUERY = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -915,21 +935,43 @@
             registerStatus.textContent = "Processing secure registration...";
             registerStatus.className = 'register-status';
 
-            setTimeout(() => {
+            setTimeout(async () => {
+                const confirmedTicket = {
+                    name: name,
+                    pass: pass,
+                    qty: tickets,
+                    email: emailValue,
+                    phone: phoneValue,
+                    city: cityValue,
+                    orderId: 'PX-' + Math.floor(Math.random() * 9000 + 1000),
+                    createdAt: new Date().toISOString()
+                };
+
+                // --- Save to Firebase ---
+                if (db) {
+                    try {
+                        const registrationsRef = db.collection('registrations');
+                        const querySnapshot = await registrationsRef.where('email', '==', emailValue).get();
+                        
+                        if (!querySnapshot.empty) {
+                            registerStatus.textContent = "This email is already registered for an event pass.";
+                            registerStatus.className = 'register-status error';
+                            registerForm.setAttribute('aria-busy', 'false');
+                            return; // Stop execution
+                        }
+                        await registrationsRef.add(confirmedTicket);
+                    } catch (error) {
+                        console.error('Firebase Error:', error);
+                        console.warn('Continuing offline configuration due to Firebase error.');
+                    }
+                }
+
                 if (modal && modalName && modalPass && modalTickets) {
                     modalName.textContent = name;
                     if (modalEmail) modalEmail.textContent = emailValue;
                     modalPass.textContent = pass;
                     modalTickets.textContent = tickets;
 
-                    const confirmedTicket = {
-                        name: name,
-                        pass: pass,
-                        qty: tickets,
-                        email: emailValue,
-                        phone: phoneValue,
-                        city: cityValue
-                    };
                     let ticketViewUrl = '';
                     let ticketDownloadUrl = '';
                     try {
@@ -947,6 +989,32 @@
                     if (passName) passName.textContent = name;
                     if (passTier) passTier.textContent = pass;
                     if (passQty) passQty.textContent = `${tickets} PASSES`;
+
+                    // Generate Dynamic QR Code
+                    const passQrContainer = document.getElementById('pass-qr-container');
+                    if (passQrContainer && typeof QRCode !== 'undefined') {
+                        passQrContainer.innerHTML = ''; // clear static SVG
+                        new QRCode(passQrContainer, {
+                            text: confirmedTicket.orderId,
+                            width: 80,
+                            height: 80,
+                            colorDark : "#050812",
+                            colorLight : "#ffffff",
+                            correctLevel : QRCode.CorrectLevel.L
+                        });
+                        const qrLabel = document.createElement('small');
+                        qrLabel.textContent = 'Scan at gate';
+                        passQrContainer.appendChild(qrLabel);
+                        
+                        setTimeout(() => {
+                            const qrImg = passQrContainer.querySelector('img');
+                            if(qrImg) {
+                                qrImg.style.display = 'block';
+                                qrImg.style.margin = '0 auto';
+                                qrImg.style.borderRadius = '4px';
+                            }
+                        }, 50);
+                    }
 
                     modal.hidden = false;
                     modal.setAttribute('aria-hidden', 'false');
@@ -998,6 +1066,8 @@
                     addToHistory(confirmedTicket);
 
                     if (modalSummaryView) modalSummaryView.hidden = true;
+                    if (digitalPassPreview) digitalPassPreview.hidden = false;
+                    if (viewPassBtn) viewPassBtn.textContent = "Back to Summary";
                 } else {
                     console.warn("Missing one or more modal elements. Check IDs: register-modal, modal-name, modal-pass, modal-tickets.");
                 }
@@ -1629,6 +1699,8 @@
                 // Limit tilt angle for larger elements
                 const maxTilt = el.classList.contains('spotlight-section') ? 6 : 3;
                 el.style.setProperty('transform', `perspective(1200px) rotateX(${-latestY * maxTilt}deg) rotateY(${latestX * maxTilt}deg)`);
+                el.style.setProperty('--mouse-x', `${(latestX + 0.5) * 100}%`);
+                el.style.setProperty('--mouse-y', `${(latestY + 0.5) * 100}%`);
             };
 
             el.addEventListener('pointermove', (event) => {
@@ -1687,7 +1759,125 @@
         resizeFrame = window.requestAnimationFrame(() => {
             setHeaderProgress();
             syncMobileNavState();
-            resizeFrame = 0;
         });
     });
+
+    // --- Custom Cursor Tracker ---
+    const customCursor = document.getElementById('custom-cursor');
+    if (customCursor && hasFinePointer && !reducedMotionEnabled) {
+        document.addEventListener('mousemove', (e) => {
+            customCursor.style.transform = `translate(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%))`;
+        });
+        
+        // Add hover effects to interactable elements
+        const interactables = document.querySelectorAll('a, button, input, textarea, select, .glitch-hover, .artist-card');
+        interactables.forEach(el => {
+            el.addEventListener('mouseenter', () => customCursor.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => customCursor.classList.remove('hovering'));
+        });
+    } else if (customCursor) {
+        customCursor.style.display = 'none'; // hide on touch devices
+    }
+    
+    // --- Ambient Audio Toggle ---
+    const audioToggle = document.getElementById('audio-toggle');
+    const ambientAudio = document.getElementById('ambient-audio');
+    const audioIconOff = document.getElementById('audio-icon-off');
+    const audioIconOn = document.getElementById('audio-icon-on');
+    
+    if (audioToggle && ambientAudio) {
+        audioToggle.addEventListener('click', () => {
+            if (ambientAudio.paused) {
+                ambientAudio.volume = 0.2; // keeping it low & ambient
+                ambientAudio.play().then(() => {
+                    audioToggle.classList.add('is-playing');
+                    audioIconOff.style.display = 'none';
+                    audioIconOn.style.display = 'block';
+                    audioToggle.setAttribute('title', 'Pause Ambient Sound');
+                }).catch(e => console.log('Audio play failed:', e));
+            } else {
+                ambientAudio.pause();
+                audioToggle.classList.remove('is-playing');
+                audioIconOn.style.display = 'none';
+                audioIconOff.style.display = 'block';
+                audioToggle.setAttribute('title', 'Play Ambient Sound');
+            }
+        });
+    }
+    // --- Ember Particle Canvas System ---
+    const emberCanvas = document.getElementById('ember-canvas');
+    if (emberCanvas && !prefersReducedMotion() && !prefersReducedData()) {
+        const ctx = emberCanvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let mouseX = 0;
+        let animateFrameId = 0;
+        
+        const resizeCanvas = () => {
+            width = emberCanvas.parentElement.clientWidth;
+            height = emberCanvas.parentElement.clientHeight;
+            emberCanvas.width = width;
+            emberCanvas.height = height;
+        };
+
+        const initParticles = () => {
+            particles = [];
+            const count = Math.min(width / 12, 60); // Responsive count
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 2.5 + 0.5,
+                    speedY: Math.random() * -1 - 0.5,
+                    speedX: Math.random() * 2 - 1,
+                    opacity: Math.random() * 0.8 + 0.2, // Min opacity 0.2
+                    life: Math.random() * 100
+                });
+            }
+        };
+
+        const drawParticles = () => {
+            ctx.clearRect(0, 0, width, height);
+            
+            particles.forEach((p) => {
+                p.y += p.speedY;
+                p.x += p.speedX + (mouseX * 0.05); // slight sway with mouse
+                p.life -= 0.5;
+
+                if (p.y < -10 || p.x < -10 || p.x > width + 10 || p.life <= 0) {
+                    p.y = height + 10;
+                    p.x = Math.random() * width;
+                    p.life = 100;
+                    p.opacity = Math.random() * 0.8 + 0.2;
+                }
+
+                // Make embers glow based on life
+                const currentOpacity = (p.opacity * Math.sin((p.life / 100) * Math.PI)).toFixed(2);
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                // Ember color: mix of orange/red/yellow
+                ctx.fillStyle = `rgba(255, ${100 + Math.random() * 100}, 50, ${Math.max(0, currentOpacity)})`; 
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = `rgba(255, 100, 0, ${Math.max(0, currentOpacity)})`;
+                ctx.fill();
+            });
+
+            animateFrameId = window.requestAnimationFrame(drawParticles);
+        };
+
+        // Mouse tracking for breeze effect
+        document.addEventListener('pointermove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 4;
+        });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        resizeCanvas();
+        initParticles();
+        drawParticles();
+    }
 })();
