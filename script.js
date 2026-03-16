@@ -1884,6 +1884,12 @@
     
     // --- Artist Data & Modals ---
     const ARTIST_DATA = {
+        'marathi-folk': {
+            name: 'Shobha Yatra - Gudi Padwa',
+            bio: 'A majestic celebration on Laxmi Road featuring 50+ Dhol Tasha Pathaks and hundreds of Lezim performers. Join Pune\'s legendary Marathi New Year procession for a grand traditional experience.',
+            audio: 'assets/audio/marathi-folk.mp3',
+            spotify: 'https://open.spotify.com/search/Dhol%20Tasha'
+        },
         'dj-blaze': {
             name: 'DJ Blaze',
             bio: 'Electronic phenomenon DJ Blaze brings his high-octane "Thunder-Tech" sound to Phoenix Live \'26. Known for record-breaking sets at Tomorrowland, he promises an immersive neon experience.',
