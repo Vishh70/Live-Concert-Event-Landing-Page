@@ -1588,7 +1588,7 @@
 
         addCalendarBtn.addEventListener('click', () => {
             try {
-                const fallbackStart = new Date('2026-03-16T17:30:00+05:30');
+                const fallbackStart = new Date('2026-05-07T17:30:00+05:30');
                 const parsedStart = eventDateEl ? new Date(eventDateEl.getAttribute('datetime') || '') : fallbackStart;
                 const eventStart = Number.isNaN(parsedStart.getTime()) ? fallbackStart : parsedStart;
                 const eventEnd = new Date(eventStart.getTime() + (5.5 * 60 * 60 * 1000));
