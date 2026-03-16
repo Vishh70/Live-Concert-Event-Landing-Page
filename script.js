@@ -1163,6 +1163,7 @@
 
                     // Save to purchase history
                     addToHistory(confirmedTicket);
+                    if (typeof updateHistoryBadge === 'function') updateHistoryBadge();
 
                     if (modalSummaryView) modalSummaryView.hidden = true;
                     if (digitalPassPreview) digitalPassPreview.hidden = false;
@@ -1355,6 +1356,69 @@
     // Initialize account UI
     syncAccountUI();
 
+    // ---- Welcome Back Toast for Returning Users ----
+    const showWelcomeToast = () => {
+        const profile = readUserProfile();
+        const history = readPurchaseHistory();
+        if (!profile) return;
+
+        // Only show once per session
+        const sessionKey = 'epic2003.welcomeShown';
+        if (window.sessionStorage.getItem(sessionKey)) return;
+        window.sessionStorage.setItem(sessionKey, '1');
+
+        const toast = document.createElement('div');
+        toast.className = 'welcome-toast';
+        const ticketCount = history.length;
+        const ticketMsg = ticketCount > 0
+            ? `You have ${ticketCount} ticket${ticketCount > 1 ? 's' : ''} in your history.`
+            : 'Ready to grab your first ticket?';
+        toast.innerHTML = `
+            <div class="welcome-toast__avatar">${profile.name.charAt(0).toUpperCase()}</div>
+            <div class="welcome-toast__text">
+                <strong>Welcome back, ${profile.name.split(' ')[0]}!</strong>
+                <span>${ticketMsg}</span>
+            </div>
+            <button class="welcome-toast__close" aria-label="Dismiss">&times;</button>
+        `;
+
+        document.body.appendChild(toast);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                toast.classList.add('visible');
+            });
+        });
+
+        const dismiss = () => {
+            toast.classList.remove('visible');
+            toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+        };
+
+        toast.querySelector('.welcome-toast__close').addEventListener('click', dismiss);
+        setTimeout(dismiss, 6000);
+    };
+
+    // Show toast after preloader finishes
+    setTimeout(showWelcomeToast, 2800);
+
+    // ---- History Badge Count ----
+    const updateHistoryBadge = () => {
+        if (!viewHistoryBtn) return;
+        const history = readPurchaseHistory();
+        let badge = viewHistoryBtn.querySelector('.history-badge');
+        if (history.length > 0) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'history-badge';
+                viewHistoryBtn.appendChild(badge);
+            }
+            badge.textContent = history.length;
+        } else if (badge) {
+            badge.remove();
+        }
+    };
+    updateHistoryBadge();
+
     // Account badge click -> open account modal
     if (accountBadge) {
         accountBadge.addEventListener('click', () => {
@@ -1508,6 +1572,7 @@
         historyClearBtn.addEventListener('click', () => {
             writePurchaseHistory([]);
             renderHistory();
+            updateHistoryBadge();
         });
     }
 
