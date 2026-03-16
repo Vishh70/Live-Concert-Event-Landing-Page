@@ -185,47 +185,6 @@
             }
         };
 
-        const initHypeMeter = () => {
-            const cheerBtn = document.getElementById('cheer-btn');
-            const hypeFill = document.getElementById('hype-fill');
-            const hypePercent = document.getElementById('hype-percent');
-            const cheerCountEl = document.getElementById('cheer-count');
-            if (!cheerBtn || !db) return;
-
-            const hypeRef = db.collection('event_stats').doc('hype');
-            hypeRef.onSnapshot((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    const total = data.total_cheers || 0;
-                    const goal = data.goal || 12000;
-                    const percent = Math.min(100, (total / goal) * 100);
-                    if (hypeFill) hypeFill.style.width = `${percent}%`;
-                    if (hypePercent) hypePercent.textContent = `${Math.floor(percent)}%`;
-                    if (cheerCountEl) cheerCountEl.textContent = total.toLocaleString();
-                } else {
-                    hypeRef.set({ total_cheers: 8420, goal: 12000 });
-                }
-            });
-
-            cheerBtn.addEventListener('click', () => {
-                hypeRef.update({ total_cheers: firebase.firestore.FieldValue.increment(1) });
-                cheerBtn.style.transform = "scale(0.95)";
-                setTimeout(() => cheerBtn.style.transform = "", 150);
-            });
-        };
-
-        const initParallax = () => {
-            const items = document.querySelectorAll('.parallax');
-            if (!items.length || prefersReducedMotion()) return;
-            window.addEventListener('scroll', () => {
-                const scrolled = window.scrollY;
-                items.forEach(el => {
-                    const speed = parseFloat(el.dataset.speed) || 0.1;
-                    el.style.transform = `translateY(${scrolled * speed}px)`;
-                });
-            }, { passive: true });
-        };
-
         rafId = window.requestAnimationFrame(runProgress);
 
         if (document.readyState === 'complete') {
@@ -237,6 +196,66 @@
     } else {
         startHeroIntro();
     }
+
+    const initHypeMeter = () => {
+        const cheerBtn = document.getElementById('cheer-btn');
+        const hypeFill = document.getElementById('hype-fill');
+        const hypePercent = document.getElementById('hype-percent');
+        const cheerCountEl = document.getElementById('cheer-count');
+        if (!cheerBtn) return;
+
+        let totalCheers = parseInt(localStorage.getItem('phoenix_cheers') || '8420');
+        const goal = 12000;
+
+        const updateUI = (total) => {
+            const percent = Math.min(100, (total / goal) * 100);
+            if (hypeFill) hypeFill.style.width = `${percent}%`;
+            if (hypePercent) hypePercent.textContent = `${Math.floor(percent)}%`;
+            if (cheerCountEl) cheerCountEl.textContent = total.toLocaleString();
+        };
+
+        updateUI(totalCheers);
+
+        if (db) {
+            const hypeRef = db.collection('event_stats').doc('hype');
+            hypeRef.onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    totalCheers = data.total_cheers || totalCheers;
+                    updateUI(totalCheers);
+                } else {
+                    hypeRef.set({ total_cheers: totalCheers, goal: goal });
+                }
+            });
+        }
+
+        cheerBtn.addEventListener('click', () => {
+            totalCheers++;
+            updateUI(totalCheers);
+            localStorage.setItem('phoenix_cheers', totalCheers);
+            
+            if (db) {
+                const hypeRef = db.collection('event_stats').doc('hype');
+                hypeRef.update({ total_cheers: firebase.firestore.FieldValue.increment(1) });
+            }
+
+            cheerBtn.style.transform = "scale(0.95)";
+            setTimeout(() => cheerBtn.style.transform = "", 150);
+        });
+    };
+
+    const initParallax = () => {
+        const items = document.querySelectorAll('.parallax');
+        if (!items.length || prefersReducedMotion()) return;
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            items.forEach(el => {
+                const speed = parseFloat(el.dataset.speed) || 0.1;
+                el.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        }, { passive: true });
+    };
+
 
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
@@ -1868,17 +1887,17 @@
         'dj-blaze': {
             name: 'DJ Blaze',
             bio: 'Electronic phenomenon DJ Blaze brings his high-octane "Thunder-Tech" sound to Phoenix Live \'26. Known for record-breaking sets at Tomorrowland, he promises an immersive neon experience.',
-            spotify: '<iframe src="https://open.spotify.com/embed/track/25YmO6Yl2u5lY9zU9z7F8r?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+            spotify: '<iframe src="https://open.spotify.com/embed/track/7MXVBY9QC9oB6hB5Ycc9S6" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
         },
         'metal-shadows': {
             name: 'The Metal Shadows',
             bio: 'The titans of industrial rock. The Metal Shadows blend heavy riffs with cinematic cyberpunk visuals. Expect an earth-shattering performance filled with pyrotechnics and energy.',
-            spotify: '<iframe src="https://open.spotify.com/embed/track/4uLU6hMCjZvz0Z30SRo98E?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+            spotify: '<iframe src="https://open.spotify.com/embed/track/7qiZrawBmURvGSlS6D0sbu" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
         },
         'aisha-roy': {
             name: 'Aisha Roy',
             bio: 'Aisha Roy is redefining retro-future pop. Her soulful vocals combined with synth-wave textures have topped the charts globally. Join the "Pink Nebula" tour experience.',
-            spotify: '<iframe src="https://open.spotify.com/embed/track/5uCax9HTlsHqS4I0vDAsuD?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+            spotify: '<iframe src="https://open.spotify.com/embed/track/0VjIj9R9nsEs7m6YmYvS7Y" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
         }
     };
 
