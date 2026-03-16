@@ -1296,6 +1296,10 @@ main {
   color: #4ade80;
 }
 
+.register-status.error {
+  color: #f87171;
+}
+
 .trust-seals {
   display: flex;
   flex-wrap: wrap;
