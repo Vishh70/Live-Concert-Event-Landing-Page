@@ -3680,34 +3680,63 @@ body:hover .custom-cursor {
   margin-bottom: 30px;
 }
 
-/* ========== Restored Spotify Embeds ========== */
-.spotify-embed-wrapper {
-  margin-top: 20px;
+/* ========== Premium Artist Player ========== */
+.artist-player {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+}
+
+.player-controls {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.spotify-cta.minimal {
-  padding: 0;
-  background: transparent;
-  border: none;
-  align-items: flex-start;
+.player-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  text-transform: uppercase;
 }
 
-.btn--spotify-link {
-  background: rgba(29, 185, 84, 0.1);
-  color: #1DB954 !important;
-  border: 1px solid rgba(29, 185, 84, 0.3);
-  font-size: 0.85rem;
-  padding: 8px 16px;
+.custom-audio-player {
+  width: 100%;
+  height: 40px;
+  filter: invert(1) hue-rotate(180deg) brightness(1.5); /* Modern dark mode audio player */
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.custom-audio-player:hover {
+  opacity: 1;
+}
+
+.btn--spotify-elite {
+  background: #1DB954;
+  color: #000 !important;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
   border-radius: 999px;
   text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.btn--spotify-link:hover {
-  background: rgba(29, 185, 84, 0.2);
-  border-color: #1DB954;
+.btn--spotify-elite:hover {
+  background: #1ed760;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(29, 185, 84, 0.3);
 }
 
 .spotify-embed {

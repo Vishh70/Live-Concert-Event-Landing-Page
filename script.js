@@ -1887,17 +1887,20 @@
         'dj-blaze': {
             name: 'DJ Blaze',
             bio: 'Electronic phenomenon DJ Blaze brings his high-octane "Thunder-Tech" sound to Phoenix Live \'26. Known for record-breaking sets at Tomorrowland, he promises an immersive neon experience.',
-            spotify: 'https://open.spotify.com/embed/track/2S9idp6o3Y07C9p0X97Gis?utm_source=generator'
+            audio: 'https://cdn.pixabay.com/audio/2022/10/25/audio_141bd455de.mp3', // Industrial Tech snippet
+            spotify: 'https://open.spotify.com/search/DJ%20Blaze'
         },
         'metal-shadows': {
             name: 'The Metal Shadows',
             bio: 'The titans of industrial rock. The Metal Shadows blend heavy riffs with cinematic cyberpunk visuals. Expect an earth-shattering performance filled with pyrotechnics and energy.',
-            spotify: 'https://open.spotify.com/embed/track/47Yidp6o3Y07C9p0X97Gis?utm_source=generator'
+            audio: 'https://cdn.pixabay.com/audio/2023/06/15/audio_5b86338b7e.mp3', // Heavy Rock snippet
+            spotify: 'https://open.spotify.com/search/Industrial%20Metal'
         },
         'aisha-roy': {
             name: 'Aisha Roy',
             bio: 'Aisha Roy is redefining retro-future pop. Her soulful vocals combined with synth-wave textures have topped the charts globally. Join the "Pink Nebula" tour experience.',
-            spotify: 'https://open.spotify.com/embed/track/0VjIj9R9nsEs7m6YmYvS7Y?utm_source=generator'
+            audio: 'https://cdn.pixabay.com/audio/2022/03/24/audio_b28740523e.mp3', // Synthwave Pop snippet
+            spotify: 'https://open.spotify.com/search/Aisha%20Roy'
         }
     };
 
@@ -1916,16 +1919,23 @@
                 document.getElementById('artist-modal-name').textContent = data.name;
                 document.getElementById('artist-modal-bio').textContent = data.bio;
                 
-                // Restore high-end music player with a fallback to the CTA button
+                // Replace broken iframe with a Premium Internal Audio Player
                 const spotifyContainer = document.getElementById('spotify-container');
                 spotifyContainer.innerHTML = `
-                    <div class="spotify-embed-wrapper">
-                        <iframe src="${data.spotify}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:12px;"></iframe>
-                        <div class="spotify-cta minimal">
-                            <a href="${data.spotify.replace('/embed', '')}" target="_blank" rel="noopener noreferrer" class="btn btn--spotify-link">
-                                Open in Spotify
-                            </a>
+                    <div class="artist-player">
+                        <div class="player-controls">
+                            <span class="player-label">PREVIEW TRACK</span>
+                            <audio controls class="custom-audio-player">
+                                <source src="${data.audio}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
                         </div>
+                        <a href="${data.spotify}" target="_blank" rel="noopener noreferrer" class="btn btn--spotify-elite">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.49 17.306c-.215.353-.674.464-1.026.248-2.822-1.724-6.375-2.115-10.558-1.16-.403.093-.807-.158-.9-.561-.092-.403.159-.807.561-.9 4.58-1.047 8.5-1.048 11.675 1.258.352.216.463.675.248 1.026v-.011zm1.464-3.26c-.27.441-.845.58-1.287.31-3.23-1.983-8.155-2.557-11.974-1.397-.501.152-1.033-.133-1.185-.634-.152-.501.133-1.033.634-1.185 4.368-1.325 9.79-.675 13.43 1.56.44.27.58.845.31 1.287l-.028.059zm.126-3.415c-3.873-2.3-10.274-2.513-13.98-1.388-.593.18-1.222-.162-1.402-.755-.18-.593.162-1.222.755-1.402 4.25-1.29 11.31-1.041 15.765 1.6 1.155.686 1.534 2.18.848 3.336-.61 1.025-1.986 1.344-3.048.743l.062-.134z"/>
+                            </svg>
+                            Explore Full Artist Profile
+                        </a>
                     </div>
                 `;
                 modal.hidden = false;
