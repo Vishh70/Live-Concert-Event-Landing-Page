@@ -1887,17 +1887,17 @@
         'dj-blaze': {
             name: 'DJ Blaze',
             bio: 'Electronic phenomenon DJ Blaze brings his high-octane "Thunder-Tech" sound to Phoenix Live \'26. Known for record-breaking sets at Tomorrowland, he promises an immersive neon experience.',
-            spotify: '<iframe src="https://open.spotify.com/embed/track/7MXVBY9QC9oB6hB5Ycc9S6" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+            spotify: 'https://open.spotify.com/search/DJ%20Blaze'
         },
         'metal-shadows': {
             name: 'The Metal Shadows',
             bio: 'The titans of industrial rock. The Metal Shadows blend heavy riffs with cinematic cyberpunk visuals. Expect an earth-shattering performance filled with pyrotechnics and energy.',
-            spotify: '<iframe src="https://open.spotify.com/embed/track/7qiZrawBmURvGSlS6D0sbu" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+            spotify: 'https://open.spotify.com/search/The%20Metal%20Shadows'
         },
         'aisha-roy': {
             name: 'Aisha Roy',
             bio: 'Aisha Roy is redefining retro-future pop. Her soulful vocals combined with synth-wave textures have topped the charts globally. Join the "Pink Nebula" tour experience.',
-            spotify: '<iframe src="https://open.spotify.com/embed/track/0VjIj9R9nsEs7m6YmYvS7Y" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+            spotify: 'https://open.spotify.com/search/Aisha%20Roy'
         }
     };
 
@@ -1915,7 +1915,22 @@
                 document.getElementById('artist-modal-img').src = card.querySelector('img').src;
                 document.getElementById('artist-modal-name').textContent = data.name;
                 document.getElementById('artist-modal-bio').textContent = data.bio;
-                document.getElementById('spotify-container').innerHTML = data.spotify;
+                
+                // Replace broken iframe with a premium 'Listen on Spotify' button
+                const spotifyContainer = document.getElementById('spotify-container');
+                spotifyContainer.innerHTML = `
+                    <div class="spotify-cta">
+                        <div class="spotify-visualizer">
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <a href="${data.spotify}" target="_blank" rel="noopener noreferrer" class="btn btn--spotify">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.49 17.306c-.215.353-.674.464-1.026.248-2.822-1.724-6.375-2.115-10.558-1.16-.403.093-.807-.158-.9-.561-.092-.403.159-.807.561-.9 4.58-1.047 8.5-1.048 11.675 1.258.352.216.463.675.248 1.026v-.011zm1.464-3.26c-.27.441-.845.58-1.287.31-3.23-1.983-8.155-2.557-11.974-1.397-.501.152-1.033-.133-1.185-.634-.152-.501.133-1.033.634-1.185 4.368-1.325 9.79-.675 13.43 1.56.44.27.58.845.31 1.287l-.028.059zm.126-3.415c-3.873-2.3-10.274-2.513-13.98-1.388-.593.18-1.222-.162-1.402-.755-.18-.593.162-1.222.755-1.402 4.25-1.29 11.31-1.041 15.765 1.6 1.155.686 1.534 2.18.848 3.336-.61 1.025-1.986 1.344-3.048.743l.062-.134z"/>
+                            </svg>
+                            Explore Artist on Spotify
+                        </a>
+                    </div>
+                `;
                 modal.hidden = false;
                 document.body.style.overflow = 'hidden';
             });
