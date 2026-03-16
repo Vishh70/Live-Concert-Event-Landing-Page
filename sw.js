@@ -1,4 +1,4 @@
-const CACHE_NAME = 'epic2003-shell-v16';
+const CACHE_NAME = 'epic2003-shell-v17';
 const APP_SHELL = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const APP_SHELL = [
   './assets/aisha-roy.webp',
   './assets/metal-shadows.webp',
   './assets/dj-blaze.webp',
+  './assets/marathi-folk.webp',
   './electric_dragon_concert_hero_1772381931809.png',
   './pro_venue_map_pune_arena_1772383111373.png',
 ];
@@ -54,7 +55,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  const isStaticAsset = /\.(?:css|js|webp|svg|png|jpg|jpeg|gif|webmanifest)$/i.test(url.pathname);
+  const isStaticAsset = /\.(?:css|js|webp|svg|png|jpg|jpeg|gif|webmanifest|mp3)$/i.test(url.pathname);
   if (!isStaticAsset) return;
 
   event.respondWith(

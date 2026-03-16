@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -730,7 +730,7 @@
     <div class="ticket-controls" aria-label="Ticket Actions">
       <button type="button" id="download-image-btn" class="control-btn primary">Download As Image</button>
       <button type="button" id="download-pdf-btn" class="control-btn secondary">Download As PDF</button>
-      <button type="button" id="wallet-btn" class="control-btn wallet" disabled>Add To Wallet (Coming Soon)</button>
+      <button type="button" id="wallet-btn" class="control-btn primary">Save to Photos / Wallet</button>
     </div>
     <p id="action-status" class="action-status" aria-live="polite"></p>
   </main>
@@ -877,6 +877,37 @@
       if (!ticketContainer) return;
       ticketContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    async function addToWallet() {
+      if (!state.valid || state.downloadBusy) return;
+      
+      // If Web Share API with Files is supported, we can "Save to Photos" properly on mobile
+      if (navigator.canShare && navigator.share) {
+        try {
+          state.downloadBusy = true;
+          setActionStatus('Preparing ticket for gallery...', null);
+          const canvas = await captureTicketCanvas();
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+          const file = new File([blob], 'Phoenix_Live_Ticket.png', { type: 'image/png' });
+          
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: "Phoenix Live '26 E-Ticket",
+              text: "Official Entry Pass for Phoenix Live Pune"
+            });
+            setActionStatus('Ticket shared/saved successfully.', 'success');
+            return;
+          }
+        } catch (error) {
+          console.error('Wallet share failed:', error);
+        } finally {
+          state.downloadBusy = false;
+        }
+      }
+      
+      // Fallback to standard high-res download
+      downloadImage();
+    }
     async function downloadImage() {
       if (!state.valid || state.downloadBusy) return;
       state.downloadBusy = true;
@@ -960,8 +991,10 @@
     function attachEvents() {
       const imageBtn = document.getElementById('download-image-btn');
       const pdfBtn = document.getElementById('download-pdf-btn');
+      const walletBtn = document.getElementById('wallet-btn');
       if (imageBtn) imageBtn.addEventListener('click', downloadImage);
       if (pdfBtn) pdfBtn.addEventListener('click', () => downloadPDF({ auto: false }));
+      if (walletBtn) walletBtn.addEventListener('click', addToWallet);
     }
     function initTicketPage() {
       const result = parseAndValidateParams();
