@@ -1145,9 +1145,11 @@
                             support_url: CONFIG.APP.SUPPORT_URL
                         }).then(() => {
                             console.log("SUCCESS: Real Email Sent!");
+                            registerStatus.textContent = "Pass confirmed! Check your email (and Spam folder).";
+                            registerStatus.className = 'register-status success';
                         }, (error) => {
-                            console.log("FAILED: Check Public Key at EmailJS.com", error);
-                            registerStatus.textContent = "Registration confirmed, but email delivery failed. Use View E-ticket.";
+                            console.error("FAILED EMAILJS:", error);
+                            registerStatus.textContent = `Confirmed, but email failed: ${error.text || 'Check EmailJS Settings'}`;
                             registerStatus.className = 'register-status error';
                         });
                     } else {
