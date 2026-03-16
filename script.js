@@ -1887,12 +1887,12 @@
         'dj-blaze': {
             name: 'DJ Blaze',
             bio: 'Electronic phenomenon DJ Blaze brings his high-octane "Thunder-Tech" sound to Phoenix Live \'26. Known for record-breaking sets at Tomorrowland, he promises an immersive neon experience.',
-            spotify: 'https://open.spotify.com/embed/track/7MXVBY9QC9oB6hB5Ycc9S6?utm_source=generator'
+            spotify: 'https://open.spotify.com/embed/track/2S9idp6o3Y07C9p0X97Gis?utm_source=generator'
         },
         'metal-shadows': {
             name: 'The Metal Shadows',
             bio: 'The titans of industrial rock. The Metal Shadows blend heavy riffs with cinematic cyberpunk visuals. Expect an earth-shattering performance filled with pyrotechnics and energy.',
-            spotify: 'https://open.spotify.com/embed/track/2S9idp6o3Y07C9p0X97Gis?utm_source=generator'
+            spotify: 'https://open.spotify.com/embed/track/47Yidp6o3Y07C9p0X97Gis?utm_source=generator'
         },
         'aisha-roy': {
             name: 'Aisha Roy',
