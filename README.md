@@ -9,8 +9,11 @@
 </p>
 
 <p align="center">
+  <a href="https://live-concert-event-landing-page.vercel.app/">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-Vercel-black?style=for-the-badge&logo=vercel" alt="Vercel Demo" />
+  </a>
   <a href="https://vishh70.github.io/Live-Concert-Event-Landing-Page/">
-    <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Site-22d3ee?style=for-the-badge" alt="Live Demo" />
+    <img src="https://img.shields.io/badge/🌐_Mirror-GitHub_Pages-22d3ee?style=for-the-badge" alt="GitHub Demo" />
   </a>
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
@@ -38,7 +41,8 @@ A **world-class**, dark-themed concert landing page for **Rock Night 2026** at P
 
 ## ✨ Live Demo
 
-🔗 **[https://vishh70.github.io/Live-Concert-Event-Landing-Page/](https://vishh70.github.io/Live-Concert-Event-Landing-Page/)**
+🔗 **Primary (Vercel): [https://live-concert-event-landing-page.vercel.app/](https://live-concert-event-landing-page.vercel.app/)**  
+🔗 **Mirror (GitHub): [https://vishh70.github.io/Live-Concert-Event-Landing-Page/](https://vishh70.github.io/Live-Concert-Event-Landing-Page/)**
 
 > If the site doesn't load:
 > 1. Go to repository **Settings → Pages**

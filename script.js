@@ -22,9 +22,9 @@
             appId: "YOUR_APP_ID"
         },
         APP: {
-            PROD_BASE_URL: "https://vishh70.github.io/Live-Concert-Event-Landing-Page",
+            PROD_BASE_URL: "https://live-concert-event-landing-page.vercel.app",
             TICKET_ROUTE: "email-template.html",
-            SUPPORT_URL: "https://vishh70.github.io/Live-Concert-Event-Landing-Page/#register"
+            SUPPORT_URL: "https://live-concert-event-landing-page.vercel.app/#register"
         },
         STORAGE: {
             DRAFT: 'epic2003.registerDraft.v1',
@@ -137,8 +137,16 @@
                 setProgress(100);
 
                 window.setTimeout(() => {
-                    preloader.classList.add('loaded');
-                    document.body.classList.remove('is-loading');
+                    if (!prefersReducedMotion()) {
+                        shatterPreloader();
+                        window.setTimeout(() => {
+                            preloader.classList.add('loaded');
+                            document.body.classList.remove('is-loading');
+                        }, 400); // Wait for shatter to start
+                    } else {
+                        preloader.classList.add('loaded');
+                        document.body.classList.remove('is-loading');
+                    }
 
                     window.setTimeout(() => {
                         preloader.remove();
@@ -146,6 +154,76 @@
                     }, removeDelayMs);
                 }, preExitMs);
             }, holdMs);
+        };
+        const shatterPreloader = () => {
+            if (!preloader) return;
+            preloader.classList.add('shattering');
+            const cols = 5; // Reduced for performance
+            const rows = 8;
+            const shardWidth = window.innerWidth / cols;
+            const shardHeight = window.innerHeight / rows;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const shard = document.createElement('div');
+                    shard.className = 'preloader__shard';
+                    shard.style.width = `${shardWidth + 2}px`;
+                    shard.style.height = `${shardHeight + 2}px`;
+                    shard.style.left = `${c * shardWidth}px`;
+                    shard.style.top = `${r * shardHeight}px`;
+
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 400 + Math.random() * 600;
+                    shard.style.setProperty('--shard-x', `${Math.cos(angle) * dist}px`);
+                    shard.style.setProperty('--shard-y', `${Math.sin(angle) * dist}px`);
+                    shard.style.setProperty('--shard-r', `${(Math.random() - 0.5) * 500}deg`);
+
+                    const delay = Math.random() * 0.1;
+                    shard.style.animation = `shard-shatter 0.9s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s both`;
+                    preloader.appendChild(shard);
+                }
+            }
+        };
+
+        const initHypeMeter = () => {
+            const cheerBtn = document.getElementById('cheer-btn');
+            const hypeFill = document.getElementById('hype-fill');
+            const hypePercent = document.getElementById('hype-percent');
+            const cheerCountEl = document.getElementById('cheer-count');
+            if (!cheerBtn || !db) return;
+
+            const hypeRef = db.collection('event_stats').doc('hype');
+            hypeRef.onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const total = data.total_cheers || 0;
+                    const goal = data.goal || 12000;
+                    const percent = Math.min(100, (total / goal) * 100);
+                    if (hypeFill) hypeFill.style.width = `${percent}%`;
+                    if (hypePercent) hypePercent.textContent = `${Math.floor(percent)}%`;
+                    if (cheerCountEl) cheerCountEl.textContent = total.toLocaleString();
+                } else {
+                    hypeRef.set({ total_cheers: 8420, goal: 12000 });
+                }
+            });
+
+            cheerBtn.addEventListener('click', () => {
+                hypeRef.update({ total_cheers: firebase.firestore.FieldValue.increment(1) });
+                cheerBtn.style.transform = "scale(0.95)";
+                setTimeout(() => cheerBtn.style.transform = "", 150);
+            });
+        };
+
+        const initParallax = () => {
+            const items = document.querySelectorAll('.parallax');
+            if (!items.length || prefersReducedMotion()) return;
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY;
+                items.forEach(el => {
+                    const speed = parseFloat(el.dataset.speed) || 0.1;
+                    el.style.transform = `translateY(${scrolled * speed}px)`;
+                });
+            }, { passive: true });
         };
 
         rafId = window.requestAnimationFrame(runProgress);
@@ -1785,6 +1863,76 @@
     const audioIconOff = document.getElementById('audio-icon-off');
     const audioIconOn = document.getElementById('audio-icon-on');
     
+    // --- Artist Data & Modals ---
+    const ARTIST_DATA = {
+        'dj-blaze': {
+            name: 'DJ Blaze',
+            bio: 'Electronic phenomenon DJ Blaze brings his high-octane "Thunder-Tech" sound to Phoenix Live \'26. Known for record-breaking sets at Tomorrowland, he promises an immersive neon experience.',
+            spotify: '<iframe src="https://open.spotify.com/embed/track/25YmO6Yl2u5lY9zU9z7F8r?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+        },
+        'metal-shadows': {
+            name: 'The Metal Shadows',
+            bio: 'The titans of industrial rock. The Metal Shadows blend heavy riffs with cinematic cyberpunk visuals. Expect an earth-shattering performance filled with pyrotechnics and energy.',
+            spotify: '<iframe src="https://open.spotify.com/embed/track/4uLU6hMCjZvz0Z30SRo98E?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+        },
+        'aisha-roy': {
+            name: 'Aisha Roy',
+            bio: 'Aisha Roy is redefining retro-future pop. Her soulful vocals combined with synth-wave textures have topped the charts globally. Join the "Pink Nebula" tour experience.',
+            spotify: '<iframe src="https://open.spotify.com/embed/track/5uCax9HTlsHqS4I0vDAsuD?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+        }
+    };
+
+    const initArtistModals = () => {
+        const modal = document.getElementById('artist-modal');
+        const closeBtn = document.getElementById('artist-modal-close');
+        const artistCards = document.querySelectorAll('.artist-card');
+        if (!modal || !closeBtn) return;
+        artistCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('a')) return; // Don't trigger if social clicked
+                const artistId = card.dataset.artist;
+                const data = ARTIST_DATA[artistId];
+                if (!data) return;
+                document.getElementById('artist-modal-img').src = card.querySelector('img').src;
+                document.getElementById('artist-modal-name').textContent = data.name;
+                document.getElementById('artist-modal-bio').textContent = data.bio;
+                document.getElementById('spotify-container').innerHTML = data.spotify;
+                modal.hidden = false;
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        const closeModal = () => {
+            modal.hidden = true;
+            document.body.style.overflow = '';
+            document.getElementById('spotify-container').innerHTML = '';
+        };
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    };
+
+    // --- Sound Reactive Audio Logic ---
+    let audioCtx, analyzer, dataArray;
+    const initAudioReactive = () => {
+        if (ambientAudio && audioToggle) {
+            audioToggle.addEventListener('click', () => {
+                if (!audioCtx) {
+                    try {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        analyzer = audioCtx.createAnalyser();
+                        const source = audioCtx.createMediaElementSource(ambientAudio);
+                        source.connect(analyzer);
+                        analyzer.connect(audioCtx.destination);
+                        analyzer.fftSize = 64;
+                        dataArray = new Uint8Array(analyzer.frequencyBinCount);
+                    } catch (err) {
+                        console.warn("Audio Context init failed (likely already initialized):", err);
+                    }
+                }
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            }, { once: true });
+        }
+    };
+    
     if (audioToggle && ambientAudio) {
         audioToggle.addEventListener('click', () => {
             if (ambientAudio.paused) {
@@ -1838,9 +1986,16 @@
 
         const drawParticles = () => {
             ctx.clearRect(0, 0, width, height);
+
+            let bassIntensity = 1;
+            if (analyzer && !ambientAudio.paused) {
+                analyzer.getByteFrequencyData(dataArray);
+                const bass = dataArray.slice(0, 3).reduce((a, b) => a + b, 0) / 3;
+                bassIntensity = 1 + (bass / 255) * 1.5;
+            }
             
             particles.forEach((p) => {
-                p.y += p.speedY;
+                p.y += p.speedY * bassIntensity;
                 p.x += p.speedX + (mouseX * 0.05); // slight sway with mouse
                 p.life -= 0.5;
 
@@ -1855,7 +2010,7 @@
                 const currentOpacity = (p.opacity * Math.sin((p.life / 100) * Math.PI)).toFixed(2);
                 
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, p.size * (bassIntensity > 1.2 ? bassIntensity : 1), 0, Math.PI * 2);
                 // Ember color: mix of orange/red/yellow
                 ctx.fillStyle = `rgba(255, ${100 + Math.random() * 100}, 50, ${Math.max(0, currentOpacity)})`; 
                 ctx.shadowBlur = 8;
@@ -1880,4 +2035,10 @@
         initParticles();
         drawParticles();
     }
+
+    // Start Phase 3 Features
+    if (typeof initHypeMeter === 'function') initHypeMeter();
+    if (typeof initParallax === 'function') initParallax();
+    if (typeof initArtistModals === 'function') initArtistModals();
+    if (typeof initAudioReactive === 'function') initAudioReactive();
 })();

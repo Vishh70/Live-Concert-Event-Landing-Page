@@ -1,0 +1,19 @@
+# Logic
+.gemini/
+.agents/
+.agent/
+brain/
+/tmp/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
