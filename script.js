@@ -1887,19 +1887,19 @@
         'dj-blaze': {
             name: 'DJ Blaze',
             bio: 'Electronic phenomenon DJ Blaze brings his high-octane "Thunder-Tech" sound to Phoenix Live \'26. Known for record-breaking sets at Tomorrowland, he promises an immersive neon experience.',
-            audio: 'https://cdn.pixabay.com/audio/2022/10/25/audio_141bd455de.mp3', // Industrial Tech snippet
+            audio: 'assets/audio/dj-blaze.mp3', 
             spotify: 'https://open.spotify.com/search/DJ%20Blaze'
         },
         'metal-shadows': {
             name: 'The Metal Shadows',
             bio: 'The titans of industrial rock. The Metal Shadows blend heavy riffs with cinematic cyberpunk visuals. Expect an earth-shattering performance filled with pyrotechnics and energy.',
-            audio: 'https://cdn.pixabay.com/audio/2023/06/15/audio_5b86338b7e.mp3', // Heavy Rock snippet
+            audio: 'assets/audio/metal-shadows.mp3',
             spotify: 'https://open.spotify.com/search/Industrial%20Metal'
         },
         'aisha-roy': {
             name: 'Aisha Roy',
             bio: 'Aisha Roy is redefining retro-future pop. Her soulful vocals combined with synth-wave textures have topped the charts globally. Join the "Pink Nebula" tour experience.',
-            audio: 'https://cdn.pixabay.com/audio/2022/03/24/audio_b28740523e.mp3', // Synthwave Pop snippet
+            audio: 'assets/audio/aisha-roy.mp3',
             spotify: 'https://open.spotify.com/search/Aisha%20Roy'
         }
     };
